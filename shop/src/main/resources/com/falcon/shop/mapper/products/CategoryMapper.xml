@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.falcon.shop.mapper.products.CategoryMapper">
+
+    <resultMap id="CategoryMap" type="Category">
+        <id property="no" column="no"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="parentNo" column="parent_no"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <collection property="categoryLargeList" ofType="CategoryLarge" column="no"
+                  select="com.falcon.shop.mapper.products.CategoryLargeMapper.listByCategoryNo"/>
+    </resultMap>
+
+    <select id="list" resultType="Category">
+        SELECT *
+        FROM category
+        WHERE 1=1
+        <if test="queryParams.search != null and queryParams.search != ''">
+            AND name LIKE CONCAT('%', #{queryParams.search}, '%')
+        </if>
+        ORDER BY seq ASC, no DESC
+    </select>
+
+    <select id="select" resultMap="CategoryMap">
+        SELECT *
+        FROM category
+        WHERE no = #{no}
+    </select>
+
+    <select id="selectById" resultMap="CategoryMap">
+        SELECT *
+        FROM category
+        WHERE id = #{id}
+    </select>
+
+</mapper>

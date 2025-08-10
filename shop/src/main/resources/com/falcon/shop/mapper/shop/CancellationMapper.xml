@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.falcon.shop.mapper.shop.CancellationMapper">
+
+    <resultMap id="CancellationMap" type="Cancellations">
+        <id property="no" column="no"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="type" column="type"/>
+        <result property="reason" column="reason"/>
+        <result property="isConfirmed" column="is_confirmed"/>
+        <result property="isRefund" column="is_refund"/>
+        <result property="depositor" column="depositor"/>
+        <result property="bankName" column="bank_name"/>
+        <result property="accountNumber" column="account_number"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <association property="order" javaType="Orders" column="order_no" select="selectOrder"/>
+    </resultMap>
+
+    <select id="listWithParams" resultMap="CancellationMap">
+        SELECT *
+        FROM cancellations
+        WHERE 1=1
+        <if test="queryParams.search != null and queryParams.search != ''">
+            AND (
+                type LIKE CONCAT('%', #{queryParams.search}, '%')
+                OR reason LIKE CONCAT('%', #{queryParams.search}, '%')
+                OR depositor LIKE CONCAT('%', #{queryParams.search}, '%')
+                OR bank_name LIKE CONCAT('%', #{queryParams.search}, '%')
+            )
+        </if>
+        <if test="userNo != null and userNo != ''">
+            AND order_no IN (
+                SELECT no FROM orders WHERE user_no = #{userNo}
+            )
+        </if>
+        <if test="orderNos != null and orderNos != ''">
+            AND order_no IN 
+            <foreach item="orderNo" index="index" collection="orderNos" open="(" separator="," close=")">
+                #{orderNo}
+            </foreach>
+        </if>
+        <if test="type != null and type != ''">
+            AND type = #{type}
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        <if test="isConfirmed != null">
+            AND is_confirmed = #{isConfirmed}
+        </if>
+        <if test="isRefund != null">
+            AND is_refund = #{isRefund}
+        </if>
+        ORDER BY 
+        <choose>
+            <when test="sort != null and sort != ''">
+                <choose>
+                    <when test="sort == 'type'">type</when>
+                    <when test="sort == 'reason'">reason</when>
+                    <when test="sort == 'isConfirmed'">is_confirmed</when>
+                    <when test="sort == 'isRefund'">is_refund</when>
+                    <when test="sort == 'depositor'">depositor</when>
+                    <when test="sort == 'createdAt'">created_at</when>
+                    <otherwise>no</otherwise>
+                </choose>
+                <choose>
+                    <when test="order != null and order == 'asc'">ASC</when>
+                    <otherwise>DESC</otherwise>
+                </choose>
+            </when>
+            <otherwise>no DESC, created_at DESC</otherwise>
+        </choose>
+    </select>
+
+
+
+    <select id="selectOrder" resultMap="com.falcon.shop.mapper.shop.OrderMapper.OrderMap">
+        SELECT *
+        FROM orders
+        WHERE no = #{order_no}
+    </select>
+
+
+</mapper>

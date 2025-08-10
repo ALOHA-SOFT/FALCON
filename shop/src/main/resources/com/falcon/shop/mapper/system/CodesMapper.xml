@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.falcon.shop.mapper.system.CodesMapper">
+
+    <resultMap id="CodesMap" type="Codes">
+        <id property="no" column="no"/>
+        <result property="codeGroupNo" column="code_group_no"/>
+        <result property="name" column="name"/>
+        <result property="value" column="value"/>
+        <result property="code" column="code"/>
+        <result property="description" column="description"/>
+        <result property="seq" column="seq"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <association property="codeGroups" javaType="CodeGroups" column="code_group_no" select="selectCodeGroup"/>
+    </resultMap>
+
+    <select id="list" resultType="Codes">
+        SELECT *
+        FROM codes
+        WHERE 1=1
+        <if test="queryParams.search != null and queryParams.search != ''">
+            AND name LIKE CONCAT('%', #{queryParams.search}, '%')
+        </if>
+        ORDER BY seq ASC, no DESC
+    </select>
+
+    <select id="selectCodeGroup" resultType="CodeGroups">
+        SELECT *
+        FROM code_group
+        WHERE no = #{code_group_no}
+    </select>
+
+</mapper>

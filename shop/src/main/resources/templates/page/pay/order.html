@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/user/main_layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>주문/결제</title>
+  <!-- 토스페이먼츠 결제위젯 SDK -->
+  <script src="https://js.tosspayments.com/v1/payment-widget"></script>
+  <!-- <script src="https://js.tosspayments.com/v2/standard"></script> -->
+</head>
+<body layout:fragment="content">
+  <div class="container my-5">
+    <h2 class="mb-4">주문/결제</h2>
+
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <!-- 주문자 정보 -->
+        <div class="card mb-4">
+          <div class="card-header">주문자 정보</div>
+          <div class="card-body row g-3">
+            <div class="col-12">
+              <label for="buyerName" class="form-label">이름</label>
+              <input type="text" class="form-control" id="buyerName" name="buyerName" th:value="${user.name}" required>
+            </div>
+            <div class="col-12">
+              <label for="buyerEmail" class="form-label">이메일</label>
+              <input type="email" class="form-control" id="buyerEmail" name="buyerEmail" th:value="${user.email}" required>
+            </div>
+            <div class="col-12">
+              <label for="buyerPhone" class="form-label">연락처</label>
+              <input type="tel" class="form-control" id="buyerPhone" name="buyerPhone" th:value="${user.tel}" required>
+            </div>
+            <div class="col-12">
+              <label for="buyerAddress" class="form-label">주소</label>
+              <input type="text" class="form-control" id="buyerAddress" name="buyerAddress" disabled>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-12 col-md-6">
+        <!-- 배송지 정보 -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <div class="col-12 d-flex justify-content-between align-items-center">
+              <span>배송지 정보</span>
+              <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAddressModal">+ 새 배송지 추가</button>
+            </div>
+          </div>
+          <div class="card-body" style="height: 338px; overflow-y: auto;">
+            <div class="mb-3">
+              <div class="row g-2" th:if="${addressList != null}">
+                <div class="col-12" th:each="addr : ${addressList}">
+                  <div class="card mb-2" th:classappend="${addr.isMain} ? 'border-primary' : ''">
+                    <div class="card-body d-flex align-items-center ">
+                      <input class="form-check-input me-3" type="radio" name="addressNo" th:id="'address_' + ${addr.no}" th:value="${addr.no}" th:checked="${addr.isMain}">
+                      <label th:for="'address_' + ${addr.no}" class="w-100 mb-0 cursor-pointer address-label">
+                        <div class="d-flex justify-content-between align-items-center">
+                          <div>
+                            <strong th:text="${addr.recipient}">수령인</strong>
+                            <span class="ms-2" th:text="${addr.tel}">연락처</span>
+                          </div>
+                          <div>
+                            <span class="ms-2 badge bg-primary" th:if="${addr.isMain}">기본배송지</span>
+                          </div>
+                        </div>
+                        <!-- <div th:text="${addr.postcode} + ' ' + ${addr.address} + ' ' + ${addr.addressDong} + ' ' + ${addr.addressDetail}">주소</div> -->
+                        <div class="fs-6">
+                          <span class="badge bg-secondary" th:text="${addr.postcode}">우편번호</span>
+                          <span th:text="${addr.address} + ' ' + ${addr.addressDetail}" class="span-address" th:classappend="${addr.isMain} ? 'main' : ''">주소</span> <br>
+                          <span th:text="${addr.addressDong} + ' ' + ${addr.addressDetail}">주소</span>
+                          <div class="text-muted small" th:if="${addr.deliveryRequest}" th:text="'요청사항: ' + ${addr.deliveryRequest}">요청사항</div>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+                <div th:if="${addressList == null or #lists.isEmpty(addressList)}" class="text-muted text-center py-4">
+                  <i class="material-icons" style="font-size: 36px; color: #ccc;">local_shipping</i>
+                  <p class="mt-2 mb-2">등록된 배송지가 없습니다.</p>
+                  <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAddressModal">+ 새 배송지 추가</button>
+                </div>
+                <!-- 배송지 추가/수정 모달 -->
+                <div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="addAddressModalLabel">배송지 추가</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <form id="order-address-form">
+                      <input type="hidden" name="userNo" th:value="${user.no}">
+                      <div class="mb-2">
+                        <label class="form-label">수령인</label>
+                        <input type="text" class="form-control" name="recipient" id="orderRecipient" required>
+                      </div>
+                      <div class="mb-2">
+                        <label class="form-label">연락처</label>
+                        <input type="tel" class="form-control" name="tel" id="orderTel" required>
+                      </div>
+                      <div class="mb-2">
+                        <label class="form-label">주소</label>
+                        <div class="input-group">
+                        <input type="text" id="orderPostcode" class="form-control" name="postcode" placeholder="우편번호" readonly>
+                        <button type="button" class="btn btn-outline-secondary" onclick="execOrderDaumPostcode()">주소 찾기</button>
+                        </div>
+                        <input type="text" class="form-control mt-2" name="address" id="orderAddress" placeholder="도로명주소" readonly required>
+                        <input type="text" class="form-control mt-2" name="addressDong" id="orderAddressDong" placeholder="지번주소" readonly>
+                      </div>
+                      <div class="mb-2">
+                        <label class="form-label">상세주소</label>
+                        <input type="text" class="form-control" name="addressDetail" id="orderAddressDetail" placeholder="상세주소 (아파트, 동호수 등)" required>
+                      </div>
+                      <div class="mb-2">
+                        <label class="form-label">요청사항</label>
+                        <select id="orderDeliveryRequestSelect" class="form-select mt-2">
+                        <option value="">배송 요청사항을 선택해주세요</option>
+                        <option value="부재 시 문 앞에 놓아주세요">부재 시 문 앞에 놓아주세요</option>
+                        <option value="경비실에 맡겨주세요">경비실에 맡겨주세요</option>
+                        <option value="택배함에 넣어주세요">택배함에 넣어주세요</option>
+                        <option value="벨 누르지 마세요">벨 누르지 마세요</option>
+                        <option value="배송 전에 연락주세요">배송 전에 연락주세요</option>
+                        <option value="custom">직접 입력</option>
+                        </select>
+                        <input type="text" class="form-control d-none" name="deliveryRequest" id="orderDeliveryRequest" placeholder="배송 요청사항 (선택)" readonly>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="orderIsMain" name="isMain">
+                        <label class="form-check-label" for="orderIsMain">기본 배송지로 설정</label>
+                      </div>
+                      <button type="submit" class="btn btn-primary w-100">저장</button>
+                      </form>
+                    </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Daum Postcode CDN -->
+                <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+                <script>
+                  function execOrderDaumPostcode() {
+                    new daum.Postcode({
+                    oncomplete: function(data) {
+                      document.getElementById('orderPostcode').value = data.zonecode;
+                      document.getElementById('orderAddress').value = data.roadAddress;
+                      document.getElementById('orderAddressDong').value = data.jibunAddress;
+                    }
+                    }).open();
+                  }
+                  document.getElementById('orderDeliveryRequestSelect').addEventListener('change', function() {
+                    const selectedValue = this.value;
+                    const deliveryRequestInput = document.getElementById('orderDeliveryRequest');
+                    if (selectedValue === 'custom') {
+                    deliveryRequestInput.removeAttribute('readonly');
+                    deliveryRequestInput.classList.remove('d-none');
+                    deliveryRequestInput.value = '';
+                    deliveryRequestInput.focus();
+                    } else if (selectedValue === '') {
+                    deliveryRequestInput.value = '';
+                    deliveryRequestInput.classList.add('d-none');
+                    } else {
+                    deliveryRequestInput.value = selectedValue;
+                    deliveryRequestInput.classList.add('d-none');
+                    }
+                  });
+                  document.getElementById('order-address-form').addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(this);
+                    const addressData = {
+                    userNo: formData.get('userNo') || '',
+                    recipient: formData.get('recipient') || '',
+                    tel: formData.get('tel') || '',
+                    postcode: formData.get('postcode') || '',
+                    address: formData.get('address') || '',
+                    addressDong: formData.get('addressDong') || '',
+                    addressDetail: formData.get('addressDetail') || '',
+                    deliveryRequest: formData.get('deliveryRequest') || '',
+                    isMain: formData.get('isMain') === 'on',
+                    };
+                    try {
+                    await $ajax({
+                      url: '/api/users/address',
+                      type: 'POST',
+                      data: addressData
+                    });
+                    await $toast({
+                      title: '배송지가 등록되었습니다.',
+                      icon: 'success'
+                    });
+                    // 모달 닫기
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addAddressModal'));
+                    modal.hide();
+                    location.reload();
+                    } catch (error) {
+                    $alert('오류', '배송지 등록에 실패했습니다.', 'error');
+                    }
+                  });
+
+                  document.querySelectorAll('.address-label').forEach(function(label) {
+                    label.addEventListener('click', function() {
+                      const spanAddr = label.querySelector('.span-address');
+                      if (spanAddr) {
+                        document.getElementById('buyerAddress').value = spanAddr.innerText;
+                      }
+                    });
+                  });
+
+                  const mainAddr = document.querySelector('.span-address.main');
+                  if (mainAddr) {
+                    document.getElementById('buyerAddress').value = mainAddr.innerText;
+                  }
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <!-- 주문 상품/옵션 상세 -->
+    <div class="card mb-4">
+      <div class="card-header">주문 상품 상세</div>
+      <div class="card-body">
+        <div class="row g-3" th:each="item : ${order.orderItems}">
+          <div class="col-12">
+            <div class="card mb-3">
+              <div class="card-body">
+                <div class="row mb-2 align-items-center">
+                  <div class="col-md-6">
+                    <div class="row mb-2">
+                      <div class="col-6">
+                        <img th:src="${item.product.thumbImg != null and item.product.thumbImg.content != null ? item.product.thumbImg.content : 'https://placehold.co/120x120?text=Image'}" alt="상품 이미지" class="img-fluid rounded" style="max-height:120px;">
+                      </div>
+                      <div class="col-6 d-flex flex-column justify-content-between">
+                        <div>
+                          <strong>상품명:</strong> <span th:text="${item.product.name}">상품명</span>
+                        </div>
+                        <div>
+                          <strong>상품번호:</strong> <span th:text="${item.productNo}">상품번호</span>
+                        </div>
+                        <div>
+                          <strong>수량:</strong> <span th:text="${item.quantity}">1</span>
+                        </div>
+                        <div>
+                          <strong>가격:</strong> <span th:text="${'£' + #numbers.formatInteger(item.price, 0, 'COMMA')}" class="item-price" data-item-id="${item.productNo}">£0</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div th:if="${item.orderItemOptions != null}">
+                      <div class="row g-2" th:each="opt : ${item.orderItemOptions}">
+                        <div class="col-12">
+                          <div class="border rounded p-2 d-flex align-items-center justify-content-between flex-column flex-md-row gap-2">
+                            <div>
+                              <span class="me-2"><span th:text="${opt.option.name}" class="fw-bold p-2 fs-5">옵션명</span></span>
+                              <span class="me-2">가격: <span th:text="${'£' + #numbers.formatInteger(opt.price, 0, 'COMMA')}">£0</span></span>
+                              <span class="me-2">수량: <span class="opt-qty-view" th:text="${opt.quantity}" th:data-id="${opt.id}">1</span></span>
+                              <span class="fw-bold text-primary">
+                                <span class="opt-total-view" th:text="${'£' + #numbers.formatInteger(opt.price * opt.quantity, 0, 'COMMA')}" th:data-id="${opt.id}">£0</span>
+                              </span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                              <button type="button" class="btn btn-outline-secondary btn-sm me-1 opt-qty-btn" data-action="decrease" th:data-id="${opt.id}">-</button>
+                              <input type="text" class="form-control form-control-sm text-center opt-qty-input" style="width:50px;" th:value="${opt.quantity}" th:data-id="${opt.id}" />
+                              <button type="button" class="btn btn-outline-secondary btn-sm ms-1 opt-qty-btn" data-action="increase" th:data-id="${opt.id}">+</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <!-- 주문 정보 요약 -->
+    <div class="card mb-4">
+      <div class="card-header">주문 정보</div>
+      <div class="card-body fs-4">
+        <div class="row mb-2">
+          <div class="col-md-4"><strong>주문번호</strong></div>
+          <div class="col-md-8 text-end" th:text="${order.code}">ORDER_CODE</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-md-4"><strong>주문자</strong></div>
+          <div class="col-md-8 text-end" th:text="${order.userNo}">주문자번호</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-md-4"><strong>배송비</strong></div>
+          <div id="shipping-price" class="col-md-8 text-end" th:text="${'£' + #numbers.formatInteger(order.shipPrice, 0, 'COMMA')}">£0</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-md-4"><strong>상태</strong></div>
+          <div class="col-md-8 text-end" th:text="${order.status}">결제대기</div>
+        </div>
+        <div class="row mb-2 text-danger">
+          <div class="col-md-4"><strong>총 결제금액</strong></div>
+          <div id="total-price" th:data="${order.totalPrice}" class="col-md-8 text-end" th:text="${'£' + #numbers.formatInteger(order.totalPrice + order.shipPrice, 0, 'COMMA')}">£0</div>
+        </div>
+      </div>
+    </div>
+    <!-- 결제 영역 -->
+    <div class="card mb-4">
+      <div class="card-header">결제수단 선택</div>
+      <div class="card-body">
+        <div id="payment-widget" class="mb-3"></div>
+        <div id="agreement-widget"></div>
+      </div>
+    </div>
+    <div class="d-grid gap-2">
+      <button type="button" class="btn btn-primary btn-lg" id="payBtn">결제하기</button>
+    </div>
+  </div>
+
+  <script>
+    
+    // 토스페이먼츠 결제위젯 연동
+    // const clientKey = 'test_gck_eqRGgYO1r5OoeGlPj6J43QnN2Eya'; // 테스트용 clientKey
+    // const clientKey = 'live_gck_d46qopOB899M0kKQZyXa8ZmM75y0'; // LIVE clientKey로
+    const clientKey = 'live_ck_Z61JOxRQVENnW9z77bvgrW0X9bAq'; // LIVE clientKey로
+    const paymentWidget = PaymentWidget(clientKey, PaymentWidget.ANONYMOUS);
+    // 서버에서 전달받은 주문 정보
+    const orderCode = "[[${order.id}]]";
+    const orderTitle = "[[${order.title}]]";
+    
+    // 총 결제금액 계산 및 업데이트 함수
+    function updateTotalPrice() {
+      // 상품 가격 합계
+      let itemTotal = 0;
+      document.querySelectorAll('.item-price').forEach(function(el){
+        itemTotal += parseInt(el.innerText.replace(/[^\d]/g, ''));
+      });
+      
+      // 옵션 가격 합계
+      let optionTotal = 0;
+      document.querySelectorAll('.opt-total-view').forEach(function(el){
+        optionTotal += parseInt(el.innerText.replace(/[^\d]/g, ''));
+      });
+      
+      // 배송비
+      const shipPrice = parseInt(document.getElementById('shipping-price').innerText.replace(/[^\d]/g, '')) || 0;
+      
+      // 총 결제금액
+      const total = itemTotal + optionTotal + shipPrice;
+      
+      // 화면에 표시
+      const totalPriceText = document.getElementById('total-price');
+      if(totalPriceText) {
+        totalPriceText.innerText = '£' + total.toLocaleString();
+        totalPriceText.setAttribute('data', total);
+      }
+      
+      return total;
+    }
+    
+    // 페이지 로드 시 총 결제금액 계산 및 결제위젯 초기화
+    document.addEventListener('DOMContentLoaded', function() {
+      const total = updateTotalPrice();
+      
+      // 서버에 총 결제금액 동기화
+      const orderId = "[[${order.id}]]" || 0;
+      $ajax({
+        url: '/api/shop/order',
+        type: 'PUT',
+        data: { id: orderId, totalPrice: total }
+      });
+    });
+    
+    let orderAmount = updateTotalPrice();
+    let paymentMethodsWidget = paymentWidget.renderPaymentMethods('#payment-widget', { value: orderAmount }, { variantKey: "widgetA" });
+    let agreementWidget = paymentWidget.renderAgreement('#agreement-widget');
+    
+    document.getElementById('payBtn').addEventListener('click', function() {
+
+      // 주문자 정보 유효성 검사
+      const buyerName = document.getElementById('buyerName').value;
+      const buyerEmail = document.getElementById('buyerEmail').value;
+      let buyerPhone = document.getElementById('buyerPhone').value;
+      buyerPhone = buyerPhone.replace(/[^\d]/g, '');
+      const buyerAddress = document.getElementById('buyerAddress').value;
+      
+      if (!buyerName || !buyerEmail || !buyerPhone || !buyerAddress) {
+        alert('주문자 정보를 모두 입력해주세요.');
+        return;
+      }
+      
+      // 결제 요청
+      paymentWidget.requestPayment({
+        orderId: orderCode,
+        orderName: orderTitle,
+        customerName: buyerName,
+        customerEmail: buyerEmail,
+        customerMobilePhone: buyerPhone,
+        successUrl: window.location.origin + '/pay/success',
+        failUrl: window.location.origin + '/pay/fail',
+      });
+    });
+    
+    // 옵션 수량 값 직접 변경 - opt-qty-input
+    document.querySelectorAll('.opt-qty-input').forEach(function(input) {
+      input.addEventListener('keyup', function() {
+        const id = this.getAttribute('data-id');
+        let qty = parseInt(this.value, 10);
+        if (isNaN(qty) || qty < 1) {
+          alert('수량은 1 이상이어야 합니다.');
+          this.value = 1;
+          return;
+        }
+        $ajax({
+          url: '/api/shop/order-item-option',
+          type: 'PUT',
+          data: { id: id, quantity: qty }
+        }).then(function(res) {
+          if (res !== 'FAIL') {
+            // 수량*가격 합계 갱신
+            const price = parseInt(input.closest('.border').querySelector('.me-2:nth-child(2) span').innerText.replace(/[^\d]/g, ''));
+            input.closest('.border').querySelector('.opt-qty-view').innerText = qty;
+            input.closest('.border').querySelector('.opt-total-view').innerText = '£' + (price * qty).toLocaleString();
+            
+            // 총 결제금액 업데이트
+            const total = updateTotalPrice();
+            
+            // 토스 페이먼츠 결제위젯 업데이트
+            orderAmount = total;
+            paymentMethodsWidget = paymentWidget.renderPaymentMethods('#payment-widget', { value: orderAmount });
+            agreementWidget = paymentWidget.renderAgreement('#agreement-widget');
+            
+            // 서버에도 totalPrice 동기화
+            const orderId = "[[${order.id}]]" || 0;
+            $ajax({
+              url: '/api/shop/order',
+              type: 'PUT',
+              data: { id: orderId, totalPrice: total }
+            });
+          } else {
+            alert('수량 변경 실패');
+          }
+        });
+      });
+    });
+
+
+    // 옵션 수량 변경 비동기 처리
+    document.querySelectorAll('.opt-qty-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const id = this.getAttribute('data-id');
+        const action = this.getAttribute('data-action');
+        const input = document.querySelector('.opt-qty-input[data-id="' + id + '"]');
+        let qty = parseInt(input.value, 10);
+        if (action === 'decrease' && qty > 1) qty--;
+        if (action === 'increase') qty++;
+        $ajax({
+          url: '/api/shop/order-item-option',
+          type: 'PUT',
+          data: { id: id, quantity: qty }
+        }).then(function(res) {
+          if (res !== 'FAIL') {
+            input.value = qty;
+            // 수량*가격 합계 갱신
+            const price = parseInt(input.closest('.border').querySelector('.me-2:nth-child(2) span').innerText.replace(/[^\d]/g, ''));
+            input.closest('.border').querySelector('.opt-qty-view').innerText = qty;
+            input.closest('.border').querySelector('.opt-total-view').innerText = '£' + (price * qty).toLocaleString();
+            
+            // 총 결제금액 업데이트
+            const total = updateTotalPrice();
+
+            // 토스 페이먼츠 결제위젯 업데이트
+            orderAmount = total;
+            paymentMethodsWidget = paymentWidget.renderPaymentMethods('#payment-widget', { value: orderAmount });
+            agreementWidget = paymentWidget.renderAgreement('#agreement-widget');
+
+            // 서버에도 totalPrice 동기화
+            const orderId = "[[${order.id}]]" || 0;
+            $ajax({
+              url: '/api/shop/order',
+              type: 'PUT',
+              data: { id: orderId, totalPrice: total }
+            });
+          } else {
+            alert('수량 변경 실패');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.falcon.shop.mapper.products.CategoryLargeMapper">
+
+    <!-- ResultMap for CategoryLarge with Category join -->
+    <resultMap id="CategoryLargeMap" type="CategoryLarge">
+        <id property="no" column="no"/>
+        <result property="id" column="id"/>
+        <result property="categoryNo" column="category_no"/>
+        <result property="name" column="name"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <!-- Category 연관 객체 -->
+        <association property="category" column="category_no" javaType="Category" select="selectCategory"></association>
+    </resultMap>
+
+    <select id="listByCategory" resultMap="CategoryLargeMap">
+        SELECT *
+        FROM category_large
+        WHERE 1=1
+        <if test="categoryNo != null">
+            AND category_no = #{categoryNo}
+        </if>
+        <if test="queryParams.search != null and queryParams.search != ''">
+            AND name LIKE CONCAT('%', #{queryParams.search}, '%')
+        </if>
+        <if test="queryParams.sortBy != null and queryParams.sortBy.size() > 0">
+            ORDER BY
+            seq ASC,
+            <foreach collection="queryParams.sortBy" item="sortField" index="idx" separator=",">
+            ${sortField}
+            <if test="queryParams.sortOrder != null and queryParams.sortOrder.size() > idx">
+                ${queryParams.sortOrder[idx]}
+            </if>
+            </foreach>
+        </if>
+    </select>
+
+    <select id="selectCategory" resultType="Category">
+        SELECT *
+        FROM category
+        WHERE no = #{category_no}
+    </select>
+
+    <select id="listByCategoryNo" resultMap="CategoryLargeMap">
+        SELECT *
+        FROM category_large
+        WHERE category_no = #{no}
+        ORDER BY seq ASC, no DESC
+    </select>
+    
+</mapper>

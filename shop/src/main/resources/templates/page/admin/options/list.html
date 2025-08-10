@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/admin/admin_layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>옵션 관리</title>
+</head>
+<body layout:fragment="content">
+
+  <div class="container-fluid">
+    <!-- 페이지 헤더 -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">옵션 관리</h1>
+      <a href="/admin/options/create" class="d-none d-sm-inline-block btn btn-primary shadow-sm">
+        <i class="material-icons-two-tone">add</i>
+        등록
+      </a>
+    </div>
+
+    <!-- 옵션 목록 카드 -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">옵션 목록</h6>
+        <div class="d-flex justify-content-end align-items-center">
+          <span class="text-muted">total <strong th:text="${#numbers.formatInteger(pagination.total, 0, 'COMMA')}">0</strong></span>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- 검색 영역 -->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <div class="input-group">
+              <input type="text" class="form-control" id="searchInput" placeholder="검색어를 입력해주세요." th:value="${param.search}">
+              <button class="btn btn-outline-secondary" type="button" id="searchBtn">
+                <i class="material-icons-two-tone">search</i> 검색
+              </button>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="input-group">
+              <label for="pageSizeSelect" class="input-group-text">
+                <i class="material-icons-two-tone">view_list</i>
+              </label>
+              <select class="form-select" id="pageSizeSelect" onchange="changePageSize()" th:field="*{queryParams.size}">
+                <option value="10" >10개씩 보기</option>
+                <option value="20" >20개씩 보기</option>
+                <option value="50" >50개씩 보기</option>
+                <option value="100">100개씩 보기</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4 text-end">
+            <button type="button" class="btn btn-danger" id="deleteSelectedBtn" disabled>
+              <i class="material-icons-two-tone">delete</i> 선택 삭제
+            </button>
+          </div>
+        </div>
+
+        <!-- 테이블 -->
+        <div class="table-responsive">
+          <table class="table table-bordered" id="optionTable">
+            <thead class="table-light">
+              <tr>
+                <th width="3%">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="selectAll">
+                  </div>
+                </th>
+                <th width="3%">번호</th>
+                <th width="10%">옵션그룹</th>
+                <th width="10%">옵션명</th>
+                <th width="5%">가격</th>
+                <th width="5%">재고</th>
+                <th width="5%">등록일</th>
+                <th width="5%">수정일</th>
+                <th width="3%">관리</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="option, iterStat : ${pageInfo.list}">
+                <td>
+                  <div class="form-check">
+                    <input class="form-check-input option-checkbox" type="checkbox" 
+                           th:value="${option.id}" th:id="'check-' + ${option.id}">
+                  </div>
+                </td>
+                <td th:text="${option.no}">1</td>
+                <td>
+                    <span class="badge bg-primary" th:text="${option.optionGroup.name}">옵션그룹명</span>
+                </td>
+                <td>
+                    <span class="badge bg-success" th:text="${option.name}">옵션명</span>
+                </td>
+                <td th:text="${option.price}">가격</td>
+                <td th:text="${option.stock}">재고</td>
+                <td th:text="${#dates.format(option.createdAt, 'yyyy-MM-dd')}">2024-01-01</td>
+                <td th:text="${#dates.format(option.updatedAt, 'yyyy-MM-dd')}">2024-01-01</td>
+                <td>
+                    <div class="dropdown"></div>
+                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton-[[${option.no}]]" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="material-icons-two-tone">more_vert</i>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton-[[${option.no}]]">
+                      <li>
+                      <a class="dropdown-item" th:href="@{/admin/options/update/{id}(id=${option.id})}">
+                        수정
+                      </a>
+                      </li>
+                      <li>
+                      <a href="javascript:;" class="dropdown-item text-danger"
+                         th:onclick="deleteOption([[${option.id}]])">
+                        삭제
+                      </a>
+                      </li>
+                    </ul>
+                    </div>
+                </td>
+              </tr>
+              <!-- 데이터가 없을 때 -->
+              <tr th:if="${#lists.isEmpty(pageInfo.list)}">
+                <td colspan="6" class="text-center text-muted">등록된 옵션이 없습니다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 페이지 -->
+        <th:block th:replace="~{UI/fragments/common/page::page}"></th:block>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 전체 선택/해제
+    document.getElementById('selectAll').addEventListener('change', function() {
+      const checkboxes = document.querySelectorAll('.option-checkbox');
+      const isChecked = this.checked;
+      
+      checkboxes.forEach(function(checkbox) {
+        checkbox.checked = isChecked;
+      });
+      
+      updateDeleteButton();
+    });
+
+    // 개별 체크박스 변경 시
+    document.addEventListener('change', function(e) {
+      if (e.target.classList.contains('option-checkbox')) {
+        updateSelectAllState();
+        updateDeleteButton();
+      }
+    });
+
+    // 전체 선택 체크박스 상태 업데이트
+    function updateSelectAllState() {
+      const checkboxes = document.querySelectorAll('.option-checkbox');
+      const checkedBoxes = document.querySelectorAll('.option-checkbox:checked');
+      const selectAllCheckbox = document.getElementById('selectAll');
+      
+      if (checkedBoxes.length === 0) {
+        selectAllCheckbox.indeterminate = false;
+        selectAllCheckbox.checked = false;
+      } else if (checkedBoxes.length === checkboxes.length) {
+        selectAllCheckbox.indeterminate = false;
+        selectAllCheckbox.checked = true;
+      } else {
+        selectAllCheckbox.indeterminate = true;
+        selectAllCheckbox.checked = false;
+      }
+    }
+
+    // 삭제 버튼 상태 업데이트
+    function updateDeleteButton() {
+      const checkedBoxes = document.querySelectorAll('.option-checkbox:checked');
+      const deleteBtn = document.getElementById('deleteSelectedBtn');
+      
+      if (checkedBoxes.length > 0) {
+        deleteBtn.disabled = false;
+        deleteBtn.innerHTML = '<i class="material-icons-two-tone">delete</i> 선택 삭제 (' + checkedBoxes.length + ')';
+      } else {
+        deleteBtn.disabled = true;
+        deleteBtn.innerHTML = '<i class="material-icons-two-tone">delete</i> 선택 삭제';
+      }
+    }
+
+    // 선택 삭제 기능
+    document.getElementById('deleteSelectedBtn').addEventListener('click', function() {
+      const checkedBoxes = document.querySelectorAll('.option-checkbox:checked');
+      
+      if (checkedBoxes.length === 0) {
+        $alert('선택 오류', '삭제할 옵션을 선택해주세요.', 'warning');
+        return;
+      }
+
+      const selectedIds = Array.from(checkedBoxes).map(checkbox => checkbox.value);
+      
+      $confirmHTML('선택 삭제', 
+               '선택한 ' + selectedIds.length + '개의 옵션을 삭제하시겠습니까?<br><br><strong>주의:</strong> 삭제된 데이터는 복구할 수 없습니다.', 
+               'warning', '삭제', '취소')
+      .then(function(result) {
+        if (result.isConfirmed) {
+          deleteSelectedOptions(selectedIds);
+        }
+      });
+    });
+
+    // 선택된 옵션들 삭제
+    function deleteSelectedOptions(optionIds) {
+      let successCount = 0;
+      let failCount = 0;
+
+      // 로딩 상태 표시
+      const deleteBtn = document.getElementById('deleteSelectedBtn');
+      deleteBtn.disabled = true;
+      deleteBtn.innerHTML = '<i class="spinner-border spinner-border-sm" role="status"></i> 삭제 중...';
+
+      // 순차적으로 삭제 요청
+      const deletePromises = optionIds.map(optionId => {
+        return $ajax({
+          url: '/api/products/option/' + optionId,
+          type: 'DELETE'
+        }).then(() => {
+          successCount++;
+        }).catch(() => {
+          failCount++;
+        });
+      });
+
+      // 모든 삭제 요청 완료 후 결과 표시
+      Promise.all(deletePromises).then(() => {
+        if (failCount === 0) {
+          $alert('삭제 완료', successCount + '개의 옵션이 삭제되었습니다.', 'success').then(() => {
+            window.location.reload();
+          });
+        } else if (successCount === 0) {
+          $alert('삭제 실패', '옵션 삭제에 실패했습니다.', 'error');
+        } else {
+          $alert('부분 삭제', 
+                 successCount + '개 삭제 성공, ' + failCount + '개 삭제 실패했습니다.', 
+                 'warning').then(() => {
+            window.location.reload();
+          });
+        }
+        
+        // 버튼 상태 복원
+        updateDeleteButton();
+      });
+    }
+
+    // 페이지 크기 변경 기능
+    function changePageSize() {
+      const pageSize = document.getElementById('pageSizeSelect').value;
+      const url = new URL(window.location.href);
+      url.searchParams.set('size', pageSize);
+      url.searchParams.delete('page'); // 페이지 크기 변경 시 첫 페이지로 이동
+      window.location.href = url.toString();
+    }
+
+    // 검색 기능
+    document.getElementById('searchBtn').addEventListener('click', function() {
+      const searchValue = document.getElementById('searchInput').value;
+      if (searchValue.trim()) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('search', searchValue);
+        window.location.href = url.toString();
+      }
+    });
+
+    // Enter 키 검색
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        document.getElementById('searchBtn').click();
+      }
+    });
+
+    // 삭제 기능
+    function deleteOption(optionId) {
+      $confirmHTML('옵션 삭제', 
+                   '정말로 이 옵션을 삭제하시겠습니까?<br><br><strong>주의:</strong> 삭제된 데이터는 복구할 수 없습니다.', 
+                   'warning', '삭제', '취소')
+      .then(function(result) {
+        if (result.isConfirmed) {
+          $ajax({
+            url: '/api/products/option/' + optionId,
+            type: 'DELETE'
+          })
+          .then(function() {
+            $toast_({ title: '옵션이 삭제되었습니다.', icon: 'success' }).then(() => {
+              window.location.reload();
+            });
+          })
+          .catch(function() {
+            $alert('오류', '삭제 중 오류가 발생했습니다.', 'error');
+          });
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>

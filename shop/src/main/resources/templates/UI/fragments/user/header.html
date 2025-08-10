@@ -1,0 +1,306 @@
+<th:block th:fragment="header">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <header class="falcon-header">
+    <!-- Utility Bar -->
+    <div class="util-bar">
+      <div class="container-fluid d-flex justify-content-between align-items-center py-2">
+        <!-- Menu & Logo Section -->
+        <div class="d-flex align-items-center">
+          <button class="btn-menu me-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
+            <span class="material-icons">menu</span>
+          </button>
+        </div>
+        
+        <!-- Right Actions -->
+        <div class="d-flex align-items-center gap-3">
+          <a href="/cart" class="btn-cart">
+            <span class="material-icons">shopping_bag</span>
+          </a>
+          
+          <!-- 🔐 로그인 ❌ -->
+          <th:block sec:authorize="isAnonymous()">
+            <a href="/login" class="btn btn-falcon-dark btn-sm">Login</a>
+            <a href="/join" class="btn btn-falcon-outline btn-sm">Sign Up</a>
+          </th:block>
+          
+          <!-- 🔐 로그인 ⭕ -->
+          <th:block sec:authorize="isAuthenticated()">
+            <th:block sec:authorize="hasRole('ADMIN')">
+              <a href="/admin" class="btn btn-falcon-danger btn-sm">Admin</a>
+            </th:block>
+            <a href="/my" class="btn btn-falcon-outline btn-sm">My Account</a>
+          </th:block>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logo Section -->
+    <div class="logo-section text-center py-0">
+      <a href="/" class="text-decoration-none">
+        <!-- <img src="/img/logo.png" alt="FALCON" class="falcon-logo animate__animated animate__fadeInUp animate__delay-1s"> -->
+        <img src="/img/logo.png" alt="FALCON" class="falcon-logo">
+      </a>
+    </div>
+
+    <!-- Country Info -->
+    <div class="country-bar text-center pb-2">
+      <span class="country-text">UNITED KINGDOM</span>
+    </div>
+
+    <!-- Navigation & Offcanvas -->
+    <!-- <nav class="navbar navbar-expand-lg p-0">
+      <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="/products">All Products</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="category-skeleton">
+            <li class="nav-item"><span class="nav-link disabled"><span class="placeholder-glow"><span class="placeholder col-6"></span></span></span></li>
+            <li class="nav-item"><span class="nav-link disabled"><span class="placeholder-glow"><span class="placeholder col-5"></span></span></span></li>
+            <li class="nav-item"><span class="nav-link disabled"><span class="placeholder-glow"><span class="placeholder col-4"></span></span></span></li>
+          </ul>
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="category-nav"></ul>
+        </div>
+      </div>
+    </nav> -->
+
+    <!-- Offcanvas Menu -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">FALCON</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <nav>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item border-0">
+              <a class="text-decoration-none text-dark" href="/">Home</a>
+            </li>
+            <li class="list-group-item border-0">
+              <a class="text-decoration-none text-dark" href="/products">Products</a>
+            </li>
+            <li class="list-group-item border-0">
+              <a class="text-decoration-none text-dark" href="/my">My Account</a>
+            </li>
+            <li class="list-group-item border-0">
+              <a class="text-decoration-none text-dark" href="/loyalty">Loyalty Program</a>
+            </li>
+            <li class="list-group-item border-0">
+              <a class="text-decoration-none text-dark" href="/orders">Track Your Order</a>
+            </li>
+            <li class="list-group-item border-0">
+              <a class="text-decoration-none text-dark" href="/faq">FAQs & Terms and Conditions</a>
+            </li>
+            <li class="list-group-item border-0">
+              <a class="text-decoration-none text-dark" href="/privacy">Privacy Policy</a>
+            </li>
+            <li class="list-group-item border-0">
+              <a class="text-decoration-none text-dark" href="/contact">Contact Us</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <style>
+    .falcon-header {
+      background: #ffffff;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .util-bar {
+      background: #ffffff;
+      height: 80px;
+    }
+
+    .btn-menu, .btn-cart {
+      background: none;
+      border: none;
+      padding: 12px;
+      border-radius: 50%;
+      transition: background-color 0.3s;
+    }
+
+    .btn-menu:hover, .btn-cart:hover {
+      background-color: #f8f9fa;
+    }
+
+    .btn-menu .material-icons, .btn-cart .material-icons {
+      font-size: 24px;
+      color: #000;
+    }
+
+    .btn-falcon-dark {
+      background-color: #212529;
+      color: white;
+      border: 1px solid #212529;
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+
+    .btn-falcon-dark:hover {
+      background-color: #000;
+      color: white;
+    }
+
+    .btn-falcon-outline {
+      background-color: transparent;
+      color: #212529;
+      border: 1px solid #212529;
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+
+    .btn-falcon-outline:hover {
+      background-color: #212529;
+      color: white;
+    }
+
+    .btn-falcon-danger {
+      background-color: #B02A37;
+      color: white;
+      border: 1px solid #A52834;
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+
+    .btn-falcon-danger:hover {
+      background-color: #A52834;
+      color: white;
+    }
+
+    .logo-section {
+      background: #ffffff;
+      height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .falcon-logo {
+      max-height: 280px;
+      width: auto;
+    }
+
+    .country-bar {
+      background: #ffffff;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .country-text {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 20px;
+      font-weight: 400;
+      color: #000;
+      letter-spacing: 0.1em;
+    }
+
+    .navbar .nav-link {
+      color: #000 !important;
+      font-weight: 500;
+      padding: 8px 16px;
+      transition: color 0.3s;
+    }
+
+    .navbar .nav-link:hover {
+      color: #666666 !important;
+    }
+
+    .offcanvas-title {
+      font-size: 20px;
+      font-weight: 500;
+      color: #000;
+    }
+
+    .list-group-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid #dee2e6 !important;
+    }
+
+    .list-group-item:last-child {
+      border-bottom: none !important;
+    }
+
+    .list-group-item a {
+      color: rgba(33, 37, 41, 0.75);
+      font-size: 16px;
+      transition: color 0.3s;
+    }
+
+    .list-group-item a:hover {
+      color: #000;
+    }
+
+    .placeholder-glow .placeholder {
+      display: inline-block;
+      height: 1.5em;
+      background: #e0e0e0;
+      border-radius: 0.3em;
+      animation: placeholder-glow 1.2s infinite linear;
+    }
+
+    @keyframes placeholder-glow {
+      0% { opacity: 0.5; }
+      50% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
+  </style>
+
+  <script>
+    // 카테고리 네비 동적 로딩
+    function renderCategoryNav(categories) {
+      const nav = document.getElementById('category-nav');
+      nav.innerHTML = '';
+      categories.forEach(cat => {
+        const li = document.createElement('li');
+        li.className = 'nav-item';
+        const a = document.createElement('a');
+        a.className = 'nav-link';
+        a.href = `/products/category/${encodeURIComponent(cat.no)}`;
+        a.textContent = cat.name;
+        li.appendChild(a);
+        nav.appendChild(li);
+      });
+    }
+    
+    function showCategoryError() {
+      const nav = document.getElementById('category-nav');
+      nav.innerHTML = '';
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      fetch('/api/category?size=10')
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('category-skeleton').style.display = 'none';
+          if (Array.isArray(data.list)) {
+            renderCategoryNav(data.list);
+          } else if (Array.isArray(data)) {
+            renderCategoryNav(data);
+          } else {
+            showCategoryError();
+          }
+        })
+        .catch(showCategoryError);
+    });
+  </script>
+</th:block>
+
+

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.falcon.shop.mapper.products.OptionGroupMapper">
+
+    <!-- ResultMap for OptionGroup -->
+    <resultMap id="OptionGroupMap" type="OptionGroup">
+        <id property="no" column="no"/>
+        <result property="name" column="name"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <collection property="options" ofType="Options" column="no" select="listByOptionGroup"/>
+    </resultMap>
+
+    <select id="listWithParams" resultMap="OptionGroupMap">
+        SELECT *
+        FROM option_group
+        WHERE 1=1
+        <if test="queryParams.search != null and queryParams.search != ''">
+            AND name LIKE CONCAT('%', #{queryParams.search}, '%')
+        </if>
+    </select>
+
+    <select id="listByOptionGroup" resultType="Options">
+        SELECT *
+        FROM options
+        WHERE group_no = #{no}
+    </select>
+
+</mapper>

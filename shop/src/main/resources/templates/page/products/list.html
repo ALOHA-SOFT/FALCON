@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/user/main_layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FALCON - Premium Cigarettes UK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&display=swap" rel="stylesheet">
+  <!-- Masonry Library -->
+  <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+</head>
+
+<body layout:fragment="content">
+  <!-- Shipping Information Section -->
+  <section class="shipping-info-section py-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-4">
+          <div class="shipping-info-box">
+            <p class="shipping-info-text">
+              SHIPPING & HANDLING FEES
+              1 - 2 CARTONS: £12
+              3 - 5 CARTONS: £8.5
+              6 - 9 CARTONS: £5.5
+              10+ CARTONS: FREE
+            </p>
+            <p class="shipping-terms-text">Check T&Cs page for more information</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products Grid Section -->
+  <section class="products-grid-section py-5">
+    <div class="container px-0">
+      <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-2" id="products-masonry">
+        <!-- Product Cards -->
+        <th:block th:each="product, iterStat : ${pageInfo.list}">
+          <div class="col">
+            <div class="product-card" th:data-product-id="${product.id}">
+              <div class="product-image-box">
+                <img th:if="${product.thumbImg != null and product.thumbImg.content != null}" 
+                     th:src="${product.thumbImg.content}" 
+                     th:alt="${product.name}" 
+                     class="product-image">
+                <img th:unless="${product.thumbImg != null and product.thumbImg.content != null}" 
+                     src="https://placehold.co/200x314?text=No+Image" 
+                     alt="No Image" 
+                     class="product-image">
+              </div>
+              <div class="product-info">
+                <h3 class="product-title" th:text="${product.name}">KING BLUE KING BLUE KING BLUE</h3>
+                <p class="product-price" 
+                   th:if="${!product.isSoldOut}"
+                   th:text="${product.price != null ? '£' + #numbers.formatInteger(product.price, 0, 'COMMA') : product.priceInfo}">£52.30</p>
+                <p class="product-price out-of-stock" 
+                   th:if="${product.isSoldOut}"
+                   th:text="'OUT OF STOCK'">OUT OF STOCK</p>
+              </div>
+            </div>
+          </div>
+        </th:block>
+      </div>
+    </div>
+  </section>
+
+  <!-- 페이지 -->
+  <th:block th:replace="~{UI/fragments/user/page::page}"></th:block>
+
+  <style>
+    /* Shipping Information */
+    .shipping-info-section {
+      background-color: #FFFFFF;
+    }
+    
+    .shipping-info-box {
+      text-align: center;
+    }
+    
+    .shipping-info-text {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: #000000;
+      margin-bottom: 20px;
+      white-space: pre-line;
+    }
+    
+    .shipping-terms-text {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: #000000;
+      margin: 0;
+    }
+
+    /* Products Grid - Bootstrap + Masonry */
+    .products-grid-section {
+      background-color: #FFFFFF;
+    }
+    
+    .product-card {
+      width: 100%;
+      background-color: #FFFFFF;
+      box-shadow: 3px 3px 3px 3px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+      height: fit-content;
+    }
+    
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 5px 5px 5px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    .product-image-box {
+      width: 100%;
+      height: 250px;
+      background-color: rgba(204, 204, 204, 0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    
+    .product-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    
+    .product-info {
+      padding: 15px;
+      text-align: center;
+    }
+    
+    .product-title {
+      font-family: 'Hedvig Letters Serif', serif;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.3;
+      color: #666666;
+      margin: 0 0 10px 0;
+      height: auto;
+      min-height: 40px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    
+    .product-price {
+      font-family: 'Hedvig Letters Serif', serif;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.2;
+      color: #21257E;
+      margin: 0;
+    }
+    
+    .product-price.out-of-stock {
+      color: #A70101;
+      font-weight: 600;
+    }
+
+    /* Masonry responsive height adjustments */
+    @media (max-width: 576px) {
+      .product-image-box {
+        height: 200px;
+      }
+      .product-title {
+        font-size: 14px;
+      }
+      .product-price {
+        font-size: 16px;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .product-image-box {
+        height: 280px;
+      }
+    }
+
+    @media (min-width: 992px) {
+      .product-image-box {
+        height: 250px;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .product-image-box {
+        height: 300px;
+      }
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // 상품 카드 클릭 이벤트 처리
+      document.querySelectorAll('.product-card').forEach(function(card) {
+        card.addEventListener('click', function() {
+          var productId = this.getAttribute('data-product-id');
+          if (productId) {
+            window.location.href = '/products/' + productId;
+          }
+        });
+        
+        // 호버 효과를 위한 커서 스타일
+        card.style.cursor = 'pointer';
+      });
+
+      // Masonry 초기화
+      var masonryContainer = document.querySelector('#products-masonry');
+      if (masonryContainer) {
+        // 이미지 로딩 완료 후 Masonry 적용
+        var masonry = new Masonry(masonryContainer, {
+          itemSelector: '.col',
+          columnWidth: '.col',
+          percentPosition: true,
+          gutter: 0
+        });
+
+        // 이미지 로딩 완료 후 레이아웃 재조정
+        var images = masonryContainer.querySelectorAll('img');
+        var loadedImages = 0;
+        
+        function imageLoaded() {
+          loadedImages++;
+          if (loadedImages === images.length) {
+            masonry.layout();
+          }
+        }
+
+        images.forEach(function(img) {
+          if (img.complete) {
+            imageLoaded();
+          } else {
+            img.addEventListener('load', imageLoaded);
+            img.addEventListener('error', imageLoaded);
+          }
+        });
+
+        // 윈도우 리사이즈 시 레이아웃 재조정
+        window.addEventListener('resize', function() {
+          setTimeout(function() {
+            masonry.layout();
+          }, 100);
+        });
+      }
+    });
+  </script>
+
+  
+</body>
+</html>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.falcon.shop.mapper.shop.OrderItemMapper">
+
+
+    <resultMap id="OrderItemMap" type="OrderItem">
+        <id property="no" column="no"/>
+        <result property="id" column="id"/>
+        <result property="productNo" column="product_no"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="quantity" column="quantity"/>
+        <result property="price" column="price"/>
+        <association property="product" javaType="Products" column="product_no" select="selectProduct"/>
+        <collection property="orderItemOptions" ofType="OrderItemOption" column="no" select="listByOrderItem" />
+    </resultMap>
+
+    <!-- 주문 번호로 주문 항목 조회 -->
+    <select id="getOrderItemsByOrderNo" resultType="OrderItem">
+        SELECT * FROM order_item 
+        WHERE order_no = #{orderNo}
+        ORDER BY no ASC
+    </select>
+
+    <!-- 주문 항목 옵션 조회 -->
+    <select id="listByOrderItem" resultMap="com.falcon.shop.mapper.shop.OrderItemOptionMapper.OrderItemOptionMap">
+        SELECT * 
+        FROM order_item_option 
+        WHERE order_item_no = #{no}
+        ORDER BY no ASC
+    </select>
+
+    <!-- 주문항목으로 상품 정보 조회 -->
+    <select id="selectProduct" resultMap="com.falcon.shop.mapper.products.ProductMapper.ProductsMap">
+        SELECT * 
+        FROM products 
+        WHERE no = #{product_no}
+    </select>
+
+
+</mapper>

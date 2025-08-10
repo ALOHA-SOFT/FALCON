@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/admin/admin_layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>코드그룹 등록</title>
+</head>
+<body layout:fragment="content">
+
+  <div class="container-fluid">
+    <!-- 페이지 헤더 -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">코드그룹 등록</h1>
+      <a href="/admin/codegroups" class="d-none d-sm-inline-block btn btn-secondary shadow-sm">
+        <i class="material-icons-two-tone">list</i>
+        목록
+      </a>
+    </div>
+
+    <!-- 코드그룹 등록 카드 -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">코드그룹 정보</h6>
+      </div>
+      <div class="card-body">
+        <form id="codeGroupForm">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="name" class="form-label">코드그룹명 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="name" name="name" required>
+                <div class="invalid-feedback">
+                  코드그룹명을 입력해주세요.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <div class="mb-3">
+                <label for="description" class="form-label">설명 <span class="text-danger">*</span></label>
+                <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                <div class="invalid-feedback">
+                  설명을 입력해주세요.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-end">
+            <button type="button" class="btn btn-secondary me-2" onclick="history.back()">취소</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+              <i class="material-icons-two-tone me-2">save</i>
+              저장
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('codeGroupForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const form = this;
+      const submitBtn = document.getElementById('submitBtn');
+      
+      // 폼 유효성 검사
+      if (!form.checkValidity()) {
+        form.classList.add('was-validated');
+        return;
+      }
+
+      // 로딩 상태 표시
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-2" role="status"></i>저장 중...';
+
+      // 폼 데이터 생성
+      const formData = new FormData(form);
+
+      $ajax({
+        url: '/api/admin/codegroups',
+        type: 'POST',
+        data: formData
+      }).then(response => {
+        $alert('등록 완료', '코드그룹이 성공적으로 등록되었습니다.', 'success').then(() => {
+          window.location.href = '/admin/codegroups';
+        });
+      }).catch(error => {
+        $alert('등록 실패', '코드그룹 등록 중 오류가 발생했습니다.', 'error');
+      }).finally(() => {
+        // 버튼 상태 복원
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="material-icons-two-tone me-2">save</i>저장';
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/admin/admin_layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>상품 관리</title>
+</head>
+<body layout:fragment="content">
+
+  <div class="container-fluid">
+    <!-- 페이지 헤더 -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">상품 관리</h1>
+      <a href="/admin/products/create" class="d-none d-sm-inline-block btn btn-primary shadow-sm">
+        <i class="material-icons-two-tone">add</i>등록
+      </a>
+    </div>
+
+    <!-- 상품 목록 카드 -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">상품 목록</h6>
+        <div class="d-flex justify-content-end align-items-center">
+          <span class="text-muted">total <strong th:text="${#numbers.formatInteger(pagination.total, 0, 'COMMA')}">0</strong></span>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- 검색/필터 영역 -->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <div class="input-group">
+              <input type="text" class="form-control" id="searchInput" placeholder="상품명, 설명, 키워드로 검색..." th:value="${param.search}">
+              <button class="btn btn-outline-secondary" type="button" id="searchBtn">
+                <i class="material-icons-two-tone">search</i> 검색
+              </button>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="input-group">
+              <label for="pageSizeSelect" class="input-group-text">
+                <i class="material-icons-two-tone">view_list</i>
+              </label>
+              <select class="form-select" id="pageSizeSelect" onchange="changePageSize()" th:field="*{queryParams.size}">
+                <option value="10">10개씩 보기</option>
+                <option value="20">20개씩 보기</option>
+                <option value="50">50개씩 보기</option>
+                <option value="100">100개씩 보기</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4 text-end">
+            <button type="button" class="btn btn-danger" id="deleteSelectedBtn" disabled>
+              <i class="material-icons-two-tone">delete</i> 선택 삭제
+            </button>
+          </div>
+        </div>
+
+        <!-- 테이블 -->
+        <div class="table-responsive">
+          <table class="table table-bordered" id="productTable">
+            <thead class="table-light">
+              <tr>
+                <th width="3%">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="selectAll">
+                  </div>
+                </th>
+                <th width="5%">번호</th>
+                <th width="10%">이미지</th>
+                <th>상품명</th>
+                <th width="10%">가격</th>
+                <th width="8%">재고</th>
+                <th width="8%">상태</th>
+                <th width="12%">등록일</th>
+                <th width="5%">관리</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:if="${pageInfo.list.isEmpty()}">
+                <td colspan="9" class="text-center py-4 text-muted">등록된 상품이 없습니다.</td>
+              </tr>
+              <tr th:each="product, iterStat : ${pageInfo.list}">
+                <td>
+                  <div class="form-check">
+                    <input class="form-check-input product-checkbox" type="checkbox" 
+                           th:value="${product.id}" th:id="'check-' + ${product.id}">
+                  </div>
+                </td>
+                <td th:text="${product.no}"></td>
+                <td>
+                  <div class="bg-light d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                    <a th:href="@{/products/{id}(id=${product.id})}" class="text-decoration-none">
+                      <img th:if="${product.thumbImg != null and product.thumbImg.content != null}" 
+                        th:src="${product.thumbImg.content}" 
+                        alt="상품 이미지" 
+                        class="img-fluid rounded" 
+                        style="width: 60px; height: 60px; object-fit: cover;">
+                      <span th:unless="${product.thumbImg != null and product.thumbImg.content != null}">
+                        <i class="material-icons-two-tone text-muted">image</i>
+                      </span>
+                    </a>
+                  </div>
+                </td>
+                <td>
+                  <span class="fw-bold" th:text="${product.name}"></span>
+                    <span th:if="${product.category != null}" class="badge bg-primary" th:text="${product.category.name}">카테고리</span>
+                    <span th:if="${product.categoryLarge != null}" class="badge bg-dark" th:text="${product.categoryLarge.name}">대분류</span>
+                  <br>
+                  <small class="text-muted" th:if="${product.summary}" th:text="${#strings.abbreviate(product.summary, 50)}"></small>
+                </td>
+                <td>
+                  <!-- 할인가 필드가 없으므로 기본 가격만 표시 -->
+                  <div class="fw-bold" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'"></div>
+                </td>
+                <td>
+                  <span th:class="${product.stock <= 0} ? 'badge bg-danger' : (${product.stock <= 10} ? 'badge bg-warning' : 'badge bg-success')" th:text="${product.stock}"></span>
+                </td>
+                <td>
+                  <!-- 상태 필드가 없으므로 재고 기준으로 표시 -->
+                  <span th:class="${product.stock > 0} ? 'badge bg-success' : 'badge bg-secondary'" th:text="${product.stock > 0} ? '판매중' : '품절'"></span>
+                </td>
+                <td th:text="${#dates.format(product.createdAt, 'yyyy-MM-dd')}"></td>
+                <td>
+                    <div class="dropdown"></div>
+                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton-[[${product.no}]]" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="material-icons-two-tone">more_vert</i>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton-[[${product.id}]]">
+                      <li>
+                      <a class="dropdown-item" th:href="@{/admin/products/{id}(id=${product.id})}">
+                        수정
+                      </a>
+                      </li>
+                      <li>
+                      <a href="javascript:;" class="dropdown-item text-danger"
+                         th:onclick="deleteProduct([[${product.id}]])">
+                        삭제
+                      </a>
+                      </li>
+                    </ul>
+                    </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 페이지 -->
+        <th:block th:replace="~{UI/fragments/common/page::page}"></th:block>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // 전체 선택/해제
+    document.getElementById('selectAll').addEventListener('change', function() {
+      const checkboxes = document.querySelectorAll('.product-checkbox');
+      const isChecked = this.checked;
+      
+      checkboxes.forEach(function(checkbox) {
+        checkbox.checked = isChecked;
+      });
+      
+      updateDeleteButton();
+    });
+
+    // 개별 체크박스 변경 시
+    document.addEventListener('change', function(e) {
+      if (e.target.classList.contains('product-checkbox')) {
+        updateSelectAllState();
+        updateDeleteButton();
+      }
+    });
+
+    // 전체 선택 체크박스 상태 업데이트
+    function updateSelectAllState() {
+      const checkboxes = document.querySelectorAll('.product-checkbox');
+      const checkedBoxes = document.querySelectorAll('.product-checkbox:checked');
+      const selectAllCheckbox = document.getElementById('selectAll');
+      
+      if (checkedBoxes.length === 0) {
+        selectAllCheckbox.indeterminate = false;
+        selectAllCheckbox.checked = false;
+      } else if (checkedBoxes.length === checkboxes.length) {
+        selectAllCheckbox.indeterminate = false;
+        selectAllCheckbox.checked = true;
+      } else {
+        selectAllCheckbox.indeterminate = true;
+        selectAllCheckbox.checked = false;
+      }
+    }
+
+    // 삭제 버튼 상태 업데이트
+    function updateDeleteButton() {
+      const checkedBoxes = document.querySelectorAll('.product-checkbox:checked');
+      const deleteBtn = document.getElementById('deleteSelectedBtn');
+      
+      if (checkedBoxes.length > 0) {
+        deleteBtn.disabled = false;
+        deleteBtn.innerHTML = `<i class="material-icons-two-tone">delete</i> 선택 삭제 (${checkedBoxes.length})`;
+      } else {
+        deleteBtn.disabled = true;
+        deleteBtn.innerHTML = '<i class="material-icons-two-tone">delete</i> 선택 삭제';
+      }
+    }
+
+    // 검색 기능
+    document.getElementById('searchBtn').addEventListener('click', function() {
+      const searchValue = document.getElementById('searchInput').value;
+      const currentUrl = new URL(window.location);
+      if (searchValue.trim()) {
+        currentUrl.searchParams.set('search', searchValue);
+      } else {
+        currentUrl.searchParams.delete('search');
+      }
+      currentUrl.searchParams.set('page', '1');
+      window.location.href = currentUrl.toString();
+    });
+
+    // Enter 키 검색
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        document.getElementById('searchBtn').click();
+      }
+    });
+
+    // 페이지 크기 변경 기능
+    function changePageSize() {
+      const pageSize = document.getElementById('pageSizeSelect').value;
+      const url = new URL(window.location.href);
+      url.searchParams.set('size', pageSize);
+      url.searchParams.delete('page'); // 페이지 크기 변경 시 첫 페이지로 이동
+      window.location.href = url.toString();
+    }
+
+    // 선택 삭제 기능
+    document.getElementById('deleteSelectedBtn').addEventListener('click', function() {
+      const checkedBoxes = document.querySelectorAll('.product-checkbox:checked');
+      
+      if (checkedBoxes.length === 0) {
+        $alert('선택 오류', '삭제할 상품을 선택해주세요.', 'warning');
+        return;
+      }
+
+      const selectedIds = Array.from(checkedBoxes).map(checkbox => checkbox.value);
+      
+      $confirmHTML('선택 삭제', 
+               `선택한 ${selectedIds.length}개의 상품을 삭제하시겠습니까?<br><br><strong>주의:</strong> 삭제된 데이터는 복구할 수 없습니다.`, 
+               'warning', '삭제', '취소')
+      .then(function(result) {
+        if (result.isConfirmed) {
+          deleteSelectedProducts(selectedIds);
+        }
+      });
+    });
+
+    // 선택된 상품들 삭제
+    function deleteSelectedProducts(productIds) {
+      let successCount = 0;
+      let failCount = 0;
+      let totalCount = productIds.length;
+
+      // 로딩 상태 표시
+      const deleteBtn = document.getElementById('deleteSelectedBtn');
+      deleteBtn.disabled = true;
+      deleteBtn.innerHTML = '<i class="spinner-border spinner-border-sm" role="status"></i> 삭제 중...';
+
+      // 순차적으로 삭제 요청
+      const deletePromises = productIds.map(productId => {
+        return $ajax({
+          url: '/api/products/product/' + productId,
+          type: 'DELETE'
+        }).then(() => {
+          successCount++;
+        }).catch(() => {
+          failCount++;
+        });
+      });
+
+      // 모든 삭제 요청 완료 후 결과 표시
+      Promise.all(deletePromises).then(() => {
+        if (failCount === 0) {
+          $alert('삭제 완료', `${successCount}개의 상품이 삭제되었습니다.`, 'success').then(() => {
+            window.location.reload();
+          });
+        } else if (successCount === 0) {
+          $alert('삭제 실패', '상품 삭제에 실패했습니다.', 'error');
+        } else {
+          $alert('부분 삭제', 
+                 `${successCount}개 삭제 성공, ${failCount}개 삭제 실패했습니다.`, 
+                 'warning').then(() => {
+            window.location.reload();
+          });
+        }
+        
+        // 버튼 상태 복원
+        updateDeleteButton();
+      });
+    }
+
+    // 개별 상품 삭제
+    function deleteProduct(id) {
+      $confirmHTML('상품 삭제', 
+                   '정말로 이 상품을 삭제하시겠습니까?<br><br><strong>주의:</strong> 삭제된 데이터는 복구할 수 없습니다.', 
+                   'warning', '삭제', '취소')
+      .then(function(result) {
+        if (result.isConfirmed) {
+          $ajax({
+            url: '/api/products/product/' + id,
+            type: 'DELETE'
+          })
+          .then(function(response) {
+            if (response || response == 'SUCCESS' || response.status == 200 ) {
+              $toast_({ title: '상품이 삭제되었습니다.', icon: 'success' }).then(() => {
+                window.location.reload();
+              });
+            } else {
+              $alert('삭제 실패', '상품 삭제에 실패했습니다: ' + response, 'error');
+            }
+          })
+          .catch(function() {
+            $alert('오류', '삭제 중 오류가 발생했습니다.', 'error');
+          });
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>

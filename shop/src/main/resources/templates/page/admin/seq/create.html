@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/admin/admin_layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>시퀀스 등록</title>
+</head>
+<body layout:fragment="content">
+
+  <div class="container-fluid">
+    <!-- 페이지 헤더 -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">시퀀스 등록</h1>
+      <a href="/admin/seq" class="d-none d-sm-inline-block btn btn-secondary shadow-sm">
+        <i class="material-icons-two-tone">list</i>
+        목록
+      </a>
+    </div>
+
+    <!-- 시퀀스 등록 카드 -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">시퀀스 정보</h6>
+      </div>
+      <div class="card-body">
+        <form id="seqForm">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="seqGroupNo" class="form-label">시퀀스그룹 <span class="text-danger">*</span></label>
+                <select class="form-select" id="seqGroupNo" name="seqGroupNo" required>
+                  <option value="">시퀀스그룹을 선택하세요</option>
+                  <!-- 시퀀스그룹 옵션들은 JavaScript로 동적 로드 -->
+                </select>
+                <div class="invalid-feedback">
+                  시퀀스그룹을 선택해주세요.
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="code" class="form-label">코드 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="code" name="code" required>
+                <div class="invalid-feedback">
+                  코드를 입력해주세요.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="value" class="form-label">값 <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="value" name="value" value="0" min="0" required>
+                <div class="invalid-feedback">
+                  값을 입력해주세요.
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="date" class="form-label">적용일자 <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" id="date" name="date" required>
+                <div class="invalid-feedback">
+                  적용일자를 입력해주세요.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-end">
+            <button type="button" class="btn btn-secondary me-2" onclick="history.back()">취소</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+              <i class="material-icons-two-tone me-2">save</i>
+              저장
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 페이지 로드 시 시퀀스그룹 목록 로드
+    document.addEventListener('DOMContentLoaded', function() {
+      loadSeqGroups();
+    });
+
+    // 시퀀스그룹 목록 로드
+    function loadSeqGroups() {
+      $ajax({
+        url: '/api/admin/seqgroups',
+        type: 'GET',
+        data: { size: 1000 }
+      }).then(response => {
+        const select = document.getElementById('seqGroupNo');
+        const seqGroups = response.list || [];
+        seqGroups.forEach(group => {
+          const option = document.createElement('option');
+          option.value = group.no;
+          option.textContent = group.name;
+          select.appendChild(option);
+        });
+      }).catch(error => {
+        console.error('시퀀스그룹 로드 실패:', error);
+      });
+    }
+
+    document.getElementById('seqForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const form = this;
+      const submitBtn = document.getElementById('submitBtn');
+      
+      // 폼 유효성 검사
+      if (!form.checkValidity()) {
+        form.classList.add('was-validated');
+        return;
+      }
+
+      // 로딩 상태 표시
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-2" role="status"></i>저장 중...';
+
+      // 폼 데이터 생성
+      const formData = new FormData(form);
+
+      $ajax({
+        url: '/api/admin/seq',
+        type: 'POST',
+        data: formData
+      }).then(response => {
+        $alert('등록 완료', '시퀀스가 성공적으로 등록되었습니다.', 'success').then(() => {
+          window.location.href = '/admin/seq';
+        });
+      }).catch(error => {
+        $alert('등록 실패', '시퀀스 등록 중 오류가 발생했습니다.', 'error');
+      }).finally(() => {
+        // 버튼 상태 복원
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="material-icons-two-tone me-2">save</i>저장';
+      });
+    });
+  </script>
+
+</body>
+</html>

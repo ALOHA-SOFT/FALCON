@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/admin/admin_layout}"
+      >
+
+<div layout:fragment="content">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-12 col-md-6 order-md-1 order-last">
+                <h3>취소/반품 등록</h3>
+                <p class="text-subtitle text-muted">새로운 취소/반품을 등록합니다.</p>
+            </div>
+            <div class="col-12 col-md-6 order-md-2 order-first">
+                <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/admin">관리자</a></li>
+                        <li class="breadcrumb-item"><a href="/admin/cancel">취소/반품 관리</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">취소/반품 등록</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <section class="section">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">취소/반품 정보 입력</h4>
+            </div>
+            <div class="card-body">
+                <form action="/admin/cancel" method="post" id="cancellationForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="orderNo" class="form-label">주문 선택 <span class="text-danger">*</span></label>
+                                <select class="form-select" id="orderNo" name="orderNo" required>
+                                    <option value="">주문을 선택해주세요</option>
+                                    <option th:each="order : ${orders}" 
+                                            th:value="${order.no}" 
+                                            th:text="${order.code + ' - ' + order.title}">
+                                        20250101_001_001_001 - 상품1 외 5건
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="type" class="form-label">취소/반품 유형 <span class="text-danger">*</span></label>
+                                <select class="form-select" id="type" name="type" required>
+                                    <option value="">유형을 선택해주세요</option>
+                                    <option value="주문취소">주문취소</option>
+                                    <option value="반품">반품</option>
+                                    <option value="교환">교환</option>
+                                    <option value="환불">환불</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group mb-3">
+                                <label for="reason" class="form-label">취소/반품 사유 <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="reason" name="reason" rows="3" 
+                                          placeholder="취소/반품 사유를 입력해주세요" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="status" class="form-label">처리 상태 <span class="text-danger">*</span></label>
+                                <select class="form-select" id="status" name="status" required>
+                                    <option value="취소요청" selected>취소요청</option>
+                                    <option value="취소완료">취소완료</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label class="form-label">확인 여부</label>
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" id="isConfirmed" name="isConfirmed">
+                                    <label class="form-check-label" for="isConfirmed">확인됨</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label class="form-label">환불 여부</label>
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" id="isRefund" name="isRefund">
+                                    <label class="form-check-label" for="isRefund">환불됨</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="bankName" class="form-label">은행명</label>
+                                <input type="text" class="form-control" id="bankName" name="bankName" 
+                                       placeholder="은행명">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="accountNumber" class="form-label">계좌번호</label>
+                                <input type="text" class="form-control" id="accountNumber" name="accountNumber" 
+                                       placeholder="계좌번호">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="depositor" class="form-label">예금주</label>
+                                <input type="text" class="form-control" id="depositor" name="depositor" 
+                                       placeholder="예금주명">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group text-end">
+                        <a href="/admin/cancel" class="btn btn-secondary me-2">취소</a>
+                        <button type="submit" class="btn btn-primary">등록</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block layout:fragment="script">
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('cancellationForm');
+    
+    // 환불 여부에 따른 계좌정보 필드 활성화/비활성화
+    function updateAccountFieldsStatus() {
+        const isRefund = document.getElementById('isRefund').checked;
+        const bankName = document.getElementById('bankName');
+        const accountNumber = document.getElementById('accountNumber');
+        const depositor = document.getElementById('depositor');
+        
+        if (isRefund) {
+            // 환불 체크 시 계좌정보 필드 활성화
+            bankName.disabled = false;
+            accountNumber.disabled = false;
+            depositor.disabled = false;
+            bankName.parentElement.style.opacity = '1';
+            accountNumber.parentElement.style.opacity = '1';
+            depositor.parentElement.style.opacity = '1';
+        } else {
+            // 환불 미체크 시 계좌정보 필드 비활성화 및 초기화
+            bankName.disabled = true;
+            accountNumber.disabled = true;
+            depositor.disabled = true;
+            bankName.value = '';
+            accountNumber.value = '';
+            depositor.value = '';
+            bankName.parentElement.style.opacity = '0.5';
+            accountNumber.parentElement.style.opacity = '0.5';
+            depositor.parentElement.style.opacity = '0.5';
+        }
+    }
+    
+    // 환불 여부 변경 시 계좌정보 필드 상태 업데이트
+    document.getElementById('isRefund').addEventListener('change', updateAccountFieldsStatus);
+    
+    // 페이지 로드 시 초기 상태 설정
+    updateAccountFieldsStatus();
+    
+    // 주문 선택 시 주문 정보 표시 (추후 AJAX로 상세 정보 로드 가능)
+    document.getElementById('orderNo').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption.value) {
+            console.log('선택된 주문:', selectedOption.text);
+            // TODO: AJAX로 주문 상세 정보를 가져와서 표시
+        }
+    });
+    
+    // 폼 제출 검증
+    form.addEventListener('submit', function(e) {
+        e.preventDefault(); // 기본 제출 방지
+        
+        // 기본 유효성 검사
+        const requiredFields = form.querySelectorAll('[required]');
+        let isValid = true;
+        let firstInvalidField = null;
+        
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                if (!firstInvalidField) {
+                    firstInvalidField = field;
+                }
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+        
+        if (!isValid) {
+            $alert('입력 오류', '필수 항목을 모두 입력해주세요.', 'warning');
+            if (firstInvalidField) {
+                firstInvalidField.focus();
+            }
+            return;
+        }
+        
+        // 사유 길이 검사
+        const reason = document.getElementById('reason').value.trim();
+        if (reason.length < 10) {
+            $alert('입력 오류', '취소/반품 사유는 10자 이상 입력해주세요.', 'warning');
+            document.getElementById('reason').focus();
+            return;
+        }
+        
+        // 환불 시 계좌정보 필수 검사
+        const isRefund = document.getElementById('isRefund').checked;
+        if (isRefund) {
+            const bankName = document.getElementById('bankName').value.trim();
+            const accountNumber = document.getElementById('accountNumber').value.trim();
+            const depositor = document.getElementById('depositor').value.trim();
+            
+            if (!bankName || !accountNumber || !depositor) {
+                $alert('입력 오류', '환불 처리 시에는 계좌정보를 모두 입력해주세요.', 'warning');
+                return;
+            }
+            
+            // 계좌번호 형식 검사 (숫자와 하이픈만 허용)
+            const accountPattern = /^[0-9\-]+$/;
+            if (!accountPattern.test(accountNumber)) {
+                $alert('입력 오류', '계좌번호는 숫자와 하이픈(-)만 입력 가능합니다.', 'warning');
+                document.getElementById('accountNumber').focus();
+                return;
+            }
+        }
+        
+        // 확인 메시지
+        $confirmHTML('취소/반품 등록', 
+                     '취소/반품을 등록하시겠습니까?', 
+                     'question', '등록', '취소')
+        .then(function(result) {
+            if (result.isConfirmed) {
+                // 실제 폼 제출
+                const formData = new FormData(form);
+                
+                // AJAX 요청으로 등록
+                $ajax('POST', form.action, formData, {
+                    success: function(response) {
+                        $alert('등록 완료', '취소/반품이 성공적으로 등록되었습니다.', 'success')
+                        .then(function() {
+                            window.location.href = '/admin/cancel';
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('등록 실패:', error);
+                        let message = '등록 중 오류가 발생했습니다.';
+                        
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            message = xhr.responseJSON.message;
+                        } else if (xhr.status === 400) {
+                            message = '입력 데이터를 확인해주세요.';
+                        } else if (xhr.status === 409) {
+                            message = '이미 등록된 취소/반품 요청입니다.';
+                        } else if (xhr.status === 500) {
+                            message = '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+                        }
+                        
+                        $alert('등록 실패', message, 'error');
+                    }
+                });
+            }
+        });
+    });
+    
+    // 계좌번호 입력 시 숫자와 하이픈만 허용
+    document.getElementById('accountNumber').addEventListener('input', function(e) {
+        // 숫자와 하이픈이 아닌 문자 제거
+        this.value = this.value.replace(/[^0-9\-]/g, '');
+    });
+    
+    // 입력 필드 포커스 시 invalid 클래스 제거
+    const inputFields = form.querySelectorAll('input, select, textarea');
+    inputFields.forEach(field => {
+        field.addEventListener('focus', function() {
+            this.classList.remove('is-invalid');
+        });
+    });
+});
+</script>
+</th:block>
+
+</html>

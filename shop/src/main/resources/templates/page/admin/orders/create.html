@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/admin/admin_layout}"
+      >
+
+<div layout:fragment="content">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-12 col-md-6 order-md-1 order-last">
+                <h3>주문 등록</h3>
+                <p class="text-subtitle text-muted">새로운 주문을 등록합니다.</p>
+            </div>
+            <div class="col-12 col-md-6 order-md-2 order-first">
+                <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/admin">관리자</a></li>
+                        <li class="breadcrumb-item"><a href="/admin/orders">주문 관리</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">주문 등록</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <section class="section">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">주문 정보 입력</h4>
+            </div>
+            <div class="card-body">
+                <form action="/admin/orders" method="post" id="orderForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="userNo" class="form-label">주문자 <span class="text-danger">*</span></label>
+                                <select class="form-select" id="userNo" name="userNo" required>
+                                    <option value="">주문자를 선택하세요</option>
+                                    <option th:each="user : ${users}" 
+                                            th:value="${user.no}" 
+                                            th:text="${user.name + ' (' + user.username + ')'}">홍길동 (hong)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="code" class="form-label">주문번호 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="code" name="code" 
+                                       placeholder="주문번호를 입력하세요" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group mb-3">
+                                <label for="title" class="form-label">주문 제목 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="title" name="title" 
+                                       placeholder="주문 제목을 입력하세요" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="totalPrice" class="form-label">총 금액 <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="totalPrice" name="totalPrice" 
+                                       min="0" placeholder="총 금액을 입력하세요" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="totalQuantity" class="form-label">총 수량 <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="totalQuantity" name="totalQuantity" 
+                                       min="1" placeholder="총 수량을 입력하세요" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="totalItemCount" class="form-label">총 상품 종류 <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="totalItemCount" name="totalItemCount" 
+                                       min="1" placeholder="총 상품 종류를 입력하세요" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="status" class="form-label">주문 상태 <span class="text-danger">*</span></label>
+                                <select class="form-select" id="status" name="status" required>
+                                    <option value="">상태를 선택하세요</option>
+                                    <option value="주문접수">주문접수</option>
+                                    <option value="결제완료">결제완료</option>
+                                    <option value="배송준비중">배송준비중</option>
+                                    <option value="배송중">배송중</option>
+                                    <option value="배송완료">배송완료</option>
+                                    <option value="주문취소">주문취소</option>
+                                    <option value="환불완료">환불완료</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="guestTel" class="form-label">비회원 전화번호</label>
+                                <input type="tel" class="form-control" id="guestTel" name="guestTel" 
+                                       placeholder="비회원 주문시 전화번호">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group text-end">
+                        <a href="/admin/orders" class="btn btn-secondary me-2">취소</a>
+                        <button type="submit" class="btn btn-primary">등록</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block layout:fragment="script">
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('orderForm');
+    
+    form.addEventListener('submit', function(e) {
+        // 기본 유효성 검사
+        const requiredFields = form.querySelectorAll('[required]');
+        let isValid = true;
+        
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+        
+        if (!isValid) {
+            e.preventDefault();
+            alert('필수 항목을 모두 입력해주세요.');
+            return;
+        }
+        
+        // 금액 검사
+        const totalPrice = document.getElementById('totalPrice').value;
+        if (totalPrice && totalPrice < 0) {
+            e.preventDefault();
+            alert('총 금액은 0원 이상이어야 합니다.');
+            return;
+        }
+        
+        // 수량 검사
+        const totalQuantity = document.getElementById('totalQuantity').value;
+        if (totalQuantity && totalQuantity < 1) {
+            e.preventDefault();
+            alert('총 수량은 1개 이상이어야 합니다.');
+            return;
+        }
+        
+        // 상품 종류 검사
+        const totalItemCount = document.getElementById('totalItemCount').value;
+        if (totalItemCount && totalItemCount < 1) {
+            e.preventDefault();
+            alert('총 상품 종류는 1개 이상이어야 합니다.');
+            return;
+        }
+    });
+    
+    // 숫자 입력 필드 포맷팅
+    const numberFields = ['totalPrice', 'totalQuantity', 'totalItemCount'];
+    numberFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener('input', function() {
+                // 음수 입력 방지
+                if (this.value < 0) {
+                    this.value = 0;
+                }
+            });
+        }
+    });
+});
+</script>
+</th:block>
+
+</html>

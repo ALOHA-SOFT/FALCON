@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.falcon.shop.mapper.shop.OrderMapper">
+
+    <resultMap id="OrderMap" type="Orders">
+        <id property="no" column="no"/>
+        <result property="id" column="id"/>
+        <result property="userNo" column="user_no"/>
+        <result property="addressNo" column="address_no"/>
+        <result property="code" column="code"/>
+        <result property="title" column="title"/>
+        <result property="guestTel" column="guest_tel"/>
+        <result property="totalPrice" column="total_price"/>
+        <result property="totalQuantity" column="total_quantity"/>
+        <result property="totalItemCount" column="total_item_count"/>
+        <result property="status" column="status"/>
+        <collection property="orderItems" ofType="OrderItem" column="no" select="listByOrder"></collection>
+    </resultMap>
+
+    <select id="listWithParams" resultMap="OrderMap">
+        SELECT *
+        FROM orders
+        WHERE 1=1
+        <if test="userNo != null and userNo != ''">
+            AND user_no = #{userNo}
+        </if>
+        <if test="queryParams.search != null and queryParams.search != ''">
+            AND (
+                code LIKE CONCAT('%', #{queryParams.search}, '%')
+                OR title LIKE CONCAT('%', #{queryParams.search}, '%')
+                OR status LIKE CONCAT('%', #{queryParams.search}, '%')
+                OR guest_tel LIKE CONCAT('%', #{queryParams.search}, '%')
+            )
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        <if test="page != null and size != null">
+            LIMIT #{size} OFFSET #{(page - 1) * size}
+        </if>
+        ORDER BY 
+        <choose>
+            <when test="sortBy != null and sortBy.size() > 0">
+            <foreach collection="sortBy" item="sort" index="index" separator=", ">
+                <choose>
+                <when test="sort == 'code'">code</when>
+                <when test="sort == 'title'">title</when>
+                <when test="sort == 'status'">status</when>
+                <when test="sort == 'totalPrice'">total_price</when>
+                <when test="sort == 'totalQuantity'">total_quantity</when>
+                <when test="sort == 'createdAt'">created_at</when>
+                <otherwise>no</otherwise>
+                </choose>
+                <choose>
+                <when test="sortOrder != null and sortOrder.size() > index and sortOrder[index] == 'asc'">ASC</when>
+                <otherwise>DESC</otherwise>
+                </choose>
+            </foreach>
+            </when>
+            <otherwise>no DESC, created_at DESC</otherwise>
+        </choose>
+    </select>
+
+    <select id="listByOrder" resultMap="com.falcon.shop.mapper.shop.OrderItemMapper.OrderItemMap">
+        SELECT *
+        FROM order_item
+        WHERE order_no = #{no}
+    </select>
+
+
+    <select id="selectById" resultMap="OrderMap">
+        SELECT *
+        FROM orders
+        WHERE id = #{id}
+    </select>
+
+    
+
+</mapper>

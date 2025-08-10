@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>CHEditor Sample</title>
+	<script type="text/javascript" src="/CHEditor/cheditor.js" ></script>
+	<style>
+		.container {
+			width: 1000px;
+			margin: 0 auto;	
+		}
+	</style>
+</head>
+<body>
+
+	<div class="container">
+		<h1>CHEditor 샘플</h1>
+		
+		<textarea id="fm_post" name="content"></textarea>
+	
+		<!-- 에디터를 화면에 출력합니다. -->
+		<script type="text/javascript">
+			var myeditor = new cheditor();              // 에디터 개체를 생성합니다.
+			myeditor.config.editorHeight = '500px';     // 에디터 세로폭입니다.
+			myeditor.config.editorWidth = '100%';       // 에디터 가로폭입니다.
+			myeditor.inputForm = 'fm_post';             // 위에 있는 textarea의 id입니다. 주의: name 속성 이름이 아닙니다.
+			myeditor.run();                             // 에디터를 실행합니다.
+		</script>
+	
+	
+	</div>
+
+	
+</body>
+</html>

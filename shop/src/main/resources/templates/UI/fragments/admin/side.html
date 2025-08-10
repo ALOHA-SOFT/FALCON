@@ -1,0 +1,114 @@
+<th:block th:fragment="side">
+  <div class="app-sidebar">
+    <div class="logo">
+      <a href="/" class="logo-icon"></a>
+      <a href="/" class="text-dark">
+        <span class="logo-text" style="display: inline-block; height: 40px; line-height: 40px;">분수마켓</span>
+      </a>
+      <div class="sidebar-user-switcher user-activity-online">
+        <a href="#">
+          <!-- <img src="../../assets/images/avatars/avatar.png"> -->
+          <!-- <span class="activity-indicator"></span> -->
+          <span class="user-info-text">관리자<br><span class="user-state-info">admin</span></span>
+        </a>
+      </div>
+    </div>
+    <div class="app-menu">
+      <ul class="accordion-menu">
+        <li class="sidebar-title">
+          관리메뉴
+        </li>
+        <li class="active-page">
+          <a href="/admin" class="active"><i class="material-icons-two-tone">dashboard</i>대시보드</a>
+        </li>
+        <!-- <li>
+          <a href="/admin/category"><i class="material-icons-two-tone">category</i>카테고리</a>
+        </li> -->
+        <li>
+          <a href="#">
+              <i class="material-icons-two-tone">category</i>카테고리
+              <i class="material-icons has-sub-menu">keyboard_arrow_right</i>
+          </a>
+          <ul class="sub-menu">
+            <li>
+              <a href="/admin/category">카테고리</a>
+            </li>
+            <li>
+              <a href="/admin/category-large">대분류</a>
+            </li>
+            <!-- <li>
+              <a href="/admin/category/middle">중분류</a>
+            </li>
+            <li>
+              <a href="/admin/category/small">소분류</a>
+            </li> -->
+          </ul>
+        </li>
+        <li>
+          <a href="#"><i class="material-icons-two-tone">inventory</i>상품관리<i
+              class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
+            <ul class="sub-menu">
+              <li>
+                <a href="/admin/products">상품관리</a>
+              </li>
+            </ul>
+        </li>
+        <li>
+          <a href="#"><i class="material-icons-two-tone">more_horiz</i>옵션관리
+            <i class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
+            <ul class="sub-menu">
+              <li>
+                <a href="/admin/option-groups">옵션그룹</a>
+              </li>
+              <li>
+                <a href="/admin/options">옵션</a>
+              </li>
+            </ul>
+        </li>
+        <li>
+          <a href="/admin/users"><i class="material-icons-two-tone">people</i>회원관리</a>
+        </li>
+        <li>
+          <a href="#"><i class="material-icons-two-tone">shopping_cart</i>주문관리<i
+              class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
+          <ul class="sub-menu">
+            <li>
+              <a href="/admin/orders">주문 처리</a>
+            </li>
+            <li>
+              <a href="/admin/cancel">환불 처리</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="/admin/popups"><i class="material-icons-two-tone">announcement</i>팝업관리</a>
+        </li>
+        <li>
+          <a href="/admin/banners"><i class="material-icons-two-tone">image</i>배너관리</a>
+        </li>
+        <li class="sidebar-title">
+          기타
+        </li>
+        <li>
+          <a href="#"><i class="material-icons-two-tone">settings</i>시스템관리<i
+              class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
+          <ul class="sub-menu">
+            <li>
+              <a href="/admin/codegroups">코드그룹 관리</a>
+            </li>
+            <li>
+              <a href="/admin/codes">코드관리</a>
+            </li>
+            <li>
+              <a href="/admin/seqgroups">시퀀스그룹 관리</a>
+            </li>
+            <li>
+              <a href="/admin/seq">시퀀스 관리</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+</th:block>

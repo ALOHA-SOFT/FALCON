@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{UI/layouts/user/my_layout}">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>취소/반품 - 분수마켓</title>
+</head>
+
+<body layout:fragment="content">
+
+  <div class="card">
+    <div class="card-header">
+      <h5>취소/반품 내역</h5>
+    </div>
+    <div class="card-body">
+      <!-- 취소/반품 목록 -->
+      <div class="cancel-list">
+        <th:block th:each="cancel : ${pageInfo.list}">
+          <!-- 취소/반품 항목 -->
+          <div class="border p-3 mb-3 rounded">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="fw-bold" th:text="'주문번호: ' + ${cancel.order.code}">주문번호: 20250630001</span>
+              <th:block th:if="${cancel.order.status == '결제완료'}">
+                <span class="badge bg-success" th:text="${cancel.order.status}">결제완료</span>
+              </th:block>
+              <th:block th:if="${cancel.order.status == '결제대기'}">
+                <span class="badge bg-secondary" th:text="${cancel.order.status}">결제대기</span>
+              </th:block>
+              <th:block th:if="${cancel.order.status == '주문취소'}">
+                <span class="badge bg-danger" th:text="${cancel.order.status}">주문취소</span>
+              </th:block>
+              <th:block th:if="${cancel.order.status == '환불완료'}">
+                <span class="badge bg-primary" th:text="${cancel.order.status}">환불완료</span>
+              </th:block>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <img th:src="${cancel.order.orderItems != null && cancel.order.orderItems.size() > 0 && cancel.order.orderItems[0].product != null && cancel.order.orderItems[0].product.thumbImg != null ? cancel.order.orderItems[0].product.thumbImg.content : 'https://placehold.co/120x120?text=Image'}"
+                  th:alt="${cancel.order.orderItems != null && cancel.order.orderItems.size() > 0 && cancel.order.orderItems[0].product != null ? cancel.order.orderItems[0].product.name : '상품 이미지'}"
+                  width="120" height="120" class="rounded">
+              </div>
+              <div class="col-md-6">
+                <h6 th:text="${cancel.order.title}">주문제목</h6>
+                <p class="text-muted mb-1" th:text="'취소 사유: ' + ${cancel.reason}">취소 사유: 단순 변심</p>
+                <p class="text-muted mb-1" th:text="'취소 유형: ' + ${cancel.type}">취소 유형: 주문취소</p>
+              </div>
+              <div class="col-md-2">
+                <p class="fw-bold" th:text="'₩' + ${#numbers.formatInteger(cancel.order.totalPrice, 3, 'COMMA')}">₩25,000</p>
+              </div>
+            </div>
+            <div class="text-end mt-2">
+              <small class="text-muted">취소일시: 2025.06.28</small>
+            </div>
+          </div>
+        </th:block>
+
+        <!-- 취소/반품이 없을 때 -->
+        <th:block th:if="${pageInfo.list.size() == 0}">
+          <div class="text-center py-5">
+            <i class="material-icons" style="font-size: 48px; color: #ccc;">cancel</i>
+            <p class="text-muted mt-3">취소/반품 내역이 없습니다.</p>
+            <a href="/my/orders" class="btn btn-primary">주문 내역 보기</a>
+           </div>
+         </th:block>
+      </div>
+
+      <!-- 페이지 -->
+      <th:block th:replace="~{UI/fragments/common/page::page}"></th:block>
+
+      
+    </div>
+  </div>
+
+</body>
+
+</html>

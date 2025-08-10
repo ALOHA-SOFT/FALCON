@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/admin/admin_layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>시퀀스그룹 수정</title>
+</head>
+<body layout:fragment="content">
+  <div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">시퀀스그룹 수정</h1>
+      <a href="/admin/seqgroups" class="d-none d-sm-inline-block btn btn-secondary shadow-sm">
+        <i class="material-icons-two-tone">list</i> 목록
+      </a>
+    </div>
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">시퀀스그룹 정보</h6>
+      </div>
+      <div class="card-body">
+        <form id="seqGroupForm">
+          <input type="hidden" id="id" name="id" th:value="${seqGroups.id}" />
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="code" class="form-label">코드 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="code" name="code" th:value="${seqGroups.code}" required>
+                <div class="invalid-feedback">코드를 입력해주세요.</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="name" class="form-label">이름 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="name" name="name" th:value="${seqGroups.name}" required>
+                <div class="invalid-feedback">이름을 입력해주세요.</div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="value" class="form-label">Value <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="value" name="value" th:value="${seqGroups.value}" required>
+                <div class="invalid-feedback">Value를 입력해주세요.</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="step" class="form-label">Step <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="step" name="step" th:value="${seqGroups.step}" required>
+                <div class="invalid-feedback">Step을 입력해주세요.</div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <div class="mb-3">
+                <label for="description" class="form-label">설명</label>
+                <textarea class="form-control" id="description" name="description" rows="3" th:text="${seqGroups.description}"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="text-end">
+            <button type="button" class="btn btn-secondary me-2" onclick="history.back()">취소</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+              <i class="material-icons-two-tone me-2">save</i> 저장
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script>
+  // ... $ajax, $alert, SweetAlert2 활용 비동기 수정 JS ...
+  </script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/admin/admin_layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>팝업 수정</title>
+</head>
+<body layout:fragment="content">
+
+  <div class="container-fluid">
+    <!-- 페이지 헤더 -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">팝업 수정</h1>
+      <a href="/admin/popups" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm">
+        <i class="fas fa-list fa-sm text-white-50"></i> 목록으로
+      </a>
+    </div>
+
+    <!-- 수정 폼 카드 -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">팝업 정보 수정</h6>
+      </div>
+      <div class="card-body">
+        <form id="popupUpdateForm" class="needs-validation" novalidate th:object="${popup}">
+          <!-- CSRF TOKEN -->
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+          <!-- 원본 번호 (수정 시 참조용) -->
+          <input type="hidden" th:field="*{no}" id="originalNo">
+          
+          <div class="row">
+            <div class="col-md-8">
+              <!-- 팝업 번호 (읽기 전용) -->
+              <div class="mb-3">
+                <label for="no" class="form-label">팝업 번호</label>
+                <input type="text" class="form-control" th:field="*{no}" readonly>
+              </div>
+
+              <!-- 팝업 ID (읽기 전용) -->
+              <div class="mb-3">
+                <label for="id" class="form-label">팝업 번호</label>
+                <input type="text" class="form-control" th:field="*{id}" readonly>
+              </div>
+
+              <!-- 팝업 타입 -->
+              <div class="mb-3">
+                <label for="type" class="form-label">팝업 타입 <span class="text-danger">*</span></label>
+                <select class="form-select" th:field="*{type}" required>
+                  <option value="">타입을 선택하세요</option>
+                  <option value="MAIN">메인</option>
+                </select>
+                <div class="invalid-feedback">팝업 타입을 선택해주세요.</div>
+              </div>
+
+              <!-- 팝업명 -->
+              <div class="mb-3">
+                <label for="name" class="form-label">팝업명 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" th:field="*{name}" required 
+                       maxlength="100" placeholder="팝업명을 입력하세요">
+                <div class="invalid-feedback">팝업명을 입력해주세요.</div>
+              </div>
+
+              <!-- 링크 URL -->
+              <div class="mb-3">
+                <label for="url" class="form-label">링크 URL</label>
+                <input type="url" class="form-control" th:field="*{url}" 
+                       maxlength="500" placeholder="http:// 또는 https://로 시작하는 URL을 입력하세요">
+                <div class="form-text">팝업 클릭 시 이동할 URL을 입력하세요. (선택사항)</div>
+              </div>
+
+              <!-- 팝업 내용 -->
+              <div class="mb-3">
+                <label for="content" class="form-label">팝업 내용</label>
+                <textarea class="form-control" th:field="*{content}" rows="6" 
+                          maxlength="1000" placeholder="팝업에 표시할 내용을 입력하세요"></textarea>
+                <div class="form-text">최대 1000자까지 입력 가능합니다.</div>
+              </div>
+
+              <!-- 표시 기간 -->
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="startedAt" class="form-label">시작일시</label>
+                    <input type="datetime-local" class="form-control" th:field="*{startedAt}">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="endedAt" class="form-label">종료일시</label>
+                    <input type="datetime-local" class="form-control" th:field="*{endedAt}">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 표시 여부 -->
+              <div class="mb-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" th:field="*{isShow}" value="true">
+                  <label class="form-check-label" for="isShow">
+                    팝업 표시
+                  </label>
+                </div>
+                <div class="form-text">체크하면 팝업이 표시됩니다.</div>
+              </div>
+
+              <!-- 등록일/수정일 정보 -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="createdAt" class="form-label">등록일</label>
+                  <input type="text" class="form-control" th:value="${#dates.format(popup.createdAt, 'yyyy-MM-dd HH:mm:ss')}" readonly>
+                </div>
+                <div class="col-md-6">
+                  <label for="updatedAt" class="form-label">수정일</label>
+                  <input type="text" class="form-control" th:value="${popup.updatedAt != null ? #dates.format(popup.updatedAt, 'yyyy-MM-dd HH:mm:ss') : '없음'}" readonly>
+                </div>
+              </div>
+
+              <!-- 버튼 영역 -->
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="button" class="btn btn-secondary me-md-2" onclick="history.back()">취소</button>
+                <button type="submit" class="btn btn-primary">수정</button>
+              </div>
+            </div>
+
+            <!-- 도움말 영역 -->
+            <div class="col-md-4">
+              <div class="card bg-light">
+                <div class="card-body">
+                  <h6 class="card-title">수정 안내</h6>
+                  <ul class="card-text small">
+                    <li>팝업 타입에 따라 표시 방식이 결정됩니다.</li>
+                    <li>링크 URL은 선택사항이며, 입력 시 팝업 클릭 시 해당 URL로 이동합니다.</li>
+                    <li>시작일시와 종료일시를 설정하여 표시 기간을 제한할 수 있습니다.</li>
+                    <li>표시 여부를 체크해제하면 팝업이 노출되지 않습니다.</li>
+                    <li>팝업 번호는 수정할 수 없습니다.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    // 폼 제출
+    document.getElementById('popupUpdateForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      // 폼 유효성 검사
+      if (!this.checkValidity()) {
+        this.classList.add('was-validated');
+        return;
+      }
+
+      // 폼 데이터 수집
+      const formData = {};
+      const formElements = new FormData(this);
+      for (let [key, value] of formElements.entries()) {
+        if (key === 'isShow') {
+          formData[key] = value === 'true';
+        } else {
+          formData[key] = value;
+        }
+      }
+
+      // isShow 체크박스가 체크되지 않은 경우 false로 설정
+      if (!formData.isShow) {
+        formData.isShow = false;
+      }
+
+      // 수정 요청
+      $ajax({
+        url: '/api/admin/popup',
+        type: 'PUT',
+        data: formData
+      }).then(response => {
+        $alert('성공', '팝업이 성공적으로 수정되었습니다.', 'success').then(() => {
+          window.location.href = '/admin/popups';
+        });
+      }).catch(error => {
+        $alert('오류', '수정 중 오류가 발생했습니다. 다시 시도해주세요.', 'error');
+      });
+    });
+
+    // Bootstrap validation
+    (function() {
+      'use strict';
+      window.addEventListener('load', function() {
+        const forms = document.getElementsByClassName('needs-validation');
+        Array.prototype.filter.call(forms, function(form) {
+          form.addEventListener('submit', function(event) {
+            if (form.checkValidity() === false) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+          }, false);
+        });
+      }, false);
+    })();
+  </script>
+
+</body>
+</html>

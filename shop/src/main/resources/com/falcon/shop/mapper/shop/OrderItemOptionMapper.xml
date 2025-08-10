@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.falcon.shop.mapper.shop.OrderItemOptionMapper">
+
+    <resultMap id="OrderItemOptionMap" type="com.falcon.shop.domain.shop.OrderItemOption">
+        <id property="no" column="no"/>
+        <result property="id" column="id"/>
+        <result property="orderItemNo" column="order_item_no"/>
+        <result property="optionNo" column="option_no"/>
+        <result property="quantity" column="quantity"/>
+        <result property="price" column="price"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <association property="option" javaType="Options" column="option_no" select="selectOption"/> 
+    </resultMap>
+
+    <select id="selectOption" resultType="Options">
+        SELECT *
+        FROM options
+        WHERE no = #{option_no}
+    </select>
+
+
+</mapper>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/admin/admin_layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>상품 미디어</title>
+</head>
+<body layout:fragment="content">
+
+  <div class="container-fluid">
+    <!-- 페이지 헤더 -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">상품 미디어</h1>
+      <a href="/admin/products" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm">
+        <i class="fas fa-list fa-sm text-white-50"></i> 목록으로
+      </a>
+    </div>
+
+    <!-- 수정 폼 카드 -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">상품 미디어 관리</h6>
+      </div>
+      <div class="card-body">
+        <form id="mediaForm">
+          <input type="hidden" name="productNo" th:value="${product.no}" id="productNo">
+          <div class="row mb-4">
+            <!-- 썸네일 이미지 -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">썸네일 이미지 <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <input type="url" class="form-control" name="thumbImage" placeholder="이미지 URL 입력" required th:value="${product.thumbImg != null ? product.thumbImg.content : ''}" th:disabled="${product.thumbImg != null}" th:data-id="product.thumbImg.id">
+                <th:block th:if="${product.thumbImg == null}">
+                  <button type="submit" class="btn btn-outline-primary">저장</button>
+                </th:block>
+                <th:block th:if="${product.thumbImg != null}">
+                  <button type="button" class="btn btn-outline-danger btn-delete-media ms-2" th:data-id="${product.thumbImg.id}">삭제</button>
+                </th:block>
+              </div>
+            </div>
+            <!-- 메인 이미지 -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">메인 이미지 <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <input type="url" class="form-control" name="mainImage" placeholder="이미지 URL 입력" required th:value="${product.mainImg != null ? product.mainImg.content : ''}" th:disabled="${product.mainImg != null}">
+                <th:block th:if="${product.mainImg == null}">
+                  <button type="submit" class="btn btn-outline-primary">저장</button>
+                </th:block>
+                <th:block th:if="${product.mainImg != null}">
+                  <button type="button" class="btn btn-outline-danger btn-delete-media ms-2" th:data-id="${product.mainImg.id}">삭제</button>
+                </th:block>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <!-- 썸네일 동영상 -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">썸네일 동영상 (URL)</label>
+              <div class="input-group">
+                <input type="url" class="form-control" name="thumbVideo" placeholder="동영상 URL 입력" th:value="${product.thumbVideo != null ? product.thumbVideo.content : ''}" th:disabled="${product.thumbVideo != null}">
+                <th:block th:if="${product.thumbVideo == null}">
+                  <button type="submit" class="btn btn-outline-primary">저장</button>
+                </th:block>
+                <th:block th:if="${product.thumbVideo != null}">
+                  <button type="button" class="btn btn-outline-danger btn-delete-media ms-2" th:data-id="${product.thumbVideo.id}">삭제</button>
+                </th:block>
+              </div>
+            </div>
+            <!-- 메인 동영상 -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">메인 동영상 (URL)</label>
+              <div class="input-group">
+                <input type="url" class="form-control" name="mainVideo" placeholder="동영상 URL 입력" th:value="${product.mainVideo != null ? product.mainVideo.content : ''}" th:disabled="${product.mainVideo != null}">
+                <th:block th:if="${product.mainVideo == null}">
+                  <button type="submit" class="btn btn-outline-primary">저장</button>
+                </th:block>
+                <th:block th:if="${product.mainVideo != null}">
+                  <button type="button" class="btn btn-outline-danger btn-delete-media ms-2" th:data-id="${product.mainVideo.id}">삭제</button>
+                </th:block>
+              </div>
+            </div>
+          </div>
+          <!-- 일반 이미지 (여러개, 동적 추가) -->
+          <div class="mb-4">
+            <label class="form-label fw-bold">일반 이미지</label>
+            <div id="normalImages">
+              <th:block th:each="img, stat : ${product.imgList}">
+                <div class="input-group mb-2 normal-image-row">
+                  <input type="url" class="form-control" name="normalImages" placeholder="이미지 URL 입력" th:value="${img.content}" th:disabled="${img.content != null}">
+                  <th:block th:if="${img.content == null}">
+                    <button type="submit" class="btn btn-outline-primary">저장</button>
+                  </th:block>
+                  <th:block th:if="${img.content != null}">
+                    <button type="button" class="btn btn-outline-danger remove-normal-image" th:data-id="${img.id}">삭제</button>
+                  </th:block>
+                </div>
+              </th:block>
+            </div>
+            <button type="button" class="btn btn-outline-primary btn-sm" id="addNormalImage">+ 이미지 추가</button>
+          </div>
+          <div class="d-flex justify-content-end gap-2">
+            <a href="/admin/products" class="btn btn-secondary">취소</a>
+          </div>
+        </form>
+        <script src="/js/common/ajax.js"></script>
+        <script src="/js/common/alert.js"></script>
+        <script>
+          // 미디어 등록/삭제 상태 관리 함수
+          function setMediaRowState(row, isSaved) {
+            const input = row.querySelector('input');
+            const saveBtn = row.querySelector('.btn-outline-primary');
+            const delBtn = row.querySelector('.remove-normal-image, .btn-delete-media');
+            input.disabled = isSaved;
+            saveBtn.disabled = isSaved;
+            if (delBtn) delBtn.disabled = !isSaved;
+          }
+
+          // 썸네일/메인 이미지, 동영상 저장 버튼 이벤트
+          document.querySelectorAll('#mediaForm .input-group').forEach(group => {
+            const input = group.querySelector('input');
+            const saveBtn = group.querySelector('.btn-outline-primary');
+            if (!saveBtn) return;
+            saveBtn.addEventListener('click', async function(e) {
+              e.preventDefault();
+              if (!input.value) {
+                $alert('입력 오류', 'URL을 입력하세요.', 'warning');
+                return;
+              }
+              // 어떤 필드인지 판별
+              const name = input.name;
+              let type, isMain = false, isThumb = false;
+              if (name === 'thumbImage') { type = '이미지'; isThumb = true; }
+              else if (name === 'mainImage') { type = '이미지'; isMain = true; }
+              else if (name === 'thumbVideo') { type = '동영상'; isThumb = true; }
+              else if (name === 'mainVideo') { type = '동영상'; isMain = true; }
+              else { type = '이미지'; }
+              const data = {
+                productNo: document.getElementById('productNo').value,
+                type: type,
+                content: input.value,
+                isMain: isMain,
+                isThumb: isThumb
+              };
+              const result = await $ajax({
+                url: '/api/products/media',
+                type: 'POST',
+                data: data
+              });
+              if (result && result !== 'FAIL') {
+                $toast_({ title: '저장되었습니다', icon: 'success', timer: 1200 }).then(() => {
+                  location.reload();
+                });
+
+              } else {
+                $alert('저장 실패', '미디어 저장 중 오류가 발생했습니다.', 'error');
+              }
+            });
+          });
+
+          // 일반 이미지 동적 추가/삭제 및 저장
+          document.getElementById('addNormalImage').addEventListener('click', function() {
+            const container = document.getElementById('normalImages');
+            const row = document.createElement('div');
+            row.className = 'input-group mb-2 normal-image-row';
+            row.innerHTML = `
+              <input type="url" class="form-control" name="normalImages" placeholder="이미지 URL 입력">
+              <button type="button" class="btn btn-outline-danger remove-normal-image">삭제</button>
+              <button type="submit" class="btn btn-outline-primary">저장</button>
+            `;
+            container.appendChild(row);
+            // 삭제 버튼
+            row.querySelector('.remove-normal-image').addEventListener('click', function() {
+              row.remove();
+            });
+            // 저장 버튼
+            row.querySelector('.btn-outline-primary').addEventListener('click', async function(e) {
+              e.preventDefault();
+              const input = row.querySelector('input');
+              if (!input.value) {
+                $alert('입력 오류', '이미지 URL을 입력하세요.', 'warning');
+                return;
+              }
+              const data = {
+                productNo: document.getElementById('productNo').value,
+                type: '이미지',
+                content: input.value,
+                isMain: false,
+                isThumb: false
+              };
+              const result = await $ajax({
+                url: '/api/products/media',
+                type: 'POST',
+                data: data
+              });
+              if (result && result !== 'FAIL') {
+                $toast_({ title: '저장되었습니다', icon: 'success', timer: 1200 }).then(() => {
+                  location.reload();
+                });
+                input.disabled = true;
+                this.disabled = true;
+                // 삭제버튼 활성화
+                const delBtn = row.querySelector('.remove-normal-image');
+                delBtn.disabled = false;
+                delBtn.onclick = async function() {
+                  const delResult = await $ajax({
+                    url: '/api/products/media',
+                    type: 'DELETE',
+                    data: { productNo: data.productNo, content: data.content }
+                  });
+                  if (delResult && delResult !== 'FAIL') {
+                    $toast_({ title: '삭제되었습니다', icon: 'success', timer: 1200 });
+                    input.disabled = false;
+                    row.querySelector('.btn-outline-primary').disabled = false;
+                    delBtn.disabled = true;
+                  } else {
+                    $alert('삭제 실패', '미디어 삭제 중 오류가 발생했습니다.', 'error');
+                  }
+                };
+              } else {
+                $alert('저장 실패', '미디어 저장 중 오류가 발생했습니다.', 'error');
+              }
+            });
+          });
+
+          // 미디어 삭제 버튼(모든 타입) 이벤트
+          document.querySelectorAll('.btn-delete-media, .remove-normal-image').forEach(btn => {
+            btn.addEventListener('click', async function() {
+              const id = this.getAttribute('data-id');
+              if (!id) return;
+              const confirmed = await $confirm('삭제 확인', '정말 삭제하시겠습니까?', 'warning', '삭제', '취소');
+              if (!confirmed.isConfirmed) return;
+              const result = await $ajax({
+                url: '/api/products/media/' + encodeURIComponent(id),
+                type: 'DELETE',
+                data: {}
+              });
+              if (result && result !== 'FAIL') {
+                $toast_({ title: '삭제되었습니다', icon: 'success', timer: 1200 });
+                // 삭제 후 새로고침 또는 해당 input/버튼 상태 갱신
+                location.reload();
+              } else {
+                $alert('삭제 실패', '미디어 삭제 중 오류가 발생했습니다.', 'error');
+              }
+            });
+          });
+        </script>
+      </div>
+    </div>
+  </div>
+
+    
+</body>
+</html>

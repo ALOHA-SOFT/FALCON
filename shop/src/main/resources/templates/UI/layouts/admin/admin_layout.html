@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- [META] -->
+    <th:block th:replace="~{UI/fragments/admin/meta::meta}"></th:block>
+    <!-- [LINK] -->
+    <th:block th:replace="~{UI/fragments/admin/link::link}"></th:block>
+</head>
+<body>
+    <div class="app align-content-stretch d-flex flex-wrap">
+        <!-- [SIDE] -->
+        <th:block th:replace="~{UI/fragments/admin/side::side}"></th:block>
+        <!-- [APP-CONTAINER]-->
+        <div class="app-container">
+            <!-- [HEADER] -->
+            <th:block th:replace="~{UI/fragments/admin/header::header}"></th:block>
+            <div class="app-content">
+                <div class="content-wrapper">
+                    <!-- [CONTENT]-->
+                    <th:block layout:fragment="content"></th:block>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- [SCRIPT] -->
+    <th:block th:replace="~{UI/fragments/admin/script::script}"></th:block>
+</body>
+</html>

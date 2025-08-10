@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/user/main_layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FALCON - Premium Cigarettes UK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <th:block layout:fragment="content">
+    <!-- Service Features Section -->
+    <section class="service-features">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <h2 class="service-title">REASONS TO CHOOSE OUR SERVICE</h2>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-4 service-item">
+            <p class="service-text">Guaranteed Delivery* Or Your Money Back</p>
+          </div>
+          <div class="col-md-1 d-none d-md-block">
+            <div style="width: 1px; height: 80px; background: #CCCCCC; margin: 0 auto;"></div>
+          </div>
+          <div class="col-md-4 service-item">
+            <p class="service-text">Fast Delivery 2 - 10 Working Days</p>
+          </div>
+          <div class="col-md-1 d-none d-md-block">
+            <div style="width: 1px; height: 80px; background: #CCCCCC; margin: 0 auto;"></div>
+          </div>
+          <div class="col-md-4 service-item">
+            <p class="service-text">100% Authentic Products</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reasons to Choose Section -->
+    <section class="reasons-section py-5">
+      <div class="container">
+        <div class="text-center mb-4">
+          <h2 class="reasons-title">REASONS TO CHOOSE OUR SERVICE</h2>
+          <hr class="title-underline">
+        </div>
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-2 col-md-3 text-center reasons-item">
+            <p class="reasons-text">Guaranteed Delivery* Or Your Money Back</p>
+          </div>
+          <div class="col-lg-1 col-md-1 d-none d-md-block text-center">
+            <div class="separator-line"></div>
+          </div>
+          <div class="col-lg-2 col-md-3 text-center reasons-item">
+            <p class="reasons-text">Fast Delivery 2 - 10 Working Days</p>
+          </div>
+          <div class="col-lg-1 col-md-1 d-none d-md-block text-center">
+            <div class="separator-line"></div>
+          </div>
+          <div class="col-lg-2 col-md-3 text-center reasons-item">
+            <p class="reasons-text">100% Authentic Products</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Brand Partners Section -->
+    <section class="brand-section">
+      <div class="container">
+        <div class="brand-grid row justify-content-center align-items-center mb-4">
+          <div class="col-lg-2 col-md-3 col-6 text-center brand-item">
+            <img src="/img/KT_G-removebg-preview.png" 
+                 alt="KT&G" 
+                 class="brand-img"
+                 th:src="@{/img/KT_G-removebg-preview.png}" 
+                 onerror="this.src='https://placehold.co/200x79?text=KT%26G'">
+          </div>
+          <div class="col-lg-2 col-md-3 col-6 text-center brand-item">
+            <img src="/img/philip-morris-international-logo-removebg-preview.png" 
+                 alt="Philip Morris International" 
+                 class="brand-img"
+                 th:src="@{/img/philip-morris-international-logo-removebg-preview.png}" 
+                 onerror="this.src='https://placehold.co/200x200?text=PMI'">
+          </div>
+          <div class="col-lg-2 col-md-3 col-6 text-center brand-item">
+            <img src="/img/bat-customer-page_intro.png" 
+                 alt="BAT" 
+                 class="brand-img"
+                 th:src="@{/img/bat-customer-page_intro.png}" 
+                 onerror="this.src='https://placehold.co/200x150?text=BAT'">
+          </div>
+        </div>
+        
+        <!-- All Products Button -->
+        <div class="text-center mb-4">
+          <a href="/products" class="btn btn-falcon-primary btn-lg all-products-btn">All Products</a>
+        </div>
+        
+        <!-- Age Verification -->
+        <div class="age-verification text-center">
+          <p class="age-disclaimer">You must be over 18 to make a purchase Please read th FAQs &amp; Terms and Conditions page before ordering</p>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Shipping Information -->
+    <section class="shipping-info-section py-5">
+      <div class="container">
+        <div class="row justify-content-end">
+          <div class="col-lg-4">
+            <div class="shipping-info">
+              <h5 class="shipping-title">SHIPPING &amp; HANDLING FEES</h5>
+              <div class="shipping-text">
+                1 - 2 CARTONS: £12<br>
+                3 - 5 CARTONS: £8.5<br>
+                6 - 9 CARTONS: £5.5<br>
+                10+ CARTONS: FREE
+              </div>
+              <p class="shipping-title mt-3">Check T&amp;Cs page for more information</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </th:block>
+
+  <!-- Custom JavaScript -->
+  <th:block layout:fragment="script">
+    <script>
+      // Smooth scrolling for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+          });
+        });
+      });
+
+      // Add loading animation for brand images
+      document.querySelectorAll('.brand-img').forEach(img => {
+        img.addEventListener('load', function() {
+          this.style.opacity = '0';
+          this.style.transition = 'opacity 0.5s ease';
+          setTimeout(() => {
+            this.style.opacity = '1';
+          }, 100);
+        });
+      });
+    </script>
+  </th:block>
+</body>
+</html>

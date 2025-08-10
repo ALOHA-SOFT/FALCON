@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/admin/admin_layout}"
+      >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>옵션 등록</title>
+</head>
+<body layout:fragment="content">
+
+  <div class="container-fluid">
+    <!-- 페이지 헤더 -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">옵션 등록</h1>
+      <a href="/admin/options" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm">
+        <i class="fas fa-list fa-sm text-white-50"></i> 목록으로
+      </a>
+    </div>
+
+    <!-- 등록 폼 카드 -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">옵션 정보 입력</h6>
+      </div>
+      <div class="card-body">
+        <form id="optionForm" class="needs-validation" novalidate>
+          <!-- CSRF TOKEN -->
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+          
+          <div class="row">
+            <div class="col-md-8">
+
+                <!-- 옵션 그룹 선택 -->
+                <div class="mb-3">
+                  <label for="groupNo" class="form-label">옵션 그룹 <span class="text-danger">*</span></label>
+                  <select class="form-select" id="groupNo" name="groupNo" required>
+                    <option value="">옵션 그룹을 선택하세요</option>
+                    <option th:each="group : ${optionGroups}" 
+                            th:value="${group.no}" 
+                            th:text="${group.name}">
+                      옵션 그룹명
+                    </option>
+                  </select>
+                  <div class="invalid-feedback">옵션 그룹을 선택해주세요.</div>
+                    <div class="form-text">옵션이 속할 그룹을 선택하세요.</div>
+                </div>
+
+
+              <!-- 옵션명 -->
+              <div class="mb-3">
+                <label for="name" class="form-label">옵션명 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="name" name="name" required 
+                       maxlength="100" placeholder="옵션명을 입력하세요 (예: 색상, 크기, 용량)">
+                <div class="invalid-feedback">옵션명을 입력해주세요.</div>
+                <div class="form-text">상품의 옵션을 분류할 그룹명을 입력하세요.</div>
+              </div>
+
+              <!-- 가격 -->
+              <div class="mb-3">
+                <label for="price" class="form-label">가격 <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="price" name="price" required 
+                       min="0" step="1" placeholder="가격을 입력하세요">
+                <div class="invalid-feedback">가격을 입력해주세요.</div>
+                <div class="form-text">옵션의 추가 가격을 입력하세요. (원 단위)</div>
+              </div>
+
+              <!-- 재고 -->
+              <div class="mb-3">
+                <label for="stock" class="form-label">재고 <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="stock" name="stock" required 
+                       min="0" step="1" placeholder="재고 수량을 입력하세요">
+                <div class="invalid-feedback">재고 수량을 입력해주세요.</div>
+                <div class="form-text">옵션의 재고 수량을 입력하세요.</div>
+              </div>
+
+              <!-- 버튼 영역 -->
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="button" class="btn btn-secondary me-md-2" onclick="history.back()">취소</button>
+                <button type="submit" class="btn btn-primary">등록</button>
+              </div>
+            </div>
+
+            <!-- 도움말 영역 -->
+            <div class="col-md-4">
+              <div class="card bg-light">
+                <div class="card-body">
+                  <h6 class="card-title">등록 안내</h6>
+                  <ul class="card-text small">
+                    <li>옵션은 상품의 옵션을 분류하는 용도로 사용됩니다.</li>
+                    <li>예시: "색상", "크기", "용량", "재질" 등</li>
+                    <li>등록 후 개별 옵션들을 이 그룹에 추가할 수 있습니다.</li>
+                    <li>그룹명은 고객에게 표시되므로 명확하게 작성해주세요.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    // 폼 제출
+    document.getElementById('optionForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      // 폼 유효성 검사
+      if (!this.checkValidity()) {
+        this.classList.add('was-validated');
+        return;
+      }
+
+      // 폼 데이터 수집
+      const formData = {};
+      const formElements = new FormData(this);
+      for (let [key, value] of formElements.entries()) {
+        formData[key] = value;
+      }
+
+      // 등록 요청
+      $ajax({
+        url: '/api/products/option',
+        type: 'POST',
+        data: formData
+      }).then(response => {
+        $alert('성공', '옵션이 성공적으로 등록되었습니다.', 'success').then(() => {
+          window.location.href = '/admin/options';
+        });
+      }).catch(error => {
+        $alert('오류', '등록 중 오류가 발생했습니다. 다시 시도해주세요.', 'error');
+      });
+    });
+
+    // Bootstrap validation
+    (function() {
+      'use strict';
+      window.addEventListener('load', function() {
+        const forms = document.getElementsByClassName('needs-validation');
+        Array.prototype.filter.call(forms, function(form) {
+          form.addEventListener('submit', function(event) {
+            if (form.checkValidity() === false) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+          }, false);
+        });
+      }, false);
+    })();
+  </script>
+
+</body>
+</html>
+</body>
+</html>

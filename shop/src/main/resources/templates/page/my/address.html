@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/user/my_layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>배송지 관리 - 분수마켓</title>
+</head>
+<body layout:fragment="content">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">배송지 관리</h5>
+      <button class="btn btn-primary btn-sm btn-create" data-bs-toggle="modal" data-bs-target="#addShipmentModal">+ 새 배송지 추가</button>
+    </div>
+    <div class="card-body">
+      <!-- 배송지 목록 -->
+      <div id="address-list">
+        <th:block th:if="${#lists.isEmpty(addressList)}">
+          <div class="text-center py-5 text-muted">
+            <i class="material-icons" style="font-size: 48px; color: #ccc;">local_shipping</i>
+            <p class="mt-3">등록된 배송지가 없습니다.</p>
+            <button class="btn btn-primary btn-create" data-bs-toggle="modal" data-bs-target="#addShipmentModal">+ 새 배송지 추가</button>
+          </div>
+        </th:block>
+        <th:block th:each="address : ${addressList}">
+          <div class="border p-3 mb-3 rounded address-item">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <span th:if="${address.isMain}" class="badge bg-success me-2">기본</span>
+                <strong th:text="${address.recipient}">수령인</strong>
+                <span class="text-muted" th:text="${address.tel}">010-0000-0000</span>
+                <div class="text-muted small">
+                  <span class="badge bg-secondary" th:text="${address.postcode}">우편번호</span>
+                </div>
+                <div class="text-muted small">
+                  <span th:text="${address.address} + ' ' + ${address.addressDetail}">주소</span>
+                </div>
+                <div class="text-muted small">
+                  <span th:text="${address.addressDong} + ' ' + ${address.addressDetail}">주소</span>
+                </div>
+                <div class="text-muted small" th:if="${address.deliveryRequest}" th:text="'요청사항: ' + ${address.deliveryRequest}">요청사항</div>
+              </div>
+              <div>
+                <button class="btn btn-outline-secondary btn-sm me-1" id="btn-update">수정</button>
+                <button class="btn btn-outline-danger btn-sm">삭제</button>
+              </div>
+            </div>
+          </div>
+        </th:block>
+      </div>
+    </div>
+  </div>
+
+  <!-- 배송지 추가/수정 모달 -->
+  <div class="modal fade" id="addShipmentModal" tabindex="-1" aria-labelledby="addShipmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addShipmentModalLabel">배송지 추가</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="address-form">
+            <input type="hidden" name="userNo" th:value="${userNo}">
+            <input type="hidden" name="id" id="id">
+            <div class="mb-2">
+              <label class="form-label">수령인</label>
+              <input type="text" class="form-control" name="recipient" id="recipient" required>
+            </div>
+            <div class="mb-2">
+              <label class="form-label">연락처</label>
+              <input type="tel" class="form-control" name="tel" id="tel" required>
+            </div>
+            <div class="mb-2">
+              <label class="form-label">주소</label>
+              <div class="input-group">
+                <input type="text" id="postcode" class="form-control" name="postcode" placeholder="우편번호" readonly>
+                <button type="button" class="btn btn-outline-secondary" onclick="execDaumPostcode()">주소 찾기</button>
+              </div>
+              <input type="text" class="form-control mt-2" name="address" id="address" placeholder="도로명주소" readonly required>
+              <input type="text" class="form-control mt-2" name="addressDong" id="addressDong" placeholder="지번주소" readonly>
+            </div>
+            <!-- Daum Postcode CDN -->
+            <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+            <script>
+              function execDaumPostcode() {
+                new daum.Postcode({
+                  oncomplete: function(data) {
+                    document.getElementById('postcode').value = data.zonecode;
+                    document.getElementById('address').value = data.roadAddress;
+                    document.getElementById('addressDong').value = data.jibunAddress;
+                  }
+                }).open();
+              }
+            </script>
+            <div class="mb-2">
+              <label class="form-label">상세주소</label>
+              <input type="text" class="form-control" name="addressDetail" id="addressDetail" placeholder="상세주소 (아파트, 동호수 등)" required>
+            </div>
+            <div class="mb-2">
+              <label class="form-label">요청사항</label>
+                <select id="deliveryRequestSelect" class="form-select mt-2">
+                  <option value="">배송 요청사항을 선택해주세요</option>
+                  <option value="부재 시 문 앞에 놓아주세요">부재 시 문 앞에 놓아주세요</option>
+                  <option value="경비실에 맡겨주세요">경비실에 맡겨주세요</option>
+                  <option value="택배함에 넣어주세요">택배함에 넣어주세요</option>
+                  <option value="벨 누르지 마세요">벨 누르지 마세요</option>
+                  <option value="배송 전에 연락주세요">배송 전에 연락주세요</option>
+                  <option value="custom">직접 입력</option>
+                </select>
+                <input type="text" class="form-control d-none" name="deliveryRequest" id="deliveryRequest" placeholder="배송 요청사항 (선택)" readonly>
+                <script>
+                document.getElementById('deliveryRequestSelect').addEventListener('change', function() {
+                  const selectedValue = this.value;
+                  const deliveryRequestInput = document.getElementById('deliveryRequest');
+                  
+                  if (selectedValue === 'custom') {
+                    deliveryRequestInput.removeAttribute('readonly');
+                    deliveryRequestInput.classList.remove('d-none');
+                    deliveryRequestInput.value = '';
+                    deliveryRequestInput.focus();
+                  } else if (selectedValue === '') {
+                    deliveryRequestInput.value = '';
+                    deliveryRequestInput.classList.add('d-none');
+                  } else {
+                    deliveryRequestInput.value = selectedValue;
+                    deliveryRequestInput.classList.add('d-none');
+                    
+                  }
+                });
+              </script>
+            </div>
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" id="isMain" name="isMain">
+              <label class="form-check-label" for="isMain">기본 배송지로 설정</label>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">저장</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script th:inline="javascript">
+    // 서버에서 addressList를 window에 노출 (타임리프 렌더링 시)
+    window.addressList = [[${addressList}]];
+  </script>
+
+  <script>
+    
+
+    // 폼 초기화 함수
+    function resetShipmentForm() {
+      const form = document.getElementById('address-form');
+      form.reset();
+      delete form.dataset.editId;
+      form.querySelector('[name="isMain"]').checked = false;
+    }
+
+    // 새 배송지 추가 버튼 클릭 이벤트
+    document.querySelector('.btn-create').addEventListener('click', function() {
+      resetShipmentForm();
+    });
+
+    // 배송지 등록/수정 폼 처리
+    document.getElementById('address-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const addressData = {
+        userNo: formData.get('userNo') || '',
+        recipient: formData.get('recipient') || '',
+        tel: formData.get('tel') || '',
+        postcode: formData.get('postcode') || '',
+        address: formData.get('address') || '',
+        addressDong: formData.get('addressDong') || '',
+        addressDetail: formData.get('addressDetail') || '',
+        deliveryRequest: formData.get('deliveryRequest') || '',
+        isMain: formData.get('isMain') === 'on',
+      };
+      if (formData.get('id')) {
+        addressData.id = formData.get('id');
+      }
+      const isEdit = formData.get('id') != null && formData.get('id') != '';
+      try {
+        await $ajax({
+          url: '/api/users/address',
+          type: isEdit ? 'PUT' : 'POST',
+          data: addressData
+        });
+        await $toast({
+          title: isEdit ? '배송지가 수정되었습니다.' : '배송지가 등록되었습니다.',
+          icon: 'success'
+        });
+        // 모달 닫기
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addShipmentModal'));
+        modal.hide();
+        location.reload();
+      } catch (error) {
+        $alert('오류', isEdit ? '배송지 수정에 실패했습니다.' : '배송지 등록에 실패했습니다.', 'error');
+      }
+    });
+
+    // 수정 버튼 이벤트
+    document.querySelectorAll('#btn-update').forEach(function(btn, idx) {
+      btn.addEventListener('click', function() {
+        const address = window.addressList[idx];
+        console.dir(address);
+        document.querySelector('#id').value = address.id || '';
+        document.querySelector('#recipient').value = address.recipient || '';
+        document.querySelector('#tel').value = address.tel || '';
+        document.querySelector('#postcode').value = address.postcode || '';
+        document.querySelector('#address').value = address.address || '';
+        document.querySelector('#addressDong').value = address.addressDong || '';
+        document.querySelector('#addressDetail').value = address.addressDetail || '';
+        document.querySelector('#deliveryRequest').value = address.deliveryRequest || '';
+        document.querySelector('#deliveryRequestSelect').value = address.deliveryRequest || '';
+        // deliveryRequest 값이 select 옵션에 없으면 직접 입력 필드로 설정
+        const deliveryRequestSelect = document.querySelector('#deliveryRequestSelect');
+        const deliveryRequestInput = document.querySelector('#deliveryRequest');
+        const selectOptions = Array.from(deliveryRequestSelect.options).map(option => option.value);
+
+        if (address.deliveryRequest && !selectOptions.includes(address.deliveryRequest)) {
+          deliveryRequestSelect.value = 'custom';
+          deliveryRequestInput.classList.remove('d-none');
+          deliveryRequestInput.removeAttribute('readonly');
+        } else if (address.deliveryRequest) {
+          deliveryRequestInput.classList.add('d-none');
+        } else {
+          deliveryRequestInput.classList.add('d-none');
+        }
+        document.querySelector('#isMain').checked = address.isMain === true;
+        
+        // 모달 오픈
+        const modal = new bootstrap.Modal(document.getElementById('addShipmentModal'));
+        modal.show();
+      });
+    });
+
+    // 삭제 버튼 이벤트
+    document.querySelectorAll('.address-item .btn-outline-danger').forEach(function(btn, idx) {
+      btn.addEventListener('click', async function() {
+        const address = window.addressList[idx];
+        console.dir(address);
+        if (address.isMain) {
+          $alert('안내', '기본 배송지는 삭제할 수 없습니다.', 'warning');
+          return;
+        }
+        const result = await $confirm('삭제 확인', '정말 이 배송지를 삭제하시겠습니까?', 'warning', '삭제', '취소');
+        if (!result.isConfirmed) return;
+        try {
+          await $ajax({
+            url: '/api/users/address/' + address.id,
+            type: 'DELETE',
+          });
+          await $toast({ title: '배송지가 삭제되었습니다.', icon: 'success' });
+          location.reload();
+        } catch (error) {
+          $alert('오류', '배송지 삭제에 실패했습니다.', 'error');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

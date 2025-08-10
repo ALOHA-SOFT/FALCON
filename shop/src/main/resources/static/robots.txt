@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# 검색엔진이 크롤링하지 않았으면 하는 경로
+Disallow: /admin/
+Disallow: /api/
+Disallow: /pay/
+Disallow: /my/
+Disallow: /login
+Disallow: /join
+
+# Sitemap 위치
+Sitemap: https://foutainmarket.com/sitemap.xml

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.falcon.shop.mapper.system.SeqMapper">
+
+    <resultMap id="SeqMap" type="Seq">
+        <id property="no" column="no"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="seq" column="seq"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <collection property="seqGroups" ofType="SeqGroups" column="seq_group_no" select="selectSeqGroup"/>
+    </resultMap>
+
+    <select id="list" resultType="Seq">
+        SELECT *
+        FROM seq
+        WHERE 1=1
+        <if test="queryParams.search != null and queryParams.search != ''">
+            AND name LIKE CONCAT('%', #{queryParams.search}, '%')
+        </if>
+        ORDER BY no DESC
+    </select>
+
+    <select id="selectSeqGroup" resultType="SeqGroups">
+        SELECT *
+        FROM seq_groups
+        WHERE no = #{seq_group_no}
+    </select>
+
+</mapper>

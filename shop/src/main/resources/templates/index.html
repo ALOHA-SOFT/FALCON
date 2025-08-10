@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/user/main_layout}"
+      >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>분수마켓</title>
+  <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&display=swap" rel="stylesheet">
+  <style>
+    /* 썸네일 이미지 호버 효과 */
+    .thumb-img {
+      position: relative;
+      overflow: hidden;
+      display: block;
+    }
+    
+    .thumb-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* 비디오 위 상품 보기 버튼 */
+    .video-overlay-btn {
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      color: #333;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      z-index: 20;
+      transition: all 0.3s ease;
+      opacity: 0;
+      visibility: hidden;
+    }
+    
+    .thumb-img:hover .video-overlay-btn {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .video-overlay-btn:hover {
+      background: rgba(255, 255, 255, 1);
+      transform: translateX(-50%) translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .thumb-img:hover .thumb-video {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .thumb-video iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    
+    /* Shorts 비디오를 위한 세로 비율 최적화 */
+    .thumb-video.shorts-video iframe {
+      width: auto;
+      height: 100%;
+      max-width: 100%;
+      aspect-ratio: 9/16;
+      margin: 0 auto;
+    }
+    
+    /* 카드 이미지 비율 유지 */
+    .p-img {
+      aspect-ratio: 234/400;
+      object-fit: cover;
+    }
+    
+    /* 호버 시 이미지 약간 확대 효과 */
+    .thumb-img .p-img {
+      transition: transform 0.3s ease;
+    }
+    
+    .thumb-img:hover .p-img {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body layout:fragment="content">
+
+  <!-- Service Features Section -->
+  <section class="service-features">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <h2 class="service-title">REASONS TO CHOOSE OUR SERVICE</h2>
+        </div>
+      </div>
+      <div class="row justify-content-center align-items-center">
+        <div class="col-lg-2 col-md-3 text-center reasons-item">
+          <p class="reasons-text">Guaranteed Delivery* Or Your Money Back</p>
+        </div>
+        <div class="col-lg-1 col-md-1 d-none d-md-block text-center">
+          <div class="separator-line"></div>
+        </div>
+        <div class="col-lg-2 col-md-3 text-center reasons-item">
+          <p class="reasons-text">Fast Delivery 2 - 10 Working Days</p>
+        </div>
+        <div class="col-lg-1 col-md-1 d-none d-md-block text-center">
+          <div class="separator-line"></div>
+        </div>
+        <div class="col-lg-2 col-md-3 text-center reasons-item">
+          <p class="reasons-text">100% Authentic Products</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brand Partners Section -->
+  <section class="brand-section">
+    <div class="container">
+      <div class="brand-grid row justify-content-center align-items-center mb-4">
+        <div class="col-lg-2 col-md-3 col-6 text-center brand-item">
+          <img src="/img/KT_G-removebg-preview.png" 
+                alt="KT&G" 
+                class="brand-img"
+                th:src="@{/img/KT_G-removebg-preview.png}" 
+                onerror="this.src='https://placehold.co/200x79?text=KT%26G'">
+        </div>
+        <div class="col-lg-2 col-md-3 col-6 text-center brand-item">
+          <img src="/img/philip-morris-international-logo-removebg-preview.png" 
+                alt="Philip Morris International" 
+                class="brand-img"
+                th:src="@{/img/philip-morris-international-logo-removebg-preview.png}" 
+                onerror="this.src='https://placehold.co/200x200?text=PMI'">
+        </div>
+        <div class="col-lg-2 col-md-3 col-6 text-center brand-item">
+          <img src="/img/bat-customer-page_intro.png" 
+                alt="BAT" 
+                class="brand-img"
+                th:src="@{/img/bat-customer-page_intro.png}" 
+                onerror="this.src='https://placehold.co/200x150?text=BAT'">
+        </div>
+      </div>
+      
+      <!-- All Products Button -->
+      <div class="text-center my-5 py-5">
+        <a href="/products" class="all-products-btn">All Products</a>
+      </div>
+      
+      <!-- Age Verification -->
+      <div class="age-verification text-center">
+        <p class="age-disclaimer">You must be over 18 to make a purchase Please read th FAQs &amp; Terms and Conditions page before ordering</p>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Shipping Information -->
+  <!-- <section class="shipping-info-section py-5 m-auto">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-4">
+          <div class="shipping-info">
+            <h5 class="shipping-title">SHIPPING &amp; HANDLING FEES</h5>
+            <div class="shipping-text">
+              1 - 2 CARTONS: £12<br>
+              3 - 5 CARTONS: £8.5<br>
+              6 - 9 CARTONS: £5.5<br>
+              10+ CARTONS: FREE
+            </div>
+            <p class="shipping-title mt-3">Check T&amp;Cs page for more information</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section> -->
+
+
+  <!-- 메인 배너 슬라이드 - swiper -->
+  <div class="container-fluid p-0 d-none">
+    <!-- Swiper -->
+    <div class="swiper main-slide">
+      <div class="swiper-wrapper">
+        <th:block th:if="${mainBanners != null and !#lists.isEmpty(mainBanners)}" th:each="banner : ${mainBanners}">
+          <div class="swiper-slide position-relative">
+            <a th:href="${banner.link}" target="_blank">
+              <img th:src="${ banner.url }" th:alt="${banner.name}" style="width:100%;">
+              <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center align-items-center" style="background: rgba(0,0,0,0.3);">
+                <div class="card bg-dark bg-opacity-25 border-0 px-4 py-5 text-light" style="width: 100%; max-width: 80%;">
+                  <h2 class="mb-4 text-center fs-1" th:text="${banner.mainTitle}" style="font-weight:bold;"></h2>
+                  <p class="mb-0 text-center fs-2" th:text="${banner.subTitle}"></p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </th:block>
+        <th:block th:if="${mainBanners == null or #lists.isEmpty(mainBanners)}">
+          <div class="swiper-slide">
+            <img src="https://placehold.co/1900x800?text=Banner+01" alt="기본 배너 이미지" style="width:100%;">
+            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center align-items-center" style="background: rgba(0,0,0,0.3);">
+                <div class="card bg-white bg-opacity-75 border-0 px-4 py-3" style="width: 100%; max-width: 80%;">
+                  <h2 class="mb-2 text-center fs-1" style="font-weight:bold;">메인 타이틀 입니다.</h2>
+                  <p class="mb-0 text-center fs-2">서브 타이틀 입니다.</p>
+                </div>
+              </div>
+          </div>
+          <div class="swiper-slide">
+            <img src="https://placehold.co/1900x800?text=Banner+02" alt="기본 배너 이미지" style="width:100%;">
+          </div>
+          <div class="swiper-slide">
+            <img src="https://placehold.co/1900x800?text=Banner+03" alt="기본 배너 이미지" style="width:100%;">
+          </div>
+        </th:block>
+      </div>
+      <!-- Add Pagination -->
+      <div class="swiper-pagination"></div>
+      <!-- Add Navigation -->
+      <!-- <div class="swiper-button-next"></div> -->
+      <!-- <div class="swiper-button-prev"></div> -->
+    </div>
+    <script>
+      var swiper = new Swiper(".main-slide", {
+        loop: true,
+        // effect: "fade",
+        speed: 3000,
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
+        // navigation: {
+        //   nextEl: ".swiper-button-next",
+        //   prevEl: ".swiper-button-prev",
+        // },
+        autoplay: {
+          delay: 5000,
+          disableOnInteraction: false,
+        },
+      });
+    </script>
+  </div>
+
+  <!-- 메인 팝업 3:4 모달 (Swiper 슬라이드) -->
+  <div class="modal" id="mainPopupModal" tabindex="-1" aria-labelledby="mainPopupModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered d-flex justify-content-center" style="max-width:400px; margin: 0 auto;">
+      <div class="modal-content" style="border-radius:1rem; overflow:hidden;">
+        <div class="modal-body p-0" style="background:#000;">
+          <div class="swiper main-popup-swiper" style="width:100%; aspect-ratio:3/4; background:#000;">
+            <div class="swiper-wrapper">
+              <th:block th:each="popup : ${mainPopups}">
+                <div class="swiper-slide d-flex flex-column justify-content-center align-items-center" style="background:#000;">
+                  <a th:if="${popup.link != null && popup.link != ''}" th:href="${popup.link}" target="_blank" style="display:block;width:100%;height:100%;">
+                    <img th:src="${popup.url != null ? popup.url : 'https://placehold.co/400x530?text=Popup'}" th:alt="${popup.name != null ? popup.name : '기본 배너 이미지'}" style="width:100%;height:100%;object-fit:cover;" />
+                  </a>
+                  <img th:if="${popup.link == null || popup.link == ''}" th:src="${popup.url != null ? popup.url : 'https://placehold.co/400x530?text=Popup'}" th:alt="${popup.name != null ? popup.name : '기본 배너 이미지'}" style="width:100%;height:100%;object-fit:cover;" />
+                </div>
+              </th:block>
+            </div>
+            <div class="swiper-pagination"></div>
+          </div>
+        </div>
+        <div class="modal-footer justify-content-between align-items-center bg-light py-2 px-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="1" id="dontShowToday">
+            <label class="form-check-label small" for="dontShowToday">오늘 하루 보지 않기</label>
+          </div>
+          <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal" id="closePopupModal">닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // 쿠키 유틸
+  function setCookie(name, value, hours) {
+    var d = new Date();
+    d.setTime(d.getTime() + (hours*60*60*1000));
+    document.cookie = name + '=' + value + ';expires=' + d.toUTCString() + ';path=/';
+  }
+  function getCookie(name) {
+    var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return v ? v[2] : null;
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var hasPopups = [[${mainPopups != null and !#lists.isEmpty(mainPopups)}]]
+    if (hasPopups && !getCookie('hideMainPopup')) {
+      var popupModal = new bootstrap.Modal(document.getElementById('mainPopupModal'));
+      popupModal.show();
+    }
+    // Swiper for popup
+    if (hasPopups) {
+      new Swiper('.main-popup-swiper', {
+        loop: true,
+        pagination: { el: '.main-popup-swiper .swiper-pagination', clickable: true },
+        autoplay: { delay: 2500, disableOnInteraction: false },
+      });
+    }
+    // 오늘 하루 보지 않기
+    document.getElementById('dontShowToday')?.addEventListener('change', function(e) {
+      if (e.target.checked) {
+        setCookie('hideMainPopup', '1', 24); // 24시간
+      } else {
+        setCookie('hideMainPopup', '', -1); // 삭제
+      }
+    });
+    // 모달 닫힐 때 체크되어 있으면 쿠키 저장
+    document.getElementById('mainPopupModal')?.addEventListener('hidden.bs.modal', function() {
+      if (document.getElementById('dontShowToday')?.checked) {
+        setCookie('hideMainPopup', '1', 24);
+      }
+    });
+  });
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+<script>
+  // 팝업 모달 자동 오픈 (쿠키 체크)
+  document.addEventListener('DOMContentLoaded', function() {
+    function getCookie(name) {
+      const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+      return v ? v[2] : null;
+    }
+    if (!getCookie('hideMainPopup')) {
+      var popupModal = document.getElementById('mainPopupModal');
+      if (popupModal) {
+        var modal = new bootstrap.Modal(popupModal);
+        modal.show();
+      }
+    }
+    // Swiper for popup
+    if (document.querySelector('.popup-swiper')) {
+      new Swiper('.popup-swiper', {
+        loop: true,
+        pagination: {
+          el: '.popup-swiper .swiper-pagination',
+          clickable: true,
+        },
+      });
+    }
+    // 오늘 하루 보지 않기
+    var todayBtn = document.getElementById('popupTodayClose');
+    if (todayBtn) {
+      todayBtn.addEventListener('click', function() {
+        var d = new Date();
+        d.setHours(23,59,59,999); // 오늘 23:59까지
+        document.cookie = 'hideMainPopup=1; path=/; expires=' + d.toUTCString();
+        var popupModal = bootstrap.Modal.getInstance(document.getElementById('mainPopupModal'));
+        if (popupModal) popupModal.hide();
+      });
+    }
+  });
+
+  // 팝업 모달 닫기 버튼
+  document.getElementById('closePopupModal')?.addEventListener('click', function() {
+    var popupModal = bootstrap.Modal.getInstance(document.getElementById('mainPopupModal'));
+    if (popupModal) {
+      popupModal.hide();
+      document.querySelector('.modal-backdrop')?.remove();
+    }
+  });
+</script>
+
+  <script>
+    // YouTube API 로드 (상품 호버용)
+    var youtubeAPIReady = false;
+    var playersToInit = [];
+
+    function loadYouTubeAPI() {
+      if (window.YT) {
+        youtubeAPIReady = true;
+        initAllPlayers();
+        return;
+      }
+      
+      var tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    }
+
+    function onYouTubeIframeAPIReady() {
+      youtubeAPIReady = true;
+      initAllPlayers();
+    }
+
+    function initAllPlayers() {
+      playersToInit.forEach(function(playerData) {
+        initPlayer(playerData.containerId, playerData.videoId, playerData.isShorts);
+      });
+      playersToInit = [];
+    }
+
+    function extractVideoId(url) {
+      if (!url) return null;
+      // YouTube 일반 비디오와 Shorts 모두 지원
+      var match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([A-Za-z0-9_-]{11})/);
+      return match ? match[1] : null;
+    }
+
+    function isYouTubeShorts(url) {
+      return url && url.includes('/shorts/');
+    }
+
+    function initPlayer(containerId, videoId, isShorts) {
+      if (!videoId || !youtubeAPIReady) return;
+      
+      new YT.Player(containerId, {
+        width: '100%',
+        height: '100%',
+        videoId: videoId,
+        playerVars: {
+          'autoplay': 1,
+          'controls': 0,
+          'rel': 0,
+          'mute': 1,
+          'loop': 1,
+          'playlist': videoId,
+          'modestbranding': 1,
+          'showinfo': 0,
+          'fs': 0,
+          'iv_load_policy': 3
+        }
+      });
+    }
+
+    function setupHoverEffects() {
+      document.querySelectorAll('.thumb-img').forEach(function(thumbImg) {
+        var videoContainer = thumbImg.querySelector('.thumb-video');
+        if (!videoContainer) return;
+        
+        var videoUrl = videoContainer.getAttribute('data-video');
+        var videoId = extractVideoId(videoUrl);
+        var isShorts = isYouTubeShorts(videoUrl);
+        
+        if (!videoId) {
+          videoContainer.style.display = 'none';
+          return;
+        }
+
+        // Shorts인 경우 클래스 추가
+        if (isShorts) {
+          videoContainer.classList.add('shorts-video');
+        }
+
+        var playerId = 'player-' + Math.random().toString(36).substr(2, 9);
+        var playerDiv = document.createElement('div');
+        playerDiv.id = playerId;
+        playerDiv.style.width = '100%';
+        playerDiv.style.height = '100%';
+        videoContainer.appendChild(playerDiv);
+
+        var player = null;
+        var isHovered = false;
+
+        thumbImg.addEventListener('mouseenter', function(e) {
+          e.preventDefault();
+          isHovered = true;
+          
+          if (!player) {
+            if (youtubeAPIReady) {
+              initPlayer(playerId, videoId, isShorts);
+            } else {
+              playersToInit.push({ containerId: playerId, videoId: videoId, isShorts: isShorts });
+              loadYouTubeAPI();
+            }
+          }
+        });
+
+        thumbImg.addEventListener('mouseleave', function(e) {
+          e.preventDefault();
+          isHovered = false;
+        });
+
+        // 클릭 이벤트는 원래 기능 유지 (단, 버튼 클릭은 제외)
+        thumbImg.addEventListener('click', function(e) {
+          // 버튼 클릭 시에는 이벤트 전파 중지
+          if (e.target.classList.contains('video-overlay-btn')) {
+            e.stopPropagation();
+            return;
+          }
+          
+          if (!isHovered) return;
+          // 기본 링크 동작 허용
+        });
+      });
+    }
+
+    // DOM 로드 완료 후 실행
+    document.addEventListener('DOMContentLoaded', function() {
+      setupHoverEffects();
+    });
+  </script>
+
+
+</body>
+</html>

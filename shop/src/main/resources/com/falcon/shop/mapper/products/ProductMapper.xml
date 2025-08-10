@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.falcon.shop.mapper.products.ProductMapper">
+
+    <!-- ResultMap for Products -->
+    <resultMap id="ProductsMap" type="Products">
+        <id property="no" column="no"/>
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="stock" column="stock"/>
+        <result property="categoryNo" column="category_no"/>
+        <result property="categoryLargeNo" column="category_large_no"/>
+        <result property="price" column="price"/>
+        <result property="shipPrice" column="ship_price"/>
+        <result property="shipMsg" column="ship_msg"/>
+        <result property="summary" column="summary"/>
+        <result property="content" column="content"/>
+        <result property="isNew" column="is_new"/>
+        <result property="isBest" column="is_best"/>
+        <result property="isSoldOut" column="is_sold_out"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <association property="category" column="category_no" javaType="Category" select="selectCategory"></association>
+        <association property="categoryLarge" column="category_large_no" javaType="CategoryLarge" select="selectCategoryLarge"></association>
+        <association property="thumbImg" column="no" javaType="Media" select="selectThumbImg"></association>
+        <association property="mainImg" column="no" javaType="Media" select="selectMainImg"></association>
+        <association property="thumbVideo" column="no" javaType="Media" select="selectThumbVideo"></association>
+        <association property="mainVideo" column="no" javaType="Media" select="selectMainVideo"></association>
+        <collection property="mediaList" column="no" ofType="Media" select="selectMediaList"></collection>
+        <collection property="imgList" column="no" ofType="Media" select="selectImgList"></collection>
+    </resultMap>
+    <!-- <resultMap> 내부에 <id>, <result>가 먼저 오고, 그 다음에 <association>, <collection>이 와야 합니다. -->
+
+    <select id="listWithParams" resultMap="ProductsMap">
+        SELECT *
+        FROM products
+        WHERE 1=1
+        <if test="categoryNo != null">
+            AND category_no = #{categoryNo}
+        </if>
+        <if test="categoryLargeNo != null">
+            AND category_large_no = #{categoryLargeNo}
+        </if>
+        <if test="queryParams.search != null and queryParams.search != ''">
+            AND (name LIKE CONCAT('%', #{queryParams.search}, '%') 
+                OR summary LIKE CONCAT('%', #{queryParams.search}, '%')
+                OR content LIKE CONCAT('%', #{queryParams.search}, '%'))
+        </if>
+        <if test="isNew != null">
+            AND is_new = 1
+        </if>
+        <if test="isBest != null">
+            AND is_best = 1
+        </if>
+        <if test="queryParams.filter == null or queryParams.filter == '' or queryParams.filter == 0">
+            ORDER BY no DESC, created_at DESC
+        </if>
+        <if test="queryParams.filter != null and queryParams.filter != ''">
+            <choose>
+                <when test="queryParams.filter == 1">
+                    ORDER BY created_at DESC
+                </when>
+                <when test="queryParams.filter == 2">
+                    ORDER BY price ASC
+                </when>
+                <when test="queryParams.filter == 3">
+                    ORDER BY price DESC
+                </when>
+                <when test="queryParams.filter == 4">
+                    ORDER BY (
+                        SELECT COUNT(*)
+                        FROM order_item
+                        WHERE products.no = order_item.product_no
+                        GROUP BY products.no
+                    ) DESC
+                </when>
+            </choose>
+        </if>
+    </select>
+
+    <!-- 카테고리 -->
+    <select id="selectCategory" resultType="Category">
+        SELECT *
+        FROM category
+        WHERE no = #{category_no}
+    </select>
+    <!-- 대분류 -->
+    <select id="selectCategoryLarge" resultType="CategoryLarge">
+        SELECT *
+        FROM category_large
+        WHERE no = #{category_large_no}
+    </select>
+
+
+    <!-- Media 관련 select 쿼리들 -->
+    <select id="selectMediaList" resultType="Media">
+        SELECT *
+        FROM media
+        WHERE product_no = #{no}
+    </select>
+
+    <select id="selectImgList" resultType="Media">
+        SELECT *
+        FROM media
+        WHERE 
+                product_no = #{no} 
+            AND type = '이미지' 
+            AND is_thumb = 0
+            AND is_main = 0
+    </select>
+
+    <select id="selectThumbImg" resultType="Media">
+        SELECT *
+        FROM media
+        WHERE product_no = #{no} AND type = '이미지' AND is_thumb = 1
+        LIMIT 1
+    </select>
+
+    <select id="selectMainImg" resultType="Media">
+        SELECT *
+        FROM media
+        WHERE product_no = #{no} AND type = '이미지' AND is_main = 1
+        LIMIT 1
+    </select>
+
+    <select id="selectThumbVideo" resultType="Media">
+        SELECT *
+        FROM media
+        WHERE product_no = #{no} AND type = '동영상' AND is_thumb = 1
+        LIMIT 1
+    </select>
+
+    <select id="selectMainVideo" resultType="Media">
+        SELECT *
+        FROM media
+        WHERE product_no = #{no} AND type = '동영상' AND is_main = 1
+        LIMIT 1
+    </select>
+
+
+    <select id="selectById" resultMap="ProductsMap">
+        SELECT *
+        FROM products
+        WHERE id = #{id}
+    </select>
+
+
+    <!-- 관련 상품 -->
+    <select id="relatedList" resultMap="ProductsMap">
+        SELECT *
+        FROM products
+        WHERE category_no = #{categoryNo}
+        ORDER BY RAND()
+        LIMIT 20
+    </select>
+
+    <!-- 랜덤 상품 -->
+    <select id="randomList" resultMap="ProductsMap">
+        SELECT *
+        FROM products
+        WHERE is_sold_out = 0
+        ORDER BY RAND()
+        LIMIT 20
+    </select>
+
+
+
+</mapper>
