@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/admin/admin_layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>이메일 발송 내역</title>
+</head>
+<body layout:fragment="content">
+
+  <div class="container-fluid">
+    <!-- 페이지 헤더 -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">이메일 발송 내역</h1>
+      <a href="/admin/email/create" class="d-none d-sm-inline-block btn btn-primary shadow-sm">
+        <i class="material-icons-two-tone">add</i>
+        이메일 발송
+      </a>
+    </div>
+
+    <!-- 이메일 목록 카드 -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">이메일 발송 목록</h6>
+        <div class="d-flex justify-content-end align-items-center">
+          <span class="text-muted">total <strong th:text="${#numbers.formatInteger(pagination.total, 0, 'COMMA')}">0</strong></span>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- 검색 영역 -->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <div class="input-group">
+              <input type="text" class="form-control" id="searchInput" placeholder="수신자 이메일 또는 제목 검색" th:value="${param.search}">
+              <button class="btn btn-outline-secondary" type="button" id="searchBtn">
+                <i class="material-icons-two-tone">search</i> 검색
+              </button>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <select class="form-select" id="statusFilter">
+              <option value="">전체 상태</option>
+              <option value="PENDING">발송 대기</option>
+              <option value="SENT">발송 완료</option>
+              <option value="FAILED">발송 실패</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <select class="form-select" id="typeFilter">
+              <option value="">전체 타입</option>
+              <option value="ORDER">주문 관련</option>
+              <option value="PAYMENT">결제 관련</option>
+              <option value="MANUAL">수동 발송</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <select class="form-select" id="pageSizeSelect" onchange="changePageSize()">
+              <option value="10">10개씩</option>
+              <option value="20">20개씩</option>
+              <option value="50">50개씩</option>
+              <option value="100">100개씩</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 테이블 -->
+        <div>
+          <table class="table table-bordered" id="emailTable">
+            <thead class="table-light">
+              <tr>
+                <th width="3%">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="selectAll">
+                  </div>
+                </th>
+                <th width="8%">발송상태</th>
+                <th width="8%">발송타입</th>
+                <th width="20%">수신자</th>
+                <th width="25%">제목</th>
+                <th width="12%">발송일시</th>
+                <th width="12%">등록일시</th>
+                <th width="12%">관리</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="email, iterStat : ${pageInfo.list}">
+                <td>
+                  <div class="form-check">
+                    <input class="form-check-input email-checkbox" type="checkbox" 
+                           th:value="${email.id}" th:id="'check-' + ${email.id}">
+                  </div>
+                </td>
+                <td>
+                  <span class="badge" 
+                        th:classappend="${email.sendStatus == 'SENT'} ? 'bg-success' : (${email.sendStatus == 'FAILED'} ? 'bg-danger' : 'bg-warning')"
+                        th:text="${email.sendStatus == 'SENT'} ? '발송완료' : (${email.sendStatus == 'FAILED'} ? '발송실패' : '발송대기')">
+                    발송대기
+                  </span>
+                </td>
+                <td>
+                  <span class="badge bg-info" th:text="${email.sendType ?: '일반'}">일반</span>
+                </td>
+                <td>
+                  <div>
+                    <strong th:text="${email.recipientName ?: ''}">김고객</strong>
+                    <br>
+                    <small class="text-muted" th:text="${email.recipientEmail}">customer@example.com</small>
+                  </div>
+                </td>
+                <td th:text="${email.subject}">주문 확인 안내</td>
+                <td th:text="${email.sendAt != null ? #dates.format(email.sendAt, 'yyyy-MM-dd HH:mm') : '-'}">2024-01-01 10:00</td>
+                <td th:text="${#dates.format(email.createdAt, 'yyyy-MM-dd HH:mm')}">2024-01-01 10:00</td>
+                <td>
+                  <div class="dropdown">
+                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" 
+                            th:id="'dropdownMenuButton-' + ${email.id}" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="material-icons-two-tone">more_vert</i>
+                    </button>
+                    <ul class="dropdown-menu" th:aria-labelledby="'dropdownMenuButton-' + ${email.id}">
+                      <li>
+                        <a class="dropdown-item" th:href="@{'/admin/email/' + ${email.id} + '/view'}">
+                          <i class="material-icons-two-tone">visibility</i> 상세보기
+                        </a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" th:href="@{'/admin/email/' + ${email.id}}">
+                          <i class="material-icons-two-tone">edit</i> 수정
+                        </a>
+                      </li>
+                      <li th:if="${email.sendStatus == 'FAILED'}">
+                        <a class="dropdown-item" href="#" th:onclick="'resendEmail(\'' + ${email.id} + '\')'">
+                          <i class="material-icons-two-tone">refresh</i> 재발송
+                        </a>
+                      </li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li>
+                        <a class="dropdown-item text-danger" href="#" th:onclick="deleteEmail([[${email.id}]])"></a>
+                          <i class="material-icons-two-tone">delete</i> 삭제
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+              <tr th:if="${#lists.isEmpty(pageInfo.list)}">
+                <td colspan="8" class="text-center py-4">
+                  <div class="text-muted">
+                    <i class="material-icons-two-tone" style="font-size: 48px;">email</i>
+                    <p class="mt-2">등록된 이메일 발송 내역이 없습니다.</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 페이지 -->
+        <th:block th:replace="~{UI/fragments/common/page::page}"></th:block>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 전체 선택/해제
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const emailCheckboxes = document.querySelectorAll('.email-checkbox');
+        
+        selectAllCheckbox.addEventListener('change', function() {
+            emailCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // 검색 기능
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            performSearch();
+        });
+
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        // 필터 기능
+        document.getElementById('statusFilter').addEventListener('change', function() {
+            performSearch();
+        });
+
+        document.getElementById('typeFilter').addEventListener('change', function() {
+            performSearch();
+        });
+    });
+
+    function performSearch() {
+        const searchValue = document.getElementById('searchInput').value;
+        const statusValue = document.getElementById('statusFilter').value;
+        const typeValue = document.getElementById('typeFilter').value;
+        
+        const params = new URLSearchParams();
+        if (searchValue) params.append('search', searchValue);
+        if (statusValue) params.append('sendStatus', statusValue);
+        if (typeValue) params.append('sendType', typeValue);
+        
+        window.location.href = '/admin/email?' + params.toString();
+    }
+
+    function changePageSize() {
+        const size = document.getElementById('pageSizeSelect').value;
+        const params = new URLSearchParams(window.location.search);
+        params.set('size', size);
+        params.set('page', '1');
+        window.location.href = '/admin/email?' + params.toString();
+    }
+
+    function resendEmail(emailId) {
+        if (confirm('이메일을 재발송하시겠습니까?')) {
+            fetch(`/api/admin/email/${emailId}/resend`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.ok ? response.text() : Promise.reject('Failed'))
+            .then(() => {
+                alert('이메일이 재발송되었습니다.');
+                location.reload();
+            })
+            .catch(() => {
+                alert('재발송에 실패했습니다.');
+            });
+        }
+    }
+
+    function deleteEmail(emailId) {
+        if (confirm('이메일 발송 내역을 삭제하시겠습니까?')) {
+            fetch(`/api/admin/email/${emailId}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.ok ? response.text() : Promise.reject('Failed'))
+            .then(() => {
+                alert('삭제되었습니다.');
+                location.reload();
+            })
+            .catch(() => {
+                alert('삭제에 실패했습니다.');
+            });
+        }
+    }
+  </script>
+
+</body>
+</html>

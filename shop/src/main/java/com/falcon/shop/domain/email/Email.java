@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.apache.ibatis.type.Alias;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.falcon.shop.domain.Base;
@@ -36,11 +37,13 @@ public class Email extends Base {
     private String senderName;          // 보내는사람 이름
     private String subject;             // 제목
     private String content;             // 내용
+    @TableField(exist = false)
     private Boolean isHtml;             // HTML 여부
     private SendStatus sendStatus;      // 발송상태
     private String sendType;            // 발송타입
     private String relatedId;           // 관련 ID
-    private LocalDateTime sentAt;       // 발송일시
+    @TableField(exist = false)
+    private LocalDateTime sendAt;       // 발송일시
     private String errorMessage;        // 오류메시지
     @Builder.Default
     private Integer retryCount = 0;     // 재시도 횟수

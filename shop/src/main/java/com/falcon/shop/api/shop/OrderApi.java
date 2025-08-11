@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.falcon.shop.domain.shop.Orders;
+import com.falcon.shop.domain.users.Users;
 import com.falcon.shop.service.email.EmailService;
 import com.falcon.shop.service.shop.OrderService;
+import com.falcon.shop.service.users.UserService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,6 +30,7 @@ public class OrderApi {
   
   @Autowired private OrderService orderService;
   @Autowired private EmailService emailService;
+  @Autowired private UserService userService;
   
   @GetMapping()
   public ResponseEntity<?> getAll(
@@ -124,7 +127,7 @@ public class OrderApi {
    */
   @PostMapping("/cash-payment")
   public ResponseEntity<String> processCashPayment(
-      Map<String, String> request) {
+      @RequestBody Map<String, String> request) {
       
       try {
           String orderId = request.get("orderId");
@@ -139,7 +142,17 @@ public class OrderApi {
               log.error("주문을 찾을 수 없습니다: {}", orderId);
               return new ResponseEntity<>("ORDER_NOT_FOUND", HttpStatus.BAD_REQUEST);
           }
-          
+
+          // 주문 사용자 조회
+          Long userNo = order.getUserNo();
+          Users user = userService.select(userNo);
+          if (user == null) {
+              log.error("사용자를 찾을 수 없습니다: {}", userNo);
+              return new ResponseEntity<>("USER_NOT_FOUND", HttpStatus.BAD_REQUEST);
+          }
+          // 주문 사용자 정보 업데이트
+          order.setGuestEmail(user.getEmail());
+
           // 주문 상태를 결제 완료로 업데이트
           order.setPaymentMethod(paymentMethod);
           order.setStatus("결제완료");

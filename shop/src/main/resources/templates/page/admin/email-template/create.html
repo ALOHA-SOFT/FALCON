@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/admin/admin_layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>이메일 템플릿 등록</title>
+</head>
+<body layout:fragment="content">
+
+  <div class="container-fluid">
+    <!-- 페이지 헤더 -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">이메일 템플릿 등록</h1>
+      <a href="/admin/email-template" class="d-none d-sm-inline-block btn btn-secondary shadow-sm">
+        <i class="material-icons-two-tone">arrow_back</i>
+        목록으로
+      </a>
+    </div>
+
+    <!-- 템플릿 등록 폼 -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">템플릿 정보</h6>
+      </div>
+      <div class="card-body">
+        <form id="templateForm">
+          <!-- 기본 정보 -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">템플릿명 <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="name" required placeholder="예: 주문 확인 이메일">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">템플릿 타입 <span class="text-danger">*</span></label>
+              <select class="form-select" name="type" required>
+                <option value="">타입 선택</option>
+                <option value="ORDER_CONFIRMATION">주문 확인</option>
+                <option value="PAYMENT_GUIDE">결제 안내</option>
+                <option value="TEMP_PASSWORD">임시 비밀번호</option>
+                <option value="WELCOME">회원가입 환영</option>
+                <option value="SHIPPING">배송 안내</option>
+                <option value="MANUAL">수동 발송</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 제목 -->
+          <div class="mb-3">
+            <label class="form-label">제목 템플릿 <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="subject" required 
+                   placeholder="예: [{{companyName}}] 주문이 접수되었습니다 (주문번호: {{orderCode}})">
+            <div class="form-text">{{변수명}} 형태로 변수를 사용할 수 있습니다.</div>
+          </div>
+
+          <!-- 내용 -->
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <label class="form-label">내용 템플릿 <span class="text-danger">*</span></label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="isHtmlCheck" name="isHtml" checked>
+                <label class="form-check-label" for="isHtmlCheck">HTML 형식</label>
+              </div>
+            </div>
+            <textarea class="form-control" name="content" rows="15" required 
+                      placeholder="이메일 내용을 입력하세요. HTML 태그 사용 가능"></textarea>
+          </div>
+
+          <!-- 변수 정보 -->
+          <div class="mb-3">
+            <label class="form-label">사용 가능한 변수</label>
+            <textarea class="form-control" name="variables" rows="3" 
+                      placeholder='["customerName", "orderCode", "companyName"] 형태로 JSON 배열로 입력'>["customerName", "orderCode", "companyName"]</textarea>
+            <div class="form-text">템플릿에서 사용할 수 있는 변수들을 JSON 배열 형태로 입력하세요.</div>
+          </div>
+
+          <!-- 설명 -->
+          <div class="mb-3">
+            <label class="form-label">설명</label>
+            <textarea class="form-control" name="description" rows="3" 
+                      placeholder="템플릿에 대한 설명을 입력하세요"></textarea>
+          </div>
+
+          <!-- 활성화 여부 -->
+          <div class="mb-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="isActive" id="isActiveCheck" checked>
+              <label class="form-check-label" for="isActiveCheck">활성화</label>
+            </div>
+          </div>
+
+          <!-- 버튼 -->
+          <div class="row">
+            <div class="col-12 text-end">
+              <button type="button" class="btn btn-secondary me-2" onclick="previewTemplate()">미리보기</button>
+              <button type="submit" class="btn btn-primary">등록</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 도움말 카드 -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-info">
+          <i class="material-icons-two-tone">help</i> 템플릿 작성 가이드
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <h6>변수 사용법</h6>
+            <ul class="small">
+              <li><code>{{customerName}}</code> - 고객명</li>
+              <li><code>{{orderCode}}</code> - 주문번호</li>
+              <li><code>{{companyName}}</code> - 회사명</li>
+              <li><code>{{orderDate}}</code> - 주문일시</li>
+              <li><code>{{paymentMethod}}</code> - 결제방식</li>
+            </ul>
+          </div>
+          <div class="col-md-6">
+            <h6>HTML 태그 예시</h6>
+            <ul class="small">
+              <li><code>&lt;strong&gt;</code> - 굵은 글씨</li>
+              <li><code>&lt;br&gt;</code> - 줄바꿈</li>
+              <li><code>&lt;div class="text-center"&gt;</code> - 가운데 정렬</li>
+              <li><code>&lt;table&gt;</code> - 테이블</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 미리보기 모달 -->
+  <div class="modal fade" id="previewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">템플릿 미리보기</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div id="previewContent">
+            <!-- 미리보기 내용 -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 폼 제출 처리
+        document.getElementById('templateForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveTemplate();
+        });
+
+        // 타입 변경 시 기본 템플릿 로드
+        document.querySelector('select[name="type"]').addEventListener('change', function() {
+            loadDefaultTemplate(this.value);
+        });
+    });
+
+    function loadDefaultTemplate(type) {
+        const templates = {
+            'ORDER_CONFIRMATION': {
+                name: '주문 확인 이메일',
+                subject: '[{{companyName}}] 주문이 접수되었습니다 (주문번호: {{orderCode}})',
+                content: `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>주문 확인</title>
+</head>
+<body>
+    <h2>{{companyName}}</h2>
+    <p><strong>{{customerName}}</strong>님, 안녕하세요!</p>
+    <p>주문해주셔서 감사합니다. 주문 내용을 확인해주세요.</p>
+    
+    <div style="background-color: #f9f9f9; padding: 15px; margin: 15px 0;">
+        <h3>주문 정보</h3>
+        <p><strong>주문번호:</strong> {{orderCode}}</p>
+        <p><strong>주문일시:</strong> {{orderDate}}</p>
+    </div>
+    
+    <p>주문하신 상품을 정성껏 준비하여 배송해드리겠습니다.</p>
+</body>
+</html>`,
+                variables: '["customerName", "orderCode", "companyName", "orderDate"]'
+            },
+            'PAYMENT_GUIDE': {
+                name: '결제 안내 이메일',
+                subject: '[{{companyName}}] 결제 안내 (주문번호: {{orderCode}})',
+                content: `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>결제 안내</title>
+</head>
+<body>
+    <h2>{{companyName}}</h2>
+    <p><strong>{{customerName}}</strong>님, 안녕하세요!</p>
+    <p>주문하신 상품의 결제 방법을 안내해드립니다.</p>
+    
+    <div style="background-color: #f9f9f9; padding: 15px; margin: 15px 0;">
+        <h3>결제 정보</h3>
+        <p><strong>주문번호:</strong> {{orderCode}}</p>
+        <p><strong>결제방식:</strong> {{paymentMethod}}</p>
+    </div>
+</body>
+</html>`,
+                variables: '["customerName", "orderCode", "paymentMethod", "companyName"]'
+            },
+            'TEMP_PASSWORD': {
+                name: '임시 비밀번호 발송',
+                subject: '[{{companyName}}] 임시 비밀번호 발송',
+                content: `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>임시 비밀번호</title>
+</head>
+<body>
+    <h2>{{companyName}}</h2>
+    <p><strong>{{username}}</strong>님, 안녕하세요!</p>
+    <p>요청하신 임시 비밀번호를 발송해드립니다.</p>
+    
+    <div style="background-color: #fff3cd; padding: 20px; margin: 20px 0; text-align: center;">
+        <h3>임시 비밀번호</h3>
+        <div style="font-size: 24px; font-weight: bold;">{{tempPassword}}</div>
+    </div>
+    
+    <p><strong>보안 안내:</strong></p>
+    <ul>
+        <li>로그인 후 반드시 비밀번호를 변경해주세요</li>
+        <li>임시 비밀번호는 타인에게 노출되지 않도록 주의하세요</li>
+    </ul>
+</body>
+</html>`,
+                variables: '["username", "tempPassword", "companyName"]'
+            }
+        };
+
+        const template = templates[type];
+        if (template) {
+            document.querySelector('input[name="name"]').value = template.name;
+            document.querySelector('input[name="subject"]').value = template.subject;
+            document.querySelector('textarea[name="content"]').value = template.content;
+            document.querySelector('textarea[name="variables"]').value = template.variables;
+        }
+    }
+
+    function previewTemplate() {
+        const name = document.querySelector('input[name="name"]').value;
+        const subject = document.querySelector('input[name="subject"]').value;
+        const content = document.querySelector('textarea[name="content"]').value;
+        const isHtml = document.getElementById('isHtmlCheck').checked;
+        const variables = document.querySelector('textarea[name="variables"]').value;
+
+        const previewContent = document.getElementById('previewContent');
+        
+        let previewHtml = `
+            <div class="mb-3">
+                <strong>템플릿명:</strong> ${name}
+            </div>
+            <div class="mb-3">
+                <strong>제목:</strong> ${subject}
+            </div>
+            <div class="mb-3">
+                <strong>내용:</strong>
+                <div class="border p-3 mt-2">
+        `;
+        
+        if (isHtml) {
+            previewHtml += content;
+        } else {
+            previewHtml += `<pre style="white-space: pre-wrap;">${content}</pre>`;
+        }
+        
+        previewHtml += `
+                </div>
+            </div>
+            <div class="mb-3">
+                <strong>사용 가능한 변수:</strong> 
+                <code>${variables || '없음'}</code>
+            </div>
+        `;
+        
+        previewContent.innerHTML = previewHtml;
+        
+        const modal = new bootstrap.Modal(document.getElementById('previewModal'));
+        modal.show();
+    }
+
+    function saveTemplate() {
+        if (!confirm('템플릿을 등록하시겠습니까?')) return;
+
+        const formData = new FormData(document.getElementById('templateForm'));
+
+        fetch('/api/admin/email-template', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.ok ? response.text() : Promise.reject('Failed'))
+        .then(() => {
+            alert('템플릿이 등록되었습니다.');
+            window.location.href = '/admin/email-template';
+        })
+        .catch(() => {
+            alert('템플릿 등록에 실패했습니다.');
+        });
+    }
+  </script>
+
+</body>
+</html>

@@ -40,7 +40,7 @@ public class EmailServiceImpl extends BaseServiceImpl<Email, EmailMapper> implem
         try {
             // 이메일 발송 전 상태를 PENDING으로 설정
             email.setSendStatus(Email.SendStatus.PENDING);
-            email.setSentAt(LocalDateTime.now());
+            email.setSendAt(LocalDateTime.now());
             
             // 데이터베이스에 저장
             save(email);
@@ -69,7 +69,7 @@ public class EmailServiceImpl extends BaseServiceImpl<Email, EmailMapper> implem
             
             // 발송 성공 시 상태 업데이트
             email.setSendStatus(Email.SendStatus.SENT);
-            email.setSentAt(LocalDateTime.now());
+            email.setSendAt(LocalDateTime.now());
             updateById(email);
             
             log.info("이메일 발송 성공: {} -> {}", SENDER_EMAIL, email.getRecipientEmail());

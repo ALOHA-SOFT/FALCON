@@ -2,9 +2,10 @@
 
 -- 1. 주문 확인 템플릿
 INSERT INTO email_templates (
-    name, type, subject, content, is_html, variables, is_active, description,
+    id, name, type, subject, content, is_html, variables, is_active, description,
     created_by, updated_by, created_at, updated_at
 ) VALUES (
+    UUID(),
     '주문 확인 이메일',
     'ORDER_CONFIRMATION', 
     '[{{companyName}}] 주문이 접수되었습니다 (주문번호: {{orderCode}})',
@@ -60,9 +61,10 @@ INSERT INTO email_templates (
 
 -- 2. 결제 안내 템플릿
 INSERT INTO email_templates (
-    name, type, subject, content, is_html, variables, is_active, description,
+    id, name, type, subject, content, is_html, variables, is_active, description,
     created_by, updated_by, created_at, updated_at
 ) VALUES (
+    UUID(),
     '결제 안내 이메일',
     'PAYMENT_GUIDE',
     '[{{companyName}}] 결제 안내 (주문번호: {{orderCode}})',
@@ -127,9 +129,10 @@ INSERT INTO email_templates (
 
 -- 3. 임시 비밀번호 템플릿
 INSERT INTO email_templates (
-    name, type, subject, content, is_html, variables, is_active, description,
+    id, name, type, subject, content, is_html, variables, is_active, description,
     created_by, updated_by, created_at, updated_at
 ) VALUES (
+    UUID(),
     '임시 비밀번호 발송',
     'TEMP_PASSWORD',
     '[{{companyName}}] 임시 비밀번호 발송',

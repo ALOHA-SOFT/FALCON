@@ -172,5 +172,34 @@ public class PayController {
     public String payFail(@ModelAttribute String orderId) {
         return "page/pay/fail";
     }
-    
+
+
+    // 현금 결제 성공 페이지
+    @GetMapping("/cash/success")
+    public String cashPaySuccess(@RequestParam("orderId") String orderId, Model model) {
+        model.addAttribute("orderId", orderId);
+        return "page/pay/cash/success";
+    }
+
+    // 현금 결제 실패 페이지
+    @GetMapping("/cash/fail")
+    public String cashPayFail(@RequestParam("orderId") String orderId, Model model) {
+        model.addAttribute("orderId", orderId);
+        return "page/pay/cash/fail";
+    }
+
+    // 코인 결제 성공 페이지
+    @GetMapping("/coin/success")
+    public String coinPaySuccess(@RequestParam("orderId") String orderId, Model model) {
+        model.addAttribute("orderId", orderId);
+        return "page/pay/coin/success";
+    }
+
+    // 코인 결제 실패 페이지
+    @GetMapping("/coin/fail")
+    public String coinPayFail(@RequestParam("orderId") String orderId, Model model) {
+        model.addAttribute("orderId", orderId);
+        return "page/pay/coin/fail";
+    }
+
 }

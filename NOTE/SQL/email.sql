@@ -1,4 +1,4 @@
--- Active: 1750388006843@@127.0.0.1@3306@falcon
+-- Active: 1754738700814@@127.0.0.1@3306@falcon
 USE `falcon`;
 
 SET FOREIGN_KEY_CHECKS = 0;
@@ -43,10 +43,13 @@ CREATE TABLE `email_templates` (
 	`type` VARCHAR(50) NOT NULL COMMENT '템플릿 타입 (ORDER, PAYMENT, MANUAL 등)',
 	`subject` VARCHAR(500) NOT NULL COMMENT '제목 템플릿',
 	`content` TEXT NOT NULL COMMENT '내용 템플릿',
+	`is_html` TINYINT(1) NOT NULL DEFAULT 1 COMMENT 'HTML 여부',
 	`html_content` TEXT NULL COMMENT 'HTML 내용 템플릿',
 	`variables` TEXT NULL COMMENT '사용 가능한 변수 (JSON)',
 	`is_active` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '활성화 여부',
 	`description` TEXT NULL COMMENT '설명',
+	`created_by` VARCHAR(64) NULL COMMENT '등록자',
+	`updated_by` VARCHAR(64) NULL COMMENT '수정자',
 	`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '등록일자',
 	`updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일자',
 	PRIMARY KEY (`no`),
@@ -57,5 +60,6 @@ CREATE TABLE `email_templates` (
 -- 외래키 제약조건 추가
 ALTER TABLE `emails` ADD CONSTRAINT `fk_emails_template` 
 FOREIGN KEY (`template_no`) REFERENCES `email_templates` (`no`) ON DELETE SET NULL ON UPDATE CASCADE;
+
 
 SET FOREIGN_KEY_CHECKS = 1;

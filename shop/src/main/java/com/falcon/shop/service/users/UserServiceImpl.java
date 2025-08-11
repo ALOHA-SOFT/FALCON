@@ -126,6 +126,7 @@ public class UserServiceImpl extends BaseServiceImpl<Users, UserMapper> implemen
         queryWrapper.eq("id", entity.getId());
         // 비밀번호 암호화
         if( !newPasswordProvided && !confirmPasswordProvided ) {
+            entity.setPassword(null); // 비밀번호 변경 없음
             log.info("비밀번호 변경 없음: {}", entity.getUsername());
         } else {
             log.info("비밀번호 변경: {}", entity.getUsername());

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/admin/admin_layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>이메일 발송</title>
+</head>
+<body layout:fragment="content">
+
+  <div class="container-fluid">
+    <!-- 페이지 헤더 -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">이메일 발송</h1>
+      <a href="/admin/email" class="d-none d-sm-inline-block btn btn-secondary shadow-sm">
+        <i class="material-icons-two-tone">arrow_back</i>
+        목록으로
+      </a>
+    </div>
+
+    <!-- 이메일 발송 폼 -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">이메일 발송</h6>
+      </div>
+      <div class="card-body">
+        <form id="emailForm">
+          <!-- 템플릿 선택 -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">이메일 템플릿</label>
+              <select class="form-select" id="templateSelect" onchange="loadTemplate()">
+                <option value="">템플릿 선택 (선택사항)</option>
+                <option value="ORDER_CONFIRMATION">주문 확인</option>
+                <option value="PAYMENT_GUIDE">결제 안내</option>
+                <option value="TEMP_PASSWORD">임시 비밀번호</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">발송 타입</label>
+              <select class="form-select" name="sendType" required>
+                <option value="">발송 타입 선택</option>
+                <option value="ORDER">주문 관련</option>
+                <option value="PAYMENT">결제 관련</option>
+                <option value="MANUAL">수동 발송</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 수신자 정보 -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">수신자 이메일 <span class="text-danger">*</span></label>
+              <input type="email" class="form-control" name="recipientEmail" required placeholder="recipient@example.com">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">수신자 이름</label>
+              <input type="text" class="form-control" name="recipientName" placeholder="홍길동">
+            </div>
+          </div>
+
+          <!-- 발신자 정보 -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">발신자 이메일 <span class="text-danger">*</span></label>
+              <input type="email" class="form-control" name="senderEmail" value="info@falconcartons.com" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">발신자 이름</label>
+              <input type="text" class="form-control" name="senderName" value="FALCON CARTONS">
+            </div>
+          </div>
+
+          <!-- 이메일 내용 -->
+          <div class="mb-3">
+            <label class="form-label">제목 <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="subject" required placeholder="이메일 제목을 입력하세요">
+          </div>
+
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <label class="form-label">내용 <span class="text-danger">*</span></label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="isHtmlCheck" name="isHtml" checked>
+                <label class="form-check-label" for="isHtmlCheck">HTML 형식</label>
+              </div>
+            </div>
+            <textarea class="form-control" name="content" rows="10" required placeholder="이메일 내용을 입력하세요"></textarea>
+          </div>
+
+          <!-- 관련 정보 -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">관련 ID</label>
+              <input type="text" class="form-control" name="relatedId" placeholder="주문번호, 결제번호 등">
+              <div class="form-text">주문, 결제 관련 이메일인 경우 관련 ID를 입력하세요.</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">발송 예약</label>
+              <input type="datetime-local" class="form-control" name="scheduledAt">
+              <div class="form-text">즉시 발송하려면 비워두세요.</div>
+            </div>
+          </div>
+
+          <!-- 버튼 -->
+          <div class="row">
+            <div class="col-12 text-end">
+              <button type="button" class="btn btn-secondary me-2" onclick="previewEmail()">미리보기</button>
+              <button type="button" class="btn btn-info me-2" onclick="testSend()">테스트 발송</button>
+              <button type="submit" class="btn btn-primary">발송</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 미리보기 모달 -->
+    <div class="modal fade" id="previewModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">이메일 미리보기</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="border p-3" id="previewContent">
+              <!-- 미리보기 내용 -->
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 폼 제출 처리
+        document.getElementById('emailForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            sendEmail();
+        });
+    });
+
+    function loadTemplate() {
+        const templateType = document.getElementById('templateSelect').value;
+        if (!templateType) return;
+
+        fetch(`/api/admin/email-template/type/${templateType}`)
+            .then(response => response.json())
+            .then(template => {
+                if (template) {
+                    document.querySelector('input[name="subject"]').value = template.subject;
+                    document.querySelector('textarea[name="content"]').value = template.content;
+                    document.getElementById('isHtmlCheck').checked = template.isHtml;
+                }
+            })
+            .catch(error => {
+                console.error('템플릿 로드 실패:', error);
+                alert('템플릿을 불러오는데 실패했습니다.');
+            });
+    }
+
+    function previewEmail() {
+        const subject = document.querySelector('input[name="subject"]').value;
+        const content = document.querySelector('textarea[name="content"]').value;
+        const isHtml = document.getElementById('isHtmlCheck').checked;
+
+        const previewContent = document.getElementById('previewContent');
+        
+        let previewHtml = `<h5>제목: ${subject}</h5><hr>`;
+        
+        if (isHtml) {
+            previewHtml += content;
+        } else {
+            previewHtml += `<pre style="white-space: pre-wrap;">${content}</pre>`;
+        }
+        
+        previewContent.innerHTML = previewHtml;
+        
+        const modal = new bootstrap.Modal(document.getElementById('previewModal'));
+        modal.show();
+    }
+
+    function testSend() {
+        const adminEmail = prompt('테스트 발송할 이메일 주소를 입력하세요:', 'admin@falconcartons.com');
+        if (!adminEmail) return;
+
+        const formData = new FormData(document.getElementById('emailForm'));
+        formData.set('recipientEmail', adminEmail);
+        formData.set('recipientName', '관리자');
+
+        fetch('/api/admin/email', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.ok ? response.text() : Promise.reject('Failed'))
+        .then(() => {
+            alert('테스트 이메일이 발송되었습니다.');
+        })
+        .catch(() => {
+            alert('테스트 발송에 실패했습니다.');
+        });
+    }
+
+    function sendEmail() {
+        if (!confirm('이메일을 발송하시겠습니까?')) return;
+
+        const formData = new FormData(document.getElementById('emailForm'));
+
+        fetch('/api/admin/email', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.ok ? response.text() : Promise.reject('Failed'))
+        .then(() => {
+            alert('이메일이 발송되었습니다.');
+            window.location.href = '/admin/email';
+        })
+        .catch(() => {
+            alert('이메일 발송에 실패했습니다.');
+        });
+    }
+  </script>
+
+</body>
+</html>

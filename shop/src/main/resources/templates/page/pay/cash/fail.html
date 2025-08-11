@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/user/main_layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>주문 요청 실패</title>
+</head>
+<body layout:fragment="content">
+  <div class="container my-5 text-center">
+    <div class="alert alert-danger py-5">
+      <h2 class="mb-4">주문 요청에 실패하였습니다</h2>
+      <p class="mb-4">주문 처리 과정에서 오류가 발생했습니다.<br>다시 시도하거나, 문제가 지속될 경우 고객센터로 문의해 주세요.</p>
+      <a th:href="@{/pay/order/{orderId}(orderId=${param.orderId})}" class="btn btn-primary">주문서로 돌아가기</a>
+      <a href="/" class="btn btn-outline-secondary ms-2">메인으로</a>
+    </div>
+  </div>
+</body>
+</html>

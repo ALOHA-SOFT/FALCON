@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/user/main_layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>주문 요청 완료</title>
+</head>
+<body layout:fragment="content">
+  <div class="container my-5 text-center">
+    <div class="alert alert-success py-5">
+      <h2 class="mb-4">주문 요청이 완료되었습니다!</h2>
+      <p class="mb-4">주문이 정상적으로 접수되었습니다.<br>결제 방법에 대한 안내를 이메일로 발송해드렸습니다.</p>
+      <p class="mb-4" th:text="${message}"></p>
+      <a href="/" class="btn btn-primary">메인으로</a>
+      <a href="/my/orders" class="btn btn-outline-secondary ms-2">주문내역 보기</a>
+    </div>
+    <div class="alert alert-info mb-4">
+      <h5><i class="material-icons-two-tone">email</i> 이메일 안내</h5>
+      <p class="mb-1">결제 정보 및 방법이 등록하신 이메일로 발송되었습니다.</p>
+      <p class="mb-0">이메일을 확인하시고 안내에 따라 결제를 진행해주세요.</p>
+    </div>
+  </div>
+</body>
+</html>
