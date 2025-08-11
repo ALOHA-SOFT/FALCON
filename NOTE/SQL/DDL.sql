@@ -1,4 +1,8 @@
--- Active: 1754738700814@@127.0.0.1@3306@falcon6@foutainmarket
+-- Active: 1750388006843@@127.0.0.1@3306@falcon
+
+CREATE DATABASE IF NOT EXISTS `falcon` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `falcon`;
+
 SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TABLE IF EXISTS `sample`;
@@ -20,6 +24,8 @@ CREATE TABLE `users` (
 	`username` VARCHAR(100) NOT NULL UNIQUE COMMENT '아이디',
 	`password` VARCHAR(100) NOT NULL COMMENT '비밀번호',
 	`name` VARCHAR(100) NOT NULL COMMENT '이름',
+	`first_name` VARCHAR(100) NULL COMMENT '성',
+	`last_name` VARCHAR(100) NULL COMMENT '이름',
 	`tel` VARCHAR(100) NOT NULL COMMENT '전화번호',
 	`email` VARCHAR(100) NOT NULL COMMENT '이메일',
 	`enabled` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '활성화여부',
@@ -37,6 +43,7 @@ CREATE TABLE `user_auth` (
 	`user_no` BIGINT NOT NULL COMMENT 'FK',
 	`username` VARCHAR(100) NOT NULL COMMENT '아이디',
 	`auth` VARCHAR(100) NOT NULL COMMENT '권한',
+	`name` VARCHAR(100) NOT NULL COMMENT '이름',
 	`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '등록일자',
 	`updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일자',
 	PRIMARY KEY (`no`),
@@ -51,10 +58,12 @@ CREATE TABLE `shipments` (
 	`user_no` BIGINT NOT NULL COMMENT 'FK',
 	`tel` VARCHAR(100) NOT NULL COMMENT '전화번호',
 	`recipient` VARCHAR(100) NOT NULL COMMENT '받는사람',
+	`country` VARCHAR(100) NULL COMMENT '국가/지역',
 	`postcode` VARCHAR(100) NULL COMMENT '우편번호',
 	`address` TEXT NOT NULL COMMENT '주소',
 	`address_dong` TEXT NULL COMMENT '주소 (동)',
 	`address_detail` TEXT NOT NULL COMMENT '상세주소',
+	`city` VARCHAR(100) NULL COMMENT '도시',
 	`is_main` TINYINT(1) NULL DEFAULT 0 COMMENT '기본배송지여부',
 	`delivery_request` TEXT NULL COMMENT '배송요청사항',
 	`delivery_method` TEXT NULL COMMENT '수령방법',
@@ -152,10 +161,12 @@ CREATE TABLE `address` (
 	`user_no` BIGINT NOT NULL COMMENT 'FK',
 	`tel` VARCHAR(100) NOT NULL COMMENT '전화번호',
 	`recipient` VARCHAR(100) NOT NULL COMMENT '받는사람',
+	`country` VARCHAR(100) NULL COMMENT '국가/지역',
 	`postcode` VARCHAR(100) NULL COMMENT '우편번호',
 	`address` TEXT NOT NULL COMMENT '주소',
 	`address_dong` TEXT NULL COMMENT '주소 (동)',
 	`address_detail` TEXT NOT NULL COMMENT '상세주소',
+	`city` VARCHAR(100) NULL COMMENT '도시',
 	`is_main` TINYINT(1) NULL DEFAULT 0 COMMENT '기본배송지여부',
 	`delivery_request` TEXT NULL COMMENT '배송요청사항',
 	`delivery_method` TEXT NULL COMMENT '수령방법',
@@ -192,10 +203,14 @@ CREATE TABLE `orders` (
   `code` varchar(200) DEFAULT NULL COMMENT '주문코드 (20250101_상품번호_유저번호_당일시퀀스)',
   `title` text NOT NULL COMMENT '주문제목 (상품1 외 5건)',
   `guest_tel` varchar(100) DEFAULT NULL COMMENT '비회원 전화번호',
+  `guest_email` varchar(100) DEFAULT NULL COMMENT '비회원 이메일',
+  `guest_first_name` varchar(100) DEFAULT NULL COMMENT '비회원 성',
+  `guest_last_name` varchar(100) DEFAULT NULL COMMENT '비회원 이름',
   `total_price` bigint DEFAULT NULL COMMENT '총 가격',
   `total_quantity` bigint DEFAULT NULL COMMENT '총 수량',
   `total_item_count` bigint DEFAULT NULL COMMENT '총 항목수',
   `ship_price` bigint NOT NULL DEFAULT 0 COMMENT '배송비',
+  `payment_method` enum('CASH','COIN','CARD','TRANSFER') DEFAULT 'CARD' COMMENT '결제방식 (현금, 코인, 카드, 계좌이체)',
   `status` enum('결제대기','결제완료','배송중','배송완료','주문취소','환불완료') DEFAULT '결제대기' COMMENT '상태 (''결제대기'',''결제완료'',''배송중'',''배송완료'',''주문취소'',''환불완료'')',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '등록일자',
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일자',

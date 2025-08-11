@@ -4,9 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.type.Alias;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.falcon.shop.domain.Base;
 
@@ -25,6 +23,7 @@ import lombok.ToString;
 @Alias("Products")
 public class Products extends Base {
 
+  private Long no;                   // 상품번호 (PK)
   private String name;                // 상품명
   private Long stock;                 // 재고
   private Long categoryNo;            // 카테고리 번호 (FK)

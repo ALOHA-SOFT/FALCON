@@ -49,6 +49,7 @@ public class UserServiceImpl extends BaseServiceImpl<Users, UserMapper> implemen
             UserAuth userAuth = new UserAuth();
             userAuth.setUserNo(entity.getNo());
             userAuth.setUsername(entity.getUsername());
+            userAuth.setName("사용자");
             userAuth.setAuth("ROLE_USER");
             userAuthMapper.insert(userAuth);
             log.info("회원가입 성공: {}", entity.getUsername());

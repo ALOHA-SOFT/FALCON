@@ -7,6 +7,96 @@
     <th:block th:replace="~{UI/fragments/user/link::link}"></th:block>
     <!-- [SCRIPT] -->
     <th:block th:replace="~{UI/fragments/user/script::script}"></th:block>
+    <style>
+        /* 모바일 플로팅 버튼 스타일 */
+        .mobile-floating-menu-btn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            background: #212529;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .mobile-floating-menu-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+            background: #343a40;
+        }
+        
+        .mobile-floating-menu-btn .material-icons {
+            font-size: 24px;
+        }
+        
+        /* 모바일에서만 플로팅 버튼 표시 */
+        @media (max-width: 1199.98px) {
+            .mobile-floating-menu-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+        
+        /* 오프캔버스 사이드바 스타일 */
+        .offcanvas-my-menu {
+            width: 280px;
+        }
+        
+        .offcanvas-my-menu .offcanvas-header {
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .offcanvas-my-menu .offcanvas-title {
+            font-family: 'Helvetica Neue', 'Noto Sans', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: #212529;
+        }
+        
+        .offcanvas-my-menu .nav-link {
+            padding: 12px 20px;
+            font-family: 'Helvetica Neue', 'Noto Sans', sans-serif;
+            font-size: 16px;
+            color: #495057;
+            border-bottom: 1px solid #f1f3f5;
+            transition: all 0.2s ease;
+        }
+        
+        .offcanvas-my-menu .nav-link:hover {
+            background: #f8f9fa;
+            color: #212529;
+        }
+        
+        .offcanvas-my-menu .nav-link.text-danger {
+            color: #dc3545 !important;
+        }
+        
+        .offcanvas-my-menu .nav-link.text-danger:hover {
+            background: #f8d7da;
+            color: #721c24 !important;
+        }
+        
+        .offcanvas-my-menu button.nav-link {
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        
+        .offcanvas-my-menu hr {
+            margin: 0;
+            border-color: #dee2e6;
+        }
+    </style>
 </head>
 <body>
     <!-- [HEADER] -->
@@ -21,7 +111,7 @@
         </div>
         <div class="row my-4">
             <!-- [SIDE] -->
-            <div class="col-2 d-none d-md-block">
+            <div class="col-2 d-none d-xl-block">
                <th:block th:replace="~{UI/fragments/user/side::side}"></th:block>
             </div> 
             <div class="col-12 col-md-10">
@@ -29,6 +119,56 @@
             </div>
         </div>
     </div>
+    
+    <!-- 모바일 플로팅 메뉴 버튼 -->
+    <button type="button" class="mobile-floating-menu-btn" data-bs-toggle="offcanvas" data-bs-target="#mobileMyMenu" aria-controls="mobileMyMenu">
+        <span class="material-icons">person</span>
+    </button>
+    
+    <!-- 모바일 오프캔버스 마이페이지 메뉴 -->
+    <div class="offcanvas offcanvas-start offcanvas-my-menu" tabindex="-1" id="mobileMyMenu" aria-labelledby="mobileMyMenuLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="mobileMyMenuLabel">MY PAGE</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/my">MY</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/my/orders">주문내역</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/my/address">배송지 관리</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/my/carts">장바구니</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/my/cancel">취소/환불</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/my/edit">회원정보 수정</a>
+                </li>
+                <hr>
+                <li class="nav-item">
+                    <a class="nav-link text-danger" href="/my/delete">회원 탈퇴</a>
+                </li>
+                <hr>
+                <li class="nav-item">
+                    <form action="/logout" method="post">
+                        <!-- 💍 CSRF TOKEN -->
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <button type="submit" class="nav-link d-flex align-items-center">
+                            <span>로그아웃</span>
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
     <!-- [FOOTER]-->
     <th:block th:replace="~{UI/fragments/user/footer::footer}"></th:block>
 

@@ -38,6 +38,8 @@ public class Users extends Base {
 
 
   private String name;     // 이름
+  private String firstName; // 성
+  private String lastName;  // 이름
   private String tel;      // 전화번호
   private String email;    // 이메일
   private Boolean enabled; // 계정 활성화 여부

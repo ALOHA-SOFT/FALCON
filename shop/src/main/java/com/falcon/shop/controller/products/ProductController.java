@@ -104,6 +104,15 @@ public class ProductController {
             // 상품 정보 조회
             Products product = productService.selectById(id);
             model.addAttribute("product", product);
+            log.info("productDetail no : {}, product : {}", product.getNo(), product);
+            // 이전상품
+            Products prevProduct = productService.select(product.getNo() - 1);
+            model.addAttribute("prevProduct", prevProduct);
+            log.info("productDetail id : {}, prevProduct : {}", id, prevProduct);
+            // 다음상품
+            Products nextProduct = productService.select(product.getNo() + 1);
+            model.addAttribute("nextProduct", nextProduct);
+            log.info("productDetail id : {}, nextProduct : {}", id, nextProduct);
             // 상품 옵션그룹 조회
             Long optionGroupNo = product.getOptionGroupNo();
             if (optionGroupNo != null) {

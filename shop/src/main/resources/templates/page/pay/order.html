@@ -6,9 +6,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>주문/결제</title>
-  <!-- 토스페이먼츠 결제위젯 SDK -->
-  <script src="https://js.tosspayments.com/v1/payment-widget"></script>
-  <!-- <script src="https://js.tosspayments.com/v2/standard"></script> -->
 </head>
 <body layout:fragment="content">
   <div class="container my-5">
@@ -18,23 +15,23 @@
       <div class="col-12 col-md-6">
         <!-- 주문자 정보 -->
         <div class="card mb-4">
-          <div class="card-header">주문자 정보</div>
+          <div class="card-header">Customer Details</div>
           <div class="card-body row g-3">
             <div class="col-12">
-              <label for="buyerName" class="form-label">이름</label>
-              <input type="text" class="form-control" id="buyerName" name="buyerName" th:value="${user.name}" required>
-            </div>
-            <div class="col-12">
-              <label for="buyerEmail" class="form-label">이메일</label>
+              <label for="buyerEmail" class="form-label">Email</label>
               <input type="email" class="form-control" id="buyerEmail" name="buyerEmail" th:value="${user.email}" required>
+            </div>
+            <div class="col-6">
+              <label for="buyerFirstName" class="form-label">First Name</label>
+              <input type="text" class="form-control" id="buyerFirstName" name="buyerFirstName" th:value="${user.firstName}" required>
+            </div>
+            <div class="col-6">
+              <label for="buyerLastName" class="form-label">Last Name</label>
+              <input type="text" class="form-control" id="buyerLastName" name="buyerLastName" th:value="${user.lastName}" required>
             </div>
             <div class="col-12">
               <label for="buyerPhone" class="form-label">연락처</label>
               <input type="tel" class="form-control" id="buyerPhone" name="buyerPhone" th:value="${user.tel}" required>
-            </div>
-            <div class="col-12">
-              <label for="buyerAddress" class="form-label">주소</label>
-              <input type="text" class="form-control" id="buyerAddress" name="buyerAddress" disabled>
             </div>
           </div>
         </div>
@@ -45,7 +42,7 @@
         <div class="card mb-4">
           <div class="card-header">
             <div class="col-12 d-flex justify-content-between align-items-center">
-              <span>배송지 정보</span>
+              <span>Delivery Details</span>
               <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAddressModal">+ 새 배송지 추가</button>
             </div>
           </div>
@@ -103,13 +100,36 @@
                         <input type="tel" class="form-control" name="tel" id="orderTel" required>
                       </div>
                       <div class="mb-2">
-                        <label class="form-label">주소</label>
+                        <label class="form-label">Country/Region</label>
+                        <select class="form-select" name="country" id="orderCountry">
+                          <option value="">국가/지역을 선택해주세요</option>
+                          <option value="KR">대한민국</option>
+                          <option value="US">미국</option>
+                          <option value="JP">일본</option>
+                          <option value="CN">중국</option>
+                          <option value="GB">영국</option>
+                          <option value="DE">독일</option>
+                          <option value="FR">프랑스</option>
+                          <option value="CA">캐나다</option>
+                          <option value="AU">호주</option>
+                        </select>
+                      </div>
+                      <div class="mb-2">
+                        <label class="form-label">Address</label>
                         <div class="input-group">
                         <input type="text" id="orderPostcode" class="form-control" name="postcode" placeholder="우편번호" readonly>
                         <button type="button" class="btn btn-outline-secondary" onclick="execOrderDaumPostcode()">주소 찾기</button>
                         </div>
                         <input type="text" class="form-control mt-2" name="address" id="orderAddress" placeholder="도로명주소" readonly required>
                         <input type="text" class="form-control mt-2" name="addressDong" id="orderAddressDong" placeholder="지번주소" readonly>
+                      </div>
+                      <div class="mb-2">
+                        <label class="form-label">City</label>
+                        <input type="text" class="form-control" name="city" id="orderCity" placeholder="도시명">
+                      </div>
+                      <div class="mb-2">
+                        <label class="form-label">Zip/Postal code</label>
+                        <input type="text" class="form-control" name="zipCode" id="orderZipCode" placeholder="우편번호">
                       </div>
                       <div class="mb-2">
                         <label class="form-label">상세주소</label>
@@ -173,10 +193,12 @@
                     userNo: formData.get('userNo') || '',
                     recipient: formData.get('recipient') || '',
                     tel: formData.get('tel') || '',
+                    country: formData.get('country') || '',
                     postcode: formData.get('postcode') || '',
                     address: formData.get('address') || '',
                     addressDong: formData.get('addressDong') || '',
                     addressDetail: formData.get('addressDetail') || '',
+                    city: formData.get('city') || '',
                     deliveryRequest: formData.get('deliveryRequest') || '',
                     isMain: formData.get('isMain') === 'on',
                     };
@@ -310,8 +332,50 @@
     <div class="card mb-4">
       <div class="card-header">결제수단 선택</div>
       <div class="card-body">
-        <div id="payment-widget" class="mb-3"></div>
-        <div id="agreement-widget"></div>
+        <!-- 결제 방식 선택 탭 -->
+        <ul class="nav nav-tabs mb-3" id="paymentTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="cash-tab" data-bs-toggle="tab" data-bs-target="#cash-payment" type="button" role="tab" aria-controls="cash-payment" aria-selected="true">Cash Payment</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="coin-tab" data-bs-toggle="tab" data-bs-target="#coin-payment" type="button" role="tab" aria-controls="coin-payment" aria-selected="false">Coin Payment</button>
+          </li>
+        </ul>
+
+        <!-- 결제 방식별 컨텐츠 -->
+        <div class="tab-content" id="paymentTabContent">
+          <!-- 현금 결제 -->
+          <div class="tab-pane fade show active" id="cash-payment" role="tabpanel" aria-labelledby="cash-tab">
+            <div class="alert alert-info d-flex align-items-center">
+              <i class="material-icons">email</i>
+              <span>
+                현금 결제는 주문 완료 후 이메일로 결제 정보를 안내받는 방식입니다.
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">현금 결제 안내</label>
+              <div class="form-text">주문 완료 후 입력하신 이메일로 결제 정보와 안내사항을 발송해드립니다.</div>
+            </div>
+          </div>
+          
+          <!-- 코인 결제 -->
+          <div class="tab-pane fade" id="coin-payment" role="tabpanel" aria-labelledby="coin-tab">
+            <div class="alert alert-warning d-flex align-items-center">
+              <i class="material-icons">account_balance_wallet</i>
+              <span>
+                코인 결제는 보유 코인으로 결제하는 방식입니다.
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">보유 코인</label>
+              <div class="input-group">
+                <span class="input-group-text">💰</span>
+                <input type="text" class="form-control" value="1,000 코인" readonly>
+              </div>
+              <div class="form-text">코인이 부족한 경우 충전 후 이용해주세요.</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="d-grid gap-2">
@@ -321,13 +385,8 @@
 
   <script>
     
-    // 토스페이먼츠 결제위젯 연동
-    // const clientKey = 'test_gck_eqRGgYO1r5OoeGlPj6J43QnN2Eya'; // 테스트용 clientKey
-    // const clientKey = 'live_gck_d46qopOB899M0kKQZyXa8ZmM75y0'; // LIVE clientKey로
-    const clientKey = 'live_ck_Z61JOxRQVENnW9z77bvgrW0X9bAq'; // LIVE clientKey로
-    const paymentWidget = PaymentWidget(clientKey, PaymentWidget.ANONYMOUS);
     // 서버에서 전달받은 주문 정보
-    const orderCode = "[[${order.id}]]";
+    const orderId = "[[${order.id}]]";
     const orderTitle = "[[${order.title}]]";
     
     // 총 결제금액 계산 및 업데이트 함수
@@ -373,35 +432,95 @@
       });
     });
     
-    let orderAmount = updateTotalPrice();
-    let paymentMethodsWidget = paymentWidget.renderPaymentMethods('#payment-widget', { value: orderAmount }, { variantKey: "widgetA" });
-    let agreementWidget = paymentWidget.renderAgreement('#agreement-widget');
-    
     document.getElementById('payBtn').addEventListener('click', function() {
 
       // 주문자 정보 유효성 검사
-      const buyerName = document.getElementById('buyerName').value;
+      const buyerFirstName = document.getElementById('buyerFirstName').value;
+      const buyerLastName = document.getElementById('buyerLastName').value;
       const buyerEmail = document.getElementById('buyerEmail').value;
       let buyerPhone = document.getElementById('buyerPhone').value;
       buyerPhone = buyerPhone.replace(/[^\d]/g, '');
-      const buyerAddress = document.getElementById('buyerAddress').value;
       
-      if (!buyerName || !buyerEmail || !buyerPhone || !buyerAddress) {
-        alert('주문자 정보를 모두 입력해주세요.');
+      if (!buyerFirstName || !buyerLastName || !buyerEmail || !buyerPhone) {
+        $alert('입력 오류', 'Customer details를 모두 입력해주세요.', 'warning');
         return;
       }
-      
-      // 결제 요청
-      paymentWidget.requestPayment({
-        orderId: orderCode,
-        orderName: orderTitle,
-        customerName: buyerName,
-        customerEmail: buyerEmail,
-        customerMobilePhone: buyerPhone,
-        successUrl: window.location.origin + '/pay/success',
-        failUrl: window.location.origin + '/pay/fail',
-      });
+
+      // 선택된 결제 방식 확인
+      const activeTab = document.querySelector('#paymentTabs .nav-link.active');
+      const paymentMethod = activeTab.id.replace('-tab', '').toUpperCase();
+
+      // 결제 방식별 처리
+      if (paymentMethod === 'CASH') {
+        // 현금 결제 처리
+        processCashPayment();
+      } else if (paymentMethod === 'COIN') {
+        // 코인 결제 처리
+        processCoinPayment();
+      }
     });
+
+    // 현금 결제 처리 함수
+    function processCashPayment() {
+      $confirm(
+        '현금 결제 확인', 
+        '현금 결제로 주문을 완료하시겠습니까?\n주문 완료 후 이메일로 결제 정보를 안내해드립니다.', 
+        'question',
+        '결제하기',
+        '취소'
+      ).then((result) => {
+        if (result.isConfirmed) {
+          $ajax({
+            url: '/api/shop/order/cash-payment',
+            type: 'POST',
+            data: { 
+              orderId: orderId,
+              paymentMethod: 'CASH'
+            }
+          }).then(function(res) {
+            if (res === 'SUCCESS') {
+              $alert('주문 완료', '주문이 완료되었습니다. 입력하신 이메일로 결제 정보를 발송했습니다.', 'success');
+              window.location.href = '/shop/order/complete?orderId=' + orderId;
+            } else {
+              $alert('주문 실패', '주문 처리에 실패했습니다.', 'error');
+            }
+          });
+        }
+      });
+    }
+
+    // 코인 결제 처리 함수
+    function processCoinPayment() {
+      const totalAmount = updateTotalPrice();
+      $confirm(
+        '코인 결제 확인',
+        '코인으로 ' + totalAmount.toLocaleString() + '원을 결제하시겠습니까?',
+        'question',
+        '결제하기',
+        '취소'
+      ).then((result) => {
+        if (result.isConfirmed) {
+          $ajax({
+            url: '/api/shop/order/coin-payment',
+            type: 'POST',
+            data: { 
+              orderId: orderId,
+              paymentMethod: 'COIN',
+              coinAmount: totalAmount
+            }
+          }).then(function(res) {
+            if (res === 'SUCCESS') {
+              $alert('결제 완료', '코인 결제가 완료되었습니다.', 'success');
+              window.location.href = '/shop/order/complete?orderId=' + orderId;
+            } else if (res === 'INSUFFICIENT_COIN') {
+              $alert('코인 부족', '보유 코인이 부족합니다. 코인을 충전해주세요.', 'warning');
+            } else {
+              $alert('결제 실패', '코인 결제에 실패했습니다.', 'error');
+            }
+          });
+        }
+      });
+    }
     
     // 옵션 수량 값 직접 변경 - opt-qty-input
     document.querySelectorAll('.opt-qty-input').forEach(function(input) {
@@ -409,7 +528,7 @@
         const id = this.getAttribute('data-id');
         let qty = parseInt(this.value, 10);
         if (isNaN(qty) || qty < 1) {
-          alert('수량은 1 이상이어야 합니다.');
+          $alert('수량 오류', '수량은 1 이상이어야 합니다.', 'warning');
           this.value = 1;
           return;
         }
@@ -427,11 +546,6 @@
             // 총 결제금액 업데이트
             const total = updateTotalPrice();
             
-            // 토스 페이먼츠 결제위젯 업데이트
-            orderAmount = total;
-            paymentMethodsWidget = paymentWidget.renderPaymentMethods('#payment-widget', { value: orderAmount });
-            agreementWidget = paymentWidget.renderAgreement('#agreement-widget');
-            
             // 서버에도 totalPrice 동기화
             const orderId = "[[${order.id}]]" || 0;
             $ajax({
@@ -440,7 +554,7 @@
               data: { id: orderId, totalPrice: total }
             });
           } else {
-            alert('수량 변경 실패');
+            $alert('수량 변경 실패', '수량 변경에 실패했습니다.', 'error');
           }
         });
       });
@@ -471,11 +585,6 @@
             // 총 결제금액 업데이트
             const total = updateTotalPrice();
 
-            // 토스 페이먼츠 결제위젯 업데이트
-            orderAmount = total;
-            paymentMethodsWidget = paymentWidget.renderPaymentMethods('#payment-widget', { value: orderAmount });
-            agreementWidget = paymentWidget.renderAgreement('#agreement-widget');
-
             // 서버에도 totalPrice 동기화
             const orderId = "[[${order.id}]]" || 0;
             $ajax({
@@ -484,7 +593,7 @@
               data: { id: orderId, totalPrice: total }
             });
           } else {
-            alert('수량 변경 실패');
+            $alert('수량 변경 실패', '수량 변경에 실패했습니다.', 'error');
           }
         });
       });

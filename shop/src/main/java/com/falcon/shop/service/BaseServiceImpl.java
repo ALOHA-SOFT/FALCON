@@ -62,7 +62,9 @@ public class BaseServiceImpl<E extends Base, M extends BaseMapper<E>> extends Se
 
   @Override
   public E select(Long no) {
-    return mapper.selectById(no);
+    QueryWrapper<E> queryWrapper = new QueryWrapper<>();
+    queryWrapper.eq("no", no);
+    return mapper.selectOne(queryWrapper);
   }
 
   @Override

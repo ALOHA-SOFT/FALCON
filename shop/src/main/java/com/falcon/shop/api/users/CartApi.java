@@ -1,5 +1,7 @@
 package com.falcon.shop.api.users;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +32,17 @@ public class CartApi {
   @GetMapping()
   public ResponseEntity<?> getAll(
     @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-    @RequestParam(value = "size", required = false, defaultValue = "10") int size
+    @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+    @AuthenticationPrincipal CustomUser customUser
   ) {
       try {
+          if (customUser != null) {
+              // 로그인된 사용자의 장바구니만 가져오기
+              Long userNo = customUser.getUser().getNo();
+              List<Carts> cartList = cartService.listByUserNo(userNo);
+              log.info("User's cart items: {}", cartList);
+              return new ResponseEntity<>(cartList, HttpStatus.OK);
+          }
           return new ResponseEntity<>(cartService.page(page, size), HttpStatus.OK);
       } catch (Exception e) {
           return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -88,6 +98,19 @@ public class CartApi {
       cart.setUserNo(userNo);
       try {
           return new ResponseEntity<>(cartService.insert(cart), HttpStatus.OK);
+      } catch (Exception e) {
+          return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+  }
+  
+  @PutMapping(path = "/{id}", consumes = "application/x-www-form-urlencoded")
+  public ResponseEntity<?> updateQuantityForm(@PathVariable("id") String id, 
+    @RequestParam("quantity") Long quantity) {
+      try {
+          Carts cart = new Carts();
+          cart.setNo(Long.parseLong(id));
+          cart.setQuantity(quantity);
+          return new ResponseEntity<>(cartService.updateById(cart), HttpStatus.OK);
       } catch (Exception e) {
           return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
       }

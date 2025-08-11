@@ -35,11 +35,15 @@ public class Orders extends Base {
   private String code;                       // 주문코드 (20250101_상품번호_유저번호_당일시퀀스)
   private String title;                      // 주문제목 (상품1 외 5건)
   private String guestTel;                   // 비회원 전화번호
+  private String guestEmail;                 // 비회원 이메일
+  private String guestFirstName;             // 비회원 성
+  private String guestLastName;              // 비회원 이름
   private Long totalPrice;                   // 총 가격
   private Long totalQuantity;                // 총 수량
   private Long totalItemCount;               // 총 항목수
-  private Long shipPrice;               // 배송비
-  private String status;         // 상태 ('결제대기','결제완료','배송중','배송완료','주문취소','환불완료')
+  private Long shipPrice;                    // 배송비
+  private String paymentMethod;              // 결제방식 (CASH, COIN, CARD, TRANSFER)
+  private String status;                     // 상태 ('결제대기','결제완료','배송중','배송완료','주문취소','환불완료')
  
   @TableField(exist = false)
   List<OrderItem> orderItems;

@@ -12,12 +12,12 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service
-public class RealEmailServiceImpl implements EmailService {
+public class RealEmailServiceImpl implements RealEmailService {
 
     @Value("${spring.mail.username:noreply@bunsoomarket.com}")
     private String fromAddress;
 
-    @Value("${email.from.name:분수마켓}")
+    @Value("${email.from.name:FALCON}")
     private String fromName;
 
     /* 
@@ -32,7 +32,7 @@ public class RealEmailServiceImpl implements EmailService {
         log.info("## 임시 비밀번호 이메일 발송 ##");
         log.info("수신자: {}, 사용자명: {}", to, username);
 
-        String subject = "[분수마켓] 임시 비밀번호 발송";
+        String subject = "[FALCON] 임시 비밀번호 발송";
         String htmlContent = createTempPasswordHtml(username, tempPassword);
 
         return sendHtmlEmail(to, subject, htmlContent);
@@ -225,7 +225,7 @@ public class RealEmailServiceImpl implements EmailService {
             <body>
                 <div class="container">
                     <div class="header">
-                        <h1>🔐 분수마켓</h1>
+                        <h1>🔐 FALCON</h1>
                         <p>임시 비밀번호 발송</p>
                     </div>
                     
@@ -259,7 +259,7 @@ public class RealEmailServiceImpl implements EmailService {
                         <p>본 메일은 발신전용 메일입니다.</p>
                         <p>문의사항이 있으시면 고객센터로 연락해주세요.</p>
                         <p style="margin-top: 15px;">
-                            <strong>분수마켓</strong><br>
+                            <strong>FALCON</strong><br>
                             이메일: support@bunsoomarket.com<br>
                             전화: 02-1234-5678
                         </p>
@@ -269,4 +269,5 @@ public class RealEmailServiceImpl implements EmailService {
             </html>
             """.formatted(username, tempPassword);
     }
+
 }

@@ -24,5 +24,7 @@ public class UserAuth extends Base {
   private Long userNo;
   private String username;
   private String auth; 
+  private String name; 
+
   
 }

@@ -8,9 +8,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.falcon.shop.domain.common.QueryParams;
 import com.falcon.shop.domain.products.Options;
 import com.falcon.shop.domain.shop.CartItemOption;
@@ -234,9 +234,10 @@ public class CartServiceImpl extends BaseServiceImpl<Carts, CartMapper> implemen
     @Override
     public List<Carts> listByUserNo(Long userNo) {
         log.info("회원별 장바구니 목록 조회: userNo={}", userNo);
-        QueryWrapper<Carts> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_no", userNo);
-        List<Carts> carts = cartMapper.selectList(queryWrapper);
+        Map<String, Object> params = new HashMap<>();
+        params.put("userNo", userNo);
+        List<Carts> carts = cartMapper.listByUser(params);
+        log.info("User's cart items: {}", carts);
         if (carts == null || carts.isEmpty()) {
             log.warn("회원별 장바구니 목록이 비어 있습니다: userNo={}", userNo);
             return new ArrayList<>();
@@ -257,9 +258,21 @@ public class CartServiceImpl extends BaseServiceImpl<Carts, CartMapper> implemen
         return carts;
     }
 
-        
+    @Override
+    public boolean insert(Carts entity) {
+        // userNo, productNo 가 동일한게 있으면, quantity 만큼 수량 증가 수정
+        QueryWrapper<Carts> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_no", entity.getUserNo());
+        queryWrapper.eq("product_no", entity.getProductNo());
+        Carts existingCart = cartMapper.selectOne(queryWrapper);
+        if (existingCart != null) {
+            existingCart.setQuantity(existingCart.getQuantity() + entity.getQuantity());
+            return cartMapper.updateById(existingCart) > 0;
+        }
+        return cartMapper.insert(entity) > 0;
+    }
 
-    
+
     
 
 }

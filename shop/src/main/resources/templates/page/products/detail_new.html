@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/user/main_layout}"
+      >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>상품 상세</title>
+  <style>
+    .product-image {
+      width: 255px;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    
+    .product-details {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 500px;
+    }
+    
+    .product-name {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 24px;
+      line-height: 1.5;
+      color: #000;
+      margin: 0;
+    }
+    
+    .product-sku {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      color: #666;
+    }
+    
+    .product-price {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.5;
+      color: #21257E;
+    }
+    
+    .quantity-section {
+      width: 140px;
+    }
+    
+    .quantity-label {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #666;
+      margin-bottom: 10px;
+    }
+    
+    .quantity-control {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid #666;
+      width: 93px;
+      border-radius: 4px;
+    }
+    
+    .quantity-btn {
+      border: none;
+      background: none;
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+    }
+    
+    .quantity-input {
+      border: none;
+      background: none;
+      text-align: center;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 14px;
+      color: #000;
+      width: 21px;
+      outline: none;
+    }
+    
+    .add-to-cart-btn {
+      width: 400px;
+      height: 43px;
+      background: #212529;
+      border: 1px solid #212529;
+      border-radius: 6px;
+      color: white;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .add-to-cart-btn:hover {
+      background: #343a40;
+      border-color: #343a40;
+    }
+    
+    .breadcrumb-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .breadcrumb-item {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 16px;
+      color: #0D6EFD;
+      text-decoration: none;
+    }
+    
+    .breadcrumb-item.current {
+      color: #6C757D;
+    }
+    
+    .breadcrumb-separator {
+      color: #6C757D;
+    }
+    
+    .product-container {
+      display: flex;
+      justify-content: center;
+      gap: 80px;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 50px 0;
+    }
+    
+    .product-image-section {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      width: 500px;
+    }
+  </style>
+</head>
+<body layout:fragment="content">
+
+  <!-- 스페이스 -->
+  <div class="s-lg"></div>
+
+  <section id="product-detail" class="container-fluid">
+    
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-nav justify-content-center">
+      <a href="/" class="breadcrumb-item">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5z"/>
+        </svg>
+        Home
+      </a>
+      <span class="breadcrumb-separator">/</span>
+      <a href="/products" class="breadcrumb-item">Products</a>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-item current" th:text="${product.name}">King Blue</span>
+    </div>
+
+    <!-- 상품이 없을 때-->
+    <div th:unless="${product != null}" class="text-center py-5">
+      <p>상품 정보를 불러올 수 없습니다.</p>
+    </div>
+    
+    <!-- 상품 정보 -->
+    <div th:if="${product != null}" class="product-container">
+      
+      <!-- 상품 이미지 -->
+      <div class="product-image-section">
+        <img th:if="${product.mainImg != null}" 
+             th:src="${product.mainImg.content}" 
+             class="product-image cursor-pointer" 
+             alt="상품 이미지" 
+             data-bs-toggle="modal" 
+             data-bs-target="#imageModal">
+        <img th:if="${product.mainImg == null}" 
+             src="https://placehold.co/255x400?text=No+Image" 
+             class="product-image" 
+             alt="이미지 없음">
+             
+        <!-- Image Modal -->
+        <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">상품 이미지</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body text-center">
+                <img id="modalImage" src="" class="img-fluid" alt="상품 이미지">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 상품 상세 정보 -->
+      <div class="product-details">
+        
+        <!-- 상품명 -->
+        <h2 class="product-name" th:text="${product.name}">King Blue</h2>
+        
+        <!-- SKU -->
+        <div class="product-sku">
+          SKU: <span th:text="${product.no}">002</span>
+        </div>
+        
+        <!-- 가격 -->
+        <div class="product-price">
+          <th:block th:text="${product.price == null ? '' : '£' + #numbers.formatInteger(product.price, 0, 'COMMA')}">£52.30</th:block>
+        </div>
+        
+        <!-- Quantity 섹션 -->
+        <div class="quantity-section">
+          <div class="quantity-label">Quantity *</div>
+          <div class="quantity-control">
+            <button type="button" id="decreaseQty" class="quantity-btn">
+              <svg width="12" height="1" viewBox="0 0 12 1" fill="none">
+                <path d="M0 0.5H12" stroke="#212529" stroke-width="1"/>
+              </svg>
+            </button>
+            <input type="text" id="quantity" value="1" class="quantity-input" readonly>
+            <button type="button" id="increaseQty" class="quantity-btn">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M6 0V12M0 6H12" stroke="#212529" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Add to Cart 버튼 -->
+        <button type="button" id="addToCartBtn" class="add-to-cart-btn">
+          Add to Cart
+        </button>
+        
+      </div>
+    </div>
+  </section>
+
+  <!-- 장바구니 오프캔버스 -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel" style="width: 400px;">
+    <div class="offcanvas-header" style="padding: 20px; border-bottom: 1px solid #dee2e6;">
+      <h5 class="offcanvas-title" id="cartOffcanvasLabel" style="font-family: 'Helvetica Neue', sans-serif; font-size: 20px; font-weight: 600; color: #000;">
+        Shopping Cart
+      </h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body" style="padding: 20px;">
+      <div id="cartItems">
+        <!-- 장바구니 아이템들이 여기에 로드됩니다 -->
+        <div class="text-center text-muted">
+          장바구니가 비어있습니다.
+        </div>
+      </div>
+      
+      <!-- 장바구니 합계 -->
+      <div id="cartSummary" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #dee2e6; display: none;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span style="font-family: 'Helvetica Neue', sans-serif; font-size: 16px; color: #666;">Total:</span>
+          <span id="cartTotal" style="font-family: 'Helvetica Neue', sans-serif; font-size: 20px; font-weight: 700; color: #21257E;">£0</span>
+        </div>
+        <button type="button" class="btn w-100" style="background: #212529; color: white; border: 1px solid #212529; border-radius: 6px; padding: 12px; font-family: 'Helvetica Neue', sans-serif; font-size: 16px;">
+          Checkout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script th:inline="javascript">
+    var userName = /*[[${ session.SPRING_SECURITY_CONTEXT != null ? #authentication.principal.user.name : '' }]]*/ '';
+    var isLogin = userName || false;
+    var productNo = /*[[${product.no}]]*/ 0;
+    var basePrice = /*[[${product.price}]]*/ 0;
+  </script>
+  
+  <script>
+    // 이미지 모달 스크립트
+    document.querySelector('.product-image').addEventListener('click', function() {
+      document.getElementById('modalImage').src = this.src;
+    });
+    
+    // Quantity 컨트롤
+    let currentQuantity = 1;
+    const quantityInput = document.getElementById('quantity');
+    const decreaseBtn = document.getElementById('decreaseQty');
+    const increaseBtn = document.getElementById('increaseQty');
+    
+    decreaseBtn.addEventListener('click', function() {
+      if (currentQuantity > 1) {
+        currentQuantity--;
+        quantityInput.value = currentQuantity;
+      }
+    });
+    
+    increaseBtn.addEventListener('click', function() {
+      currentQuantity++;
+      quantityInput.value = currentQuantity;
+    });
+    
+    // 장바구니 버튼 이벤트
+    document.getElementById('addToCartBtn').addEventListener('click', function() {
+      
+      if (!isLogin) {
+        $alert_({
+          title: '로그인이 필요합니다',
+          text: '장바구니 이용을 위해 로그인이 필요합니다.',
+          icon: 'warning',
+          confirmButtonText: '로그인하기',
+          cancelButtonText: '취소',
+          showCancelButton: true
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/login?redirect=/products/' + productNo;
+          }
+        });
+        return;
+      }
+
+      // 장바구니 데이터
+      const cartData = {
+        productNo: productNo,
+        quantity: currentQuantity,
+        totalPrice: basePrice * currentQuantity,
+        options: '[]' // 빈 옵션 배열
+      };
+      
+      $ajax({
+        url: '/api/users/cart',
+        type: 'POST',
+        data: cartData
+      }).then(function(result) {
+        if (result === 'FAIL') {
+          $alert({
+            title: '장바구니 등록 실패',
+            text: '장바구니 등록 중 오류가 발생했습니다. 다시 시도해주세요.',
+            icon: 'error',
+            confirmButtonText: '확인'
+          });
+          return;
+        }
+        
+        // 장바구니 오프캔버스 열기
+        showCartOffcanvas();
+        
+      }).catch(function(error) {
+        console.error('장바구니 등록 오류:', error);
+        $alert({
+          title: '장바구니 등록 실패',
+          text: '장바구니 등록 중 오류가 발생했습니다.',
+          icon: 'error',
+          confirmButtonText: '확인'
+        });
+      });
+    });
+    
+    // 장바구니 오프캔버스 관련 함수들
+    function showCartOffcanvas() {
+      loadCartItems();
+      const offcanvas = new bootstrap.Offcanvas(document.getElementById('cartOffcanvas'));
+      offcanvas.show();
+    }
+    
+    function loadCartItems() {
+      $ajax({
+        url: '/api/users/cart',
+        type: 'GET'
+      }).then(function(cartList) {
+        renderCartItems(cartList);
+      }).catch(function(error) {
+        console.error('장바구니 로드 오류:', error);
+      });
+    }
+    
+    function renderCartItems(cartList) {
+      const cartItemsDiv = document.getElementById('cartItems');
+      const cartSummary = document.getElementById('cartSummary');
+      const cartTotal = document.getElementById('cartTotal');
+      
+      if (!cartList || cartList.length === 0) {
+        cartItemsDiv.innerHTML = '<div class="text-center text-muted">장바구니가 비어있습니다.</div>';
+        cartSummary.style.display = 'none';
+        return;
+      }
+      
+      let totalAmount = 0;
+      let itemsHtml = '';
+      
+      cartList.forEach(cart => {
+        const itemTotal = cart.quantity * cart.product.price;
+        totalAmount += itemTotal;
+        
+        itemsHtml += `
+          <div class="cart-item d-flex align-items-center mb-3 p-3" style="border: 1px solid #dee2e6; border-radius: 8px;">
+            <div class="cart-item-image me-3">
+              <img src="${cart.product.mainImg ? cart.product.mainImg.content : 'https://placehold.co/60x60?text=No+Image'}" 
+                   alt="${cart.product.name}" 
+                   style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+            </div>
+            <div class="cart-item-details flex-grow-1">
+              <h6 style="font-family: 'Helvetica Neue', sans-serif; font-size: 14px; font-weight: 600; color: #000; margin-bottom: 4px;">
+                ${cart.product.name}
+              </h6>
+              <div style="font-family: 'Helvetica Neue', sans-serif; font-size: 12px; color: #666; margin-bottom: 4px;">
+                SKU: ${cart.product.no}
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="quantity-controls d-flex align-items-center">
+                  <button type="button" class="btn btn-sm" onclick="updateCartQuantity(${cart.no}, ${cart.quantity - 1})" 
+                          style="border: 1px solid #dee2e6; width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                    <span style="font-size: 12px;">-</span>
+                  </button>
+                  <span style="margin: 0 10px; font-family: 'Helvetica Neue', sans-serif; font-size: 14px; min-width: 20px; text-align: center;">
+                    ${cart.quantity}
+                  </span>
+                  <button type="button" class="btn btn-sm" onclick="updateCartQuantity(${cart.no}, ${cart.quantity + 1})" 
+                          style="border: 1px solid #dee2e6; width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                    <span style="font-size: 12px;">+</span>
+                  </button>
+                </div>
+                <div style="font-family: 'Helvetica Neue', sans-serif; font-size: 14px; font-weight: 600; color: #21257E;">
+                  £${itemTotal.toLocaleString()}
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-sm ms-2" onclick="removeCartItem(${cart.no})" 
+                    style="color: #dc3545; border: none; background: none; padding: 5px;">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+              </svg>
+            </button>
+          </div>
+        `;
+      });
+      
+      cartItemsDiv.innerHTML = itemsHtml;
+      cartTotal.textContent = '£' + totalAmount.toLocaleString();
+      cartSummary.style.display = 'block';
+    }
+    
+    function updateCartQuantity(cartNo, newQuantity) {
+      if (newQuantity < 1) {
+        removeCartItem(cartNo);
+        return;
+      }
+      
+      $ajax({
+        url: '/api/users/cart/' + cartNo,
+        type: 'PUT',
+        data: { quantity: newQuantity }
+      }).then(function(result) {
+        if (result === 'SUCCESS') {
+          loadCartItems(); // 장바구니 새로고침
+        }
+      }).catch(function(error) {
+        console.error('장바구니 수량 업데이트 오류:', error);
+      });
+    }
+    
+    function removeCartItem(cartNo) {
+      $ajax({
+        url: '/api/users/cart/' + cartNo,
+        type: 'DELETE'
+      }).then(function(result) {
+        if (result === 'SUCCESS') {
+          loadCartItems(); // 장바구니 새로고침
+        }
+      }).catch(function(error) {
+        console.error('장바구니 삭제 오류:', error);
+      });
+    }
+  </script>
+
+</body>
+</html>

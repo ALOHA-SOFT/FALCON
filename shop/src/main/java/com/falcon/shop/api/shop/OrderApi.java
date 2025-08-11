@@ -1,5 +1,7 @@
 package com.falcon.shop.api.shop;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.falcon.shop.domain.shop.Orders;
+import com.falcon.shop.service.email.EmailService;
 import com.falcon.shop.service.shop.OrderService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class OrderApi {
   
   @Autowired private OrderService orderService;
+  @Autowired private EmailService emailService;
   
   @GetMapping()
   public ResponseEntity<?> getAll(
@@ -112,6 +116,110 @@ public class OrderApi {
           return new ResponseEntity<>(orderService.deleteById(id), HttpStatus.OK);
       } catch (Exception e) {
           return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+  }
+  
+  /**
+   * 현금 결제 처리
+   */
+  @PostMapping("/cash-payment")
+  public ResponseEntity<String> processCashPayment(
+      Map<String, String> request) {
+      
+      try {
+          String orderId = request.get("orderId");
+          String paymentMethod = request.get("paymentMethod");
+
+          log.info("현금 결제 처리 요청 받음 - orderId: {}, paymentMethod: {}", orderId, paymentMethod);
+          log.info("현금 결제 처리 시작: orderId={}, paymentMethod={}", orderId, paymentMethod);
+          
+          // 주문 정보 조회
+          Orders order = orderService.selectById(orderId);
+          if (order == null) {
+              log.error("주문을 찾을 수 없습니다: {}", orderId);
+              return new ResponseEntity<>("ORDER_NOT_FOUND", HttpStatus.BAD_REQUEST);
+          }
+          
+          // 주문 상태를 결제 완료로 업데이트
+          order.setPaymentMethod(paymentMethod);
+          order.setStatus("결제완료");
+          orderService.updateById(order);
+          
+          // 이메일 발송
+          boolean emailSent = false;
+          try {
+              emailSent = emailService.sendPaymentEmail(
+                  orderId,
+                  paymentMethod,
+                  order.getGuestEmail(),
+                  order.getGuestFirstName() + " " + order.getGuestLastName()
+              );
+              
+              if (emailSent) {
+                  log.info("결제 안내 이메일 발송 성공: {}", order.getGuestEmail());
+              } else {
+                  log.warn("결제 안내 이메일 발송 실패: {}", order.getGuestEmail());
+              }
+          } catch (Exception e) {
+              log.error("이메일 발송 중 오류 발생: " + e.getMessage(), e);
+          }
+          
+          return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
+          
+      } catch (Exception e) {
+          log.error("현금 결제 처리 실패: " + e.getMessage(), e);
+          return new ResponseEntity<>("PAYMENT_FAILED", HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+  }
+  
+  /**
+   * 코인 결제 처리
+   */
+  @PostMapping("/coin-payment")
+  public ResponseEntity<String> processCoinPayment(
+      @RequestParam("orderId") String orderId,
+      @RequestParam("paymentMethod") String paymentMethod,
+      @RequestParam("coinAmount") Integer coinAmount) {
+      
+      try {
+          log.info("코인 결제 처리 시작: orderId={}, paymentMethod={}, coinAmount={}", orderId, paymentMethod, coinAmount);
+          
+          // 주문 정보 조회
+          Orders order = orderService.selectById(orderId);
+          if (order == null) {
+              log.error("주문을 찾을 수 없습니다: {}", orderId);
+              return new ResponseEntity<>("ORDER_NOT_FOUND", HttpStatus.BAD_REQUEST);
+          }
+          
+          // 주문 상태를 결제 완료로 업데이트
+          order.setPaymentMethod(paymentMethod);
+          order.setStatus("결제완료");
+          orderService.updateById(order);
+          
+          // 이메일 발송
+          boolean emailSent = false;
+          try {
+              emailSent = emailService.sendPaymentEmail(
+                  orderId,
+                  paymentMethod + " (" + coinAmount.toString() + " 코인)",
+                  order.getGuestEmail(),
+                  order.getGuestFirstName() + " " + order.getGuestLastName()
+              );
+              
+              if (emailSent) {
+                  log.info("결제 안내 이메일 발송 성공: {}", order.getGuestEmail());
+              } else {
+                  log.warn("결제 안내 이메일 발송 실패: {}", order.getGuestEmail());
+              }
+          } catch (Exception e) {
+              log.error("이메일 발송 중 오류 발생: " + e.getMessage(), e);
+          }
+          
+          return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
+          
+      } catch (Exception e) {
+          log.error("코인 결제 처리 실패: " + e.getMessage(), e);
+          return new ResponseEntity<>("PAYMENT_FAILED", HttpStatus.INTERNAL_SERVER_ERROR);
       }
   }
 

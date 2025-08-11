@@ -17,7 +17,7 @@
 }
 
 body {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Noto Sans KR', Arial, sans-serif;
   background-color: var(--falcon-light);
   color: var(--falcon-primary);
   line-height: 1.5;
@@ -25,7 +25,7 @@ body {
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Hedvig Letters Serif', 'Helvetica Neue', serif;
+  font-family: 'Hedvig Letters Serif', 'Helvetica Neue', 'Noto Sans KR', serif;
   color: var(--falcon-primary);
 }
 
@@ -36,7 +36,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Buttons */
 .btn-falcon {
-  font-family: 'Helvetica Neue', sans-serif;
+  font-family: 'Helvetica Neue', 'Noto Sans KR', sans-serif;
   font-weight: 400;
   border-radius: 6px;
   transition: all 0.3s ease;
@@ -102,7 +102,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .product-title {
-  font-family: 'Hedvig Letters Serif', serif;
+  font-family: 'Hedvig Letters Serif', 'Noto Sans KR', serif;
   font-size: 16px;
   font-weight: 400;
   color: var(--falcon-secondary);
@@ -111,7 +111,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .product-price {
-  font-family: 'Hedvig Letters Serif', serif;
+  font-family: 'Hedvig Letters Serif', 'Noto Sans KR', serif;
   font-size: 18px;
   font-weight: 400;
   color: var(--falcon-blue);
@@ -381,7 +381,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .reasons-title {
-    font-family: 'Helvetica Neue', sans-serif;
+    font-family: 'Helvetica Neue', 'Noto Sans KR', sans-serif;
     font-size: 32px;
     font-weight: 400;
     color: var(--falcon-secondary);
@@ -407,7 +407,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .reasons-text {
-    font-family: 'Helvetica Neue', sans-serif;
+    font-family: 'Helvetica Neue', 'Noto Sans KR', sans-serif;
     font-size: 20px;
     font-weight: 400;
     color: var(--falcon-secondary);
@@ -428,7 +428,7 @@ h1, h2, h3, h4, h5, h6 {
     background-color: var(--falcon-danger);
     border-color: var(--falcon-danger-hover);
     color: var(--falcon-light);
-    font-family: 'Helvetica Neue', sans-serif;
+    font-family: 'Helvetica Neue', 'Noto Sans KR', sans-serif;
     font-size: 24px;
     font-weight: 700;
     padding: 14px 60px;
@@ -446,7 +446,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Age Disclaimer */
 .age-disclaimer {
-    font-family: 'Helvetica Neue', sans-serif;
+    font-family: 'Helvetica Neue', 'Noto Sans KR', sans-serif;
     font-size: 16px;
     font-weight: 400;
     color: var(--falcon-dark);

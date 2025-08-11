@@ -5,269 +5,702 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>장바구니 - 분수마켓</title>
+  <title>장바구니 - FALCON</title>
+  <style>
+    .cart-container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 50px 20px;
+    }
+    
+    .cart-title {
+      font-family: 'Helvetica Neue', 'Noto Sans', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1.5;
+      color: #000;
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #000;
+    }
+    
+    .cart-content {
+      display: flex;
+      gap: 40px;
+    }
+    
+    .cart-items-section {
+      flex: 1;
+      min-width: 692px;
+    }
+    
+    .cart-card {
+      display: flex;
+      gap: 10px;
+      padding: 20px 0;
+      border-bottom: 1px solid #666;
+      margin-bottom: 0;
+    }
+    
+    .cart-card:last-child {
+      border-bottom: none;
+    }
+    
+    .cart-image {
+      width: 120px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 4px;
+      padding: 10px;
+      object-fit: contain;
+    }
+    
+    .cart-details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 10px;
+    }
+    
+    .cart-product-name {
+      font-family: 'Roboto', 'Noto Sans', sans-serif;
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 1;
+      color: #666;
+      margin: 0;
+    }
+    
+    .cart-product-price {
+      font-family: 'Roboto', 'Noto Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1;
+      color: #21257E;
+    }
+    
+    .cart-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 10px;
+      height: 200px;
+      justify-content: space-between;
+    }
+    
+    .quantity-section {
+      width: 93px;
+    }
+    
+    .quantity-control {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid #666;
+      border-radius: 4px;
+    }
+    
+    .quantity-btn {
+      border: none;
+      background: none;
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+    }
+    
+    .quantity-input {
+      border: none;
+      background: none;
+      text-align: center;
+      font-family: 'Helvetica Neue', 'Noto Sans', sans-serif;
+      font-size: 14px;
+      color: #000;
+      width: 21px;
+      outline: none;
+    }
+    
+    .cart-total-price {
+      text-align: center;
+      padding: 10px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .cart-total-price .price {
+      font-family: 'Helvetica Neue', 'Noto Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.5;
+      color: #21257E;
+    }
+    
+    .delete-section {
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-start;
+      padding: 10px;
+      width: 78px;
+      height: 40px;
+    }
+    
+    .delete-btn {
+      border: none;
+      background: none;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #A70101;
+      padding: 0;
+    }
+    
+    .delete-btn:hover {
+      opacity: 0.7;
+    }
+    
+    .order-summary-section {
+      width: 320px;
+      flex-shrink: 0;
+    }
+    
+    .order-summary {
+      background: white;
+      padding: 0;
+    }
+    
+    .summary-title {
+      font-family: 'Helvetica Neue', 'Noto Sans', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1.5;
+      color: #000;
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #000;
+    }
+    
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      width: 320px;
+      height: 30px;
+    }
+    
+    .summary-label {
+      font-family: 'Helvetica Neue', 'Noto Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: #000;
+      text-align: left;
+    }
+    
+    .summary-value {
+      font-family: 'Helvetica Neue', 'Noto Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: #666;
+      text-align: right;
+    }
+    
+    .summary-value.shipping {
+      font-weight: 700;
+    }
+    
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      width: 320px;
+      height: 30px;
+    }
+    
+    .summary-total .label {
+      font-family: 'Helvetica Neue', 'Noto Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: #000;
+    }
+    
+    .summary-total .value {
+      font-family: 'Helvetica Neue', 'Noto Sans', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.5;
+      color: #21257E;
+    }
+    
+    .checkout-btn {
+      width: 100%;
+      background: #212529;
+      border: 1px solid #212529;
+      border-radius: 6px;
+      color: white;
+      font-family: 'Helvetica Neue', 'Noto Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 20px;
+    }
+    
+    .checkout-btn:hover {
+      background: #343a40;
+      border-color: #343a40;
+    }
+    
+    .shipping-info {
+      margin-top: 30px;
+      text-align: right;
+    }
+    
+    .shipping-info-text {
+      font-family: 'Helvetica Neue', 'Noto Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: #000;
+      text-align: center;
+      white-space: pre-line;
+    }
+    
+    .empty-cart {
+      text-align: center;
+      padding: 100px 20px;
+      color: #666;
+    }
+    
+    .empty-cart .material-icons {
+      font-size: 64px;
+      color: #ccc;
+      margin-bottom: 20px;
+    }
+    
+    .empty-cart p {
+      font-family: 'Helvetica Neue', 'Noto Sans', sans-serif;
+      font-size: 18px;
+      margin-bottom: 30px;
+    }
+    
+    /* 모바일 반응형 */
+    @media (max-width: 768px) {
+      .cart-container {
+        padding: 20px 10px;
+      }
+      
+      .cart-content {
+        flex-direction: column;
+        gap: 30px;
+      }
+      
+      .cart-items-section {
+        min-width: auto;
+      }
+      
+      .cart-card {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px 0;
+      }
+      
+      .cart-image {
+        width: 100%;
+        height: 200px;
+        max-width: 200px;
+        margin: 0 auto;
+      }
+      
+      .cart-details {
+        text-align: center;
+        gap: 15px;
+      }
+      
+      .cart-actions {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        height: auto;
+        gap: 15px;
+      }
+      
+      .order-summary-section {
+        width: 100%;
+      }
+      
+      .summary-row,
+      .summary-total {
+        width: 100%;
+      }
+      
+      .cart-title {
+        font-size: 24px;
+      }
+      
+      .summary-title {
+        font-size: 24px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .cart-card {
+        padding: 10px 0;
+      }
+      
+      .cart-image {
+        height: 150px;
+      }
+      
+      .cart-actions {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .quantity-section {
+        width: 100%;
+        max-width: 120px;
+        margin: 0 auto;
+      }
+    }
+  </style>
 </head>
 
 <body layout:fragment="content">
 
-  <div class="card">
-    <div class="card-header">
-      <h5>장바구니</h5>
+  <div class="cart-container">
+    
+    
+    <!-- 장바구니가 비어있을 때 -->
+    <div th:if="${pageInfo.list.size() == 0}" class="empty-cart">
+      <i class="material-icons">shopping_cart</i>
+      <p>장바구니가 비어있습니다.</p>
+      <a href="/products" class="btn btn-primary">쇼핑하러 가기</a>
     </div>
-    <div class="card-body">
-      <!-- 장바구니 목록 -->
-      <div class="cart-list">
-        <!-- 전체 선택 및 선택 삭제 -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="selectAll">
-            <label class="form-check-label" for="selectAll">
-              전체 선택
-            </label>
+    
+    <!-- 장바구니 내용 -->
+    <div th:if="${pageInfo.list.size() > 0}" class="cart-content">
+      
+      <!-- 장바구니 아이템들 -->
+      <div class="cart-items-section order-2 order-xl-1">
+        <!-- 타이틀 -->
+        <h1 class="cart-title">My Cart</h1>
+        <th:block th:each="cart, cartStat : ${pageInfo.list}">
+          <div class="cart-card" th:data-cart-id="${cart.id}">
+            
+            <!-- 상품 이미지 -->
+            <img th:src="${cart.product != null && cart.product.mainImg != null ? cart.product.mainImg.content : 'https://placehold.co/120x200?text=No+Image'}"
+                 th:alt="${cart.product != null ? cart.product.name : '상품 이미지'}"
+                 class="cart-image">
+            
+            <!-- 상품 정보 -->
+            <div class="cart-details">
+              <h3 class="cart-product-name" th:text="${cart.product != null ? cart.product.name : '상품명'}">King Blue</h3>
+              <div class="cart-product-price" th:text="${cart.product != null and cart.product.price != null ? '£' + #numbers.formatDecimal(cart.product.price, 0, 2) : '£0.00'}">£52.30</div>
+            </div>
+            
+            <!-- 수량 조절 및 액션 -->
+            <div class="cart-actions">
+              
+              <!-- 수량 조절 -->
+              <div class="quantity-section">
+                <div class="quantity-control">
+                  <button type="button" class="quantity-btn decrease-btn" th:data-cart-id="${cart.id}">
+                    <span class="material-icons">remove</span>
+                  </button>
+                  <input type="text" class="quantity-input" th:value="${cart.quantity}" readonly>
+                  <button type="button" class="quantity-btn increase-btn" th:data-cart-id="${cart.id}">
+                    <span class="material-icons">add</span>
+                  </button>
+                </div>
+              </div>
+              
+              <!-- 총 가격 -->
+              <div class="cart-total-price">
+                <span class="price" th:text="${cart.product != null and cart.product.price != null ? '£' + #numbers.formatDecimal(cart.product.price * cart.quantity, 0, 2) : '£0.00'}">£156.90</span>
+              </div>
+              
+            </div>
+            
+            <!-- 삭제 버튼 -->
+            <div class="delete-section">
+              <button type="button" class="delete-btn" th:data-cart-id="${cart.id}">
+                <span class="material-icons">delete</span>
+              </button>
+            </div>
+            
           </div>
-          <button class="btn btn-outline-danger btn-sm" id="deleteSelected">선택 삭제</button>
+        </th:block>
+        
+        <!-- 배송 정보 -->
+        <div class="shipping-info">
+          <div class="shipping-info-text">
+SHIPPING & HANDLING FEES
+1 - 2 CARTONS: £12
+3 - 5 CARTONS: £8.5
+6 - 9 CARTONS: £5.5
+10+ CARTONS: FREE
+          </div>
         </div>
-        
-        <th:block th:each="cart : ${pageInfo.list}">
-          <!-- 장바구니 항목 -->
-          <div class="border p-3 mb-3 rounded cart-item">
-            <div class="form-check mb-2">
-              <input class="form-check-input item-check" type="checkbox">
-            </div>
-            <div class="row align-items-center">
-              <div class="col-md-2">
-                <img src="/img/products/p1.png" class="img-fluid" alt="상품 이미지">
-              </div>
-              <div class="col-md-8">
-                <h6 th:text="${cart.product.name}">상품명</h6>
-                <p class="text-muted mb-1">옵션:</p>
-                <p class="text-muted mb-1"> 
-                    <th:block th:each="item, optionStat : ${cart.cartItemOptions}">
-                      <span th:text="${item.option.name} + ': ' + ${#numbers.formatInteger(item.option.price * item.quantity, 0, 'COMMA')}"></span>
-                      <span th:text="|(${#numbers.formatInteger(item.option.price, 0, 'COMMA')}x${#numbers.formatInteger(item.quantity, 0, 'COMMA')})|">옵션명 (2개)</span>
-                      <span th:if="!${optionStat.last}">, </span>
-                    </th:block>
-                </p>
-              </div>
-              <div class="col-md-2">
-                <p class="fw-bold item-total-price" th:text="${#numbers.formatInteger(cart.totalPrice, 0, 'COMMA')}">₩0</p>
-                <a th:href="@{/carts/create/{id}(id=${cart.id})}" class="btn btn-outline-primary btn-sm btn-order">주문하기</a>
-                <button class="btn btn-outline-danger btn-sm delete-item btn-delete" th:data-id="${cart.id}">삭제</button>
-              </div>
-            </div>
-          </div>
-        </th:block>
-        
-        <!-- 장바구니가 비어있을 때 -->
-        <th:block th:if="${pageInfo.list.size() == 0}">
-          <div class="text-center py-5" id="empty-cart" style="display: none;">
-            <i class="material-icons" style="font-size: 48px; color: #ccc;">shopping_cart</i>
-            <p class="text-muted mt-3">장바구니가 비어있습니다.</p>
-            <a href="/" class="btn btn-primary">쇼핑하러 가기</a>
-          </div>
-        </th:block>
       </div>
       
       <!-- 주문 요약 -->
-      <div class="card mt-4">
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-8">
-              <h6>주문 요약</h6>
-              <div class="d-flex justify-content-between">
-                <span>선택 상품 (<span id="selected-count">2</span>개)</span>
-                <span id="selected-total">₩35,000</span>
-              </div>
-              <div class="d-flex justify-content-between">
-                <span>배송비</span>
-                <span id="shipping-fee">₩3,000</span>
-              </div>
-              <hr>
-              <div class="d-flex justify-content-between fw-bold">
-                <span>총 결제금액</span>
-                <span id="final-total" class="text-primary fs-5">₩38,000</span>
-              </div>
-            </div>
-            <div class="col-md-4">
-                <div class="d-flex flex-column align-items-between justify-content-between h-100">
-                <button class="btn btn-primary btn-lg w-100" id="order-selected">선택상품 주문</button>
-                <a href="/carts/create/all" class="btn btn-outline-primary btn-lg w-100" id="order-all">전체상품 주문</a>
-              </div>
-            </div>
+      <div class="order-summary-section order-1 order-xl-2 mb-5">
+        <div class="order-summary">
+          <h2 class="summary-title">Order Summary</h2>
+          
+          <div class="summary-row">
+            <span class="summary-label">선택 상품 (<span id="item-count" th:text="${pageInfo.list.size()}">1</span>개)</span>
+            <span class="summary-value" id="subtotal">£0.00</span>
           </div>
+          
+          <div class="summary-row">
+            <span class="summary-label">배송비</span>
+            <span class="summary-value shipping" id="shipping-fee">£10.00</span>
+          </div>
+          
+          <div class="summary-total mb-5">
+            <span class="label">총 결제금액</span>
+            <span class="value" id="final-total">£0.00</span>
+          </div>
+          
+          <!-- <button type="button" class="checkout-btn" id="checkout-btn">Checkout</button> -->
+          <button type="button" class="btn btn-dark btn-lg w-100" id="checkout-btn">Checkout</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 스페이스 : s-lg -->
-  <div class="s-lg"></div>
-
   <script src="/js/common/ajax.js"></script>
   <script src="/js/common/alert.js"></script>
   <script>
-    // 전체 선택/해제
-    document.getElementById('selectAll').addEventListener('change', function() {
-      const itemChecks = document.querySelectorAll('.item-check');
-      itemChecks.forEach(check => {
-        check.checked = this.checked;
-      });
+    // 전역 변수
+    let cartData = [];
+    
+    // 초기화
+    document.addEventListener('DOMContentLoaded', function() {
+      loadCartData();
       updateOrderSummary();
-    });
-    
-    // 개별 체크박스 상태 변경
-    document.querySelectorAll('.item-check').forEach(check => {
-      check.addEventListener('change', updateOrderSummary);
-    });
-    
-    // 수량 증가/감소
-    document.querySelectorAll('.increase-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const quantityInput = this.parentElement.querySelector('.quantity-input');
-        const currentValue = parseInt(quantityInput.value);
-        quantityInput.value = currentValue + 1;
-        updateItemTotal(this.closest('.cart-item'));
-        updateOrderSummary();
-      });
-    });
-    
-    document.querySelectorAll('.decrease-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const quantityInput = this.parentElement.querySelector('.quantity-input');
-        const currentValue = parseInt(quantityInput.value);
-        if (currentValue > 1) {
-          quantityInput.value = currentValue - 1;
-          updateItemTotal(this.closest('.cart-item'));
-          updateOrderSummary();
+      
+      // 수량 조절 버튼 이벤트
+      document.addEventListener('click', function(e) {
+        if (e.target.closest('.increase-btn')) {
+          const btn = e.target.closest('.increase-btn');
+          const cartId = btn.dataset.cartId;
+          const cartCard = btn.closest('.cart-card');
+          const quantityInput = cartCard.querySelector('.quantity-input');
+          const newQuantity = parseInt(quantityInput.value) + 1;
+          updateCartQuantity(cartId, newQuantity, cartCard);
+        }
+        
+        if (e.target.closest('.decrease-btn')) {
+          const btn = e.target.closest('.decrease-btn');
+          const cartId = btn.dataset.cartId;
+          const cartCard = btn.closest('.cart-card');
+          const quantityInput = cartCard.querySelector('.quantity-input');
+          const currentQuantity = parseInt(quantityInput.value);
+          if (currentQuantity > 1) {
+            updateCartQuantity(cartId, currentQuantity - 1, cartCard);
+          }
+        }
+        
+        if (e.target.closest('.delete-btn')) {
+          const btn = e.target.closest('.delete-btn');
+          const cartId = btn.dataset.cartId;
+          deleteCartItem(cartId);
         }
       });
+      
+      // Checkout 버튼 이벤트
+      const checkoutBtn = document.getElementById('checkout-btn');
+      if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', function() {
+          window.location.href = '/carts/create/all';
+        });
+      }
     });
     
-    // 개별 상품 삭제 (ajax)
-    document.querySelectorAll('.delete-item').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const cartId = this.dataset.id;
-        $confirm('삭제 확인', '상품을 삭제하시겠습니까?', 'warning', '삭제', '취소').then(async (result) => {
-          if (result.isConfirmed) {
-            const delResult = await $ajax({
-              url: '/api/users/cart/' + encodeURIComponent(cartId),
-              type: 'DELETE',
-              data: {}
-            });
-            if (delResult && delResult !== 'FAIL') {
-              $toast_({ title: '삭제되었습니다', icon: 'success', timer: 1500 });
-              this.closest('.cart-item').remove();
-              updateOrderSummary();
-              checkEmptyCart();
-            } else {
-              $alert('삭제 실패', '장바구니 삭제 중 오류가 발생했습니다.', 'error');
-            }
+    // 장바구니 데이터 로드
+    function loadCartData() {
+      const cartCards = document.querySelectorAll('.cart-card');
+      cartData = Array.from(cartCards).map(card => {
+        const cartId = card.dataset.cartId;
+        const productName = card.querySelector('.cart-product-name').textContent;
+        const priceText = card.querySelector('.cart-product-price').textContent;
+        const price = parseFloat(priceText.replace('£', '').replace(',', ''));
+        const quantity = parseInt(card.querySelector('.quantity-input').value);
+        
+        return {
+          id: cartId,
+          name: productName,
+          price: price,
+          quantity: quantity,
+          total: price * quantity
+        };
+      });
+    }
+    
+    // 수량 업데이트
+    async function updateCartQuantity(cartId, newQuantity, cartCard) {
+      try {
+        const result = await $ajax({
+          url: '/api/users/cart',
+          type: 'PUT',
+          data: { 
+            id: cartId,
+            quantity: newQuantity 
           }
         });
-      });
-    });
-    // 선택 삭제 (ajax)
-    document.getElementById('deleteSelected').addEventListener('click', function() {
-      const selectedItems = document.querySelectorAll('.item-check:checked');
-      if (selectedItems.length === 0) {
-        $alert('선택 없음', '삭제할 상품을 선택해주세요.', 'warning');
-        return;
-      }
-      $confirm('선택 삭제', '선택한 상품을 모두 삭제하시겠습니까?', 'warning', '삭제', '취소').then(async (result) => {
-        if (result.isConfirmed) {
-          // 여러 개 삭제를 병렬 처리
-          const deletePromises = Array.from(selectedItems).map(item => {
-            const cartItem = item.closest('.cart-item');
-            const btn = cartItem.querySelector('.delete-item');
-            const cartId = btn.dataset.id;
-            return $ajax({
-              url: '/api/users/cart/' + encodeURIComponent(cartId),
-              type: 'DELETE',
-              data: {}
-            }).then(res => ({ res, cartItem }));
-          });
-          const results = await Promise.all(deletePromises);
-          let hasFail = false;
-          results.forEach(({ res, cartItem }) => {
-            if (res && res !== 'FAIL') {
-              cartItem.remove();
-            } else {
-              hasFail = true;
-            }
-          });
+        
+        if (result && result !== 'FAIL') {
+          // UI 업데이트
+          const quantityInput = cartCard.querySelector('.quantity-input');
+          const totalPriceElement = cartCard.querySelector('.price');
+          
+          quantityInput.value = newQuantity;
+          
+          // 가격 계산 및 업데이트
+          const priceText = cartCard.querySelector('.cart-product-price').textContent;
+          const unitPrice = parseFloat(priceText.replace('£', '').replace(',', ''));
+          const newTotal = unitPrice * newQuantity;
+          totalPriceElement.textContent = '£' + newTotal.toFixed(2);
+          
+          // 장바구니 데이터 업데이트
+          loadCartData();
           updateOrderSummary();
-          checkEmptyCart();
-          if (hasFail) {
-            $alert('일부 실패', '일부 상품 삭제에 실패했습니다.', 'error');
+          
+        } else {
+          $alert({
+            title: '수량 업데이트 실패',
+            text: '수량 업데이트 중 오류가 발생했습니다.',
+            icon: 'error',
+            confirmButtonText: '확인'
+          });
+        }
+      } catch (error) {
+        console.error('수량 업데이트 오류:', error);
+        $alert({
+          title: '수량 업데이트 실패',
+          text: '수량 업데이트 중 오류가 발생했습니다.',
+          icon: 'error',
+          confirmButtonText: '확인'
+        });
+      }
+    }
+    
+    // 장바구니 아이템 삭제
+    async function deleteCartItem(cartId) {
+      try {
+        const result = await $confirm(
+          '삭제 확인',
+          '상품을 삭제하시겠습니까?',
+          'warning',
+          '삭제',
+          '취소'
+        );
+        
+        if (result.isConfirmed) {
+          const deleteResult = await $ajax({
+            url: '/api/users/cart/' + cartId,
+            type: 'DELETE'
+          });
+          
+          if (deleteResult && deleteResult !== 'FAIL') {
+            // UI에서 제거
+            const cartCard = document.querySelector(`[data-cart-id="${cartId}"]`);
+            if (cartCard) {
+              cartCard.remove();
+            }
+            
+            // 장바구니 데이터 업데이트
+            loadCartData();
+            updateOrderSummary();
+            
+            // 장바구니가 비어있는지 확인
+            const remainingCards = document.querySelectorAll('.cart-card');
+            if (remainingCards.length === 0) {
+              location.reload(); // 빈 장바구니 화면 표시를 위해 새로고침
+            }
+            
+            $toast_({ 
+              title: '삭제되었습니다', 
+              icon: 'success', 
+              timer: 1500 
+            });
+            
           } else {
-            $toast_({ title: '삭제되었습니다', icon: 'success', timer: 1500 });
+            $alert({
+              title: '삭제 실패',
+              text: '상품 삭제 중 오류가 발생했습니다.',
+              icon: 'error',
+              confirmButtonText: '확인'
+            });
           }
         }
-      });
-    });
-    
-    // 선택상품 주문
-    document.getElementById('order-selected').addEventListener('click', function() {
-      const selectedItems = document.querySelectorAll('.item-check:checked');
-      if (selectedItems.length === 0) {
-        $alert('선택 없음', '주문할 상품을 선택해주세요.', 'warning');
-        return;
+      } catch (error) {
+        console.error('삭제 오류:', error);
+        $alert({
+          title: '삭제 실패',
+          text: '상품 삭제 중 오류가 발생했습니다.',
+          icon: 'error',
+          confirmButtonText: '확인'
+        });
       }
-      // 선택된 cart id 수집
-      const ids = Array.from(selectedItems).map(item => {
-        const cartItem = item.closest('.cart-item');
-        const btn = cartItem.querySelector('.delete-item');
-        return btn.dataset.id;
-      }).join(',');
-      // 주문 생성 페이지로 이동
-      window.location.href = '/carts/create/list/' + ids;
-    });
-    
-    // 상품별 총액 업데이트
-    function updateItemTotal(cartItem) {
-      const priceElements = cartItem.querySelectorAll('.text-muted');
-      const priceText = priceElements[1].textContent; // 두 번째 .text-muted 요소 (가격)
-      const price = parseInt(priceText.replace(/[^\d]/g, ''));
-      const quantity = parseInt(cartItem.querySelector('.quantity-input').value);
-      const total = price * quantity;
-      cartItem.querySelector('.item-total-price').textContent = '₩' + total.toLocaleString();
     }
     
     // 주문 요약 업데이트
     function updateOrderSummary() {
-      const checkedItems = document.querySelectorAll('.item-check:checked');
-      let totalPrice = 0;
-      
-      checkedItems.forEach(item => {
-        const cartItem = item.closest('.cart-item');
-        const totalText = cartItem.querySelector('.item-total-price').textContent;
-        const price = parseInt(totalText.replace(/[^\d]/g, ''));
-        totalPrice += price;
-      });
-      
-      const shippingFee = totalPrice > 0 ? 3000 : 0;
-      const finalTotal = totalPrice + shippingFee;
-      
-      document.getElementById('selected-count').textContent = checkedItems.length;
-      document.getElementById('selected-total').textContent = '₩' + totalPrice.toLocaleString();
-      document.getElementById('shipping-fee').textContent = '₩' + shippingFee.toLocaleString();
-      document.getElementById('final-total').textContent = '₩' + finalTotal.toLocaleString();
-    }
-    
-    // 빈 장바구니 체크
-    function checkEmptyCart() {
-      const cartItems = document.querySelectorAll('.cart-item');
-      const emptyCart = document.getElementById('empty-cart');
-      
-      if (cartItems.length === 0) {
-        emptyCart.style.display = 'block';
-      } else {
-        emptyCart.style.display = 'none';
+      if (cartData.length === 0) {
+        return;
       }
+      
+      const subtotal = cartData.reduce((sum, item) => sum + item.total, 0);
+      const itemCount = cartData.length;
+      
+      // 배송비 계산 (실제 로직에 맞게 수정 필요)
+      let shippingFee = 0;
+      if (itemCount >= 1 && itemCount <= 2) {
+        shippingFee = 12;
+      } else if (itemCount >= 3 && itemCount <= 5) {
+        shippingFee = 8.5;
+      } else if (itemCount >= 6 && itemCount <= 9) {
+        shippingFee = 5.5;
+      } else if (itemCount >= 10) {
+        shippingFee = 0;
+      }
+      
+      const finalTotal = subtotal + shippingFee;
+      
+      // UI 업데이트
+      const itemCountElement = document.getElementById('item-count');
+      const subtotalElement = document.getElementById('subtotal');
+      const shippingFeeElement = document.getElementById('shipping-fee');
+      const finalTotalElement = document.getElementById('final-total');
+      
+      if (itemCountElement) itemCountElement.textContent = itemCount;
+      if (subtotalElement) subtotalElement.textContent = '£' + subtotal.toFixed(2);
+      if (shippingFeeElement) shippingFeeElement.textContent = '£' + shippingFee.toFixed(2);
+      if (finalTotalElement) finalTotalElement.textContent = '£' + finalTotal.toFixed(2);
     }
-    
-    // 초기 주문 요약 업데이트
-    updateOrderSummary();
   </script>
 
 </body>
