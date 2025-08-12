@@ -1,0 +1,15 @@
+# NowPayments API 설정
+nowpayments:
+  api-key: F8AR5QN-XET4YMK-JV0ZAKF-W9YK5AM
+  base-url: https://api.nowpayments.io/v1
+  sandbox-mode: true # 개발 환경에서는 true, 운영 환경에서는 false
+  
+# 결제 설정
+payment:
+  crypto:
+    callback-url: ${server.domain}/api/payment/crypto/callback
+    success-url: ${server.domain}/pay/crypto/success
+    cancel-url: ${server.domain}/pay/crypto/cancel
+    
+server:
+  domain: http://localhost:8080 # 운영 환경에서는 실제 도메인으로 변경

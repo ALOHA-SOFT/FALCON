@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/user/main_layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>암호화폐 결제 취소</title>
+</head>
+<body layout:fragment="content">
+  <div class="container my-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card text-center">
+          <div class="card-body py-5">
+            <div class="mb-4">
+              <i class="material-icons text-warning" style="font-size: 72px;">cancel</i>
+            </div>
+            <h2 class="card-title text-warning mb-3">결제가 취소되었습니다</h2>
+            <p class="card-text mb-4">
+              암호화폐 결제가 취소되었습니다.<br>
+              다시 시도하거나 다른 결제 방법을 선택해주세요.
+            </p>
+            
+            <div class="alert alert-warning">
+              <div class="d-flex align-items-center">
+                <i class="material-icons me-2">info</i>
+                <div class="text-start">
+                  <strong>결제 취소 안내</strong><br>
+                  <small>결제가 취소되어 주문이 처리되지 않았습니다. 장바구니에서 다시 주문하실 수 있습니다.</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+              <a href="/shop" class="btn btn-primary btn-lg">쇼핑 계속하기</a>
+              <a href="/shop/cart" class="btn btn-outline-secondary">장바구니로 돌아가기</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 페이지 로드 시 주문 정보 확인
+    document.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const orderId = urlParams.get('orderId');
+      
+      if (orderId) {
+        console.log('Cancelled Order ID:', orderId);
+        // 필요시 주문 취소 처리
+      }
+    });
+  </script>
+</body>
+</html>

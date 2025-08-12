@@ -332,50 +332,187 @@
     <div class="card mb-4">
       <div class="card-header">결제수단 선택</div>
       <div class="card-body">
-        <!-- 결제 방식 선택 탭 -->
-        <ul class="nav nav-tabs mb-3" id="paymentTabs" role="tablist">
-          <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="cash-tab" data-bs-toggle="tab" data-bs-target="#cash-payment" type="button" role="tab" aria-controls="cash-payment" aria-selected="true">Cash Payment</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="coin-tab" data-bs-toggle="tab" data-bs-target="#coin-payment" type="button" role="tab" aria-controls="coin-payment" aria-selected="false">Coin Payment</button>
-          </li>
-        </ul>
-
-        <!-- 결제 방식별 컨텐츠 -->
-        <div class="tab-content" id="paymentTabContent">
-          <!-- 현금 결제 -->
-          <div class="tab-pane fade show active" id="cash-payment" role="tabpanel" aria-labelledby="cash-tab">
-            <div class="alert alert-info d-flex align-items-center">
-              <i class="material-icons">email</i>
-              <span>
-                현금 결제는 주문 완료 후 이메일로 결제 정보를 안내받는 방식입니다.
-              </span>
-            </div>
-            <div class="form-group">
-              <label class="form-label">현금 결제 안내</label>
-              <div class="form-text">주문 완료 후 입력하신 이메일로 결제 정보와 안내사항을 발송해드립니다.</div>
+        <!-- 결제 방식 선택 카드 버튼 -->
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <div class="payment-card" id="cash-card" data-payment="cash">
+              <div class="payment-card-body">
+                <div class="payment-icon">
+                  <i class="material-icons">credit_card</i>
+                </div>
+                <div class="payment-info">
+                  <h5 class="payment-title">Cash Payment</h5>
+                  <p class="payment-desc">이메일로 결제 정보 안내</p>
+                </div>
+                <div class="payment-check">
+                  <i class="material-icons">check_circle</i>
+                </div>
+              </div>
             </div>
           </div>
-          
-          <!-- 코인 결제 -->
-          <div class="tab-pane fade" id="coin-payment" role="tabpanel" aria-labelledby="coin-tab">
-            <div class="alert alert-warning d-flex align-items-center">
-              <i class="material-icons">account_balance_wallet</i>
-              <span>
-                코인 결제는 보유 코인으로 결제하는 방식입니다.
-              </span>
-            </div>
-            <div class="form-group">
-              <label class="form-label">보유 코인</label>
-              <div class="input-group">
-                <span class="input-group-text">💰</span>
-                <input type="text" class="form-control" value="1,000 코인" readonly>
+          <div class="col-md-6">
+            <div class="payment-card" id="coin-card" data-payment="coin">
+              <div class="payment-card-body">
+                <div class="payment-icon">
+                  <i class="material-icons">account_balance_wallet</i>
+                </div>
+                <div class="payment-info">
+                  <h5 class="payment-title">Coin Payment</h5>
+                  <p class="payment-desc">보유 코인으로 즉시 결제</p>
+                </div>
+                <div class="payment-check">
+                  <i class="material-icons">check_circle</i>
+                </div>
               </div>
-              <div class="form-text">코인이 부족한 경우 충전 후 이용해주세요.</div>
             </div>
           </div>
         </div>
+
+        <!-- 결제 방식별 상세 정보 -->
+        <div id="payment-details">
+          <!-- 현금 결제 정보 -->
+          <div id="cash-details" class="payment-details active">
+            <div class="alert alert-info d-flex align-items-center">
+              <i class="material-icons me-2">email</i>
+              <div>
+                <strong>현금 결제 안내</strong><br>
+                <small>주문 완료 후 입력하신 이메일로 결제 정보와 안내사항을 발송해드립니다.</small>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 코인 결제 정보 -->
+          <div id="coin-details" class="payment-details">
+            <div class="alert alert-warning d-flex align-items-center">
+              <i class="material-icons me-2">account_balance_wallet</i>
+              <div>
+                <strong>암호화폐 결제 안내</strong><br>
+                <small>NowPayments를 통해 다양한 암호화폐로 결제할 수 있습니다.</small>
+              </div>
+            </div>
+            
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">결제 통화 선택</label>
+                <select class="form-select" id="cryptoCurrency">
+                  <option value="">통화를 선택해주세요</option>
+                  <option value="btc">Bitcoin (BTC)</option>
+                  <option value="eth">Ethereum (ETH)</option>
+                  <option value="usdt">Tether (USDT)</option>
+                  <option value="usdc">USD Coin (USDC)</option>
+                  <option value="ltc">Litecoin (LTC)</option>
+                  <option value="bch">Bitcoin Cash (BCH)</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">결제 금액</label>
+                <div class="input-group">
+                  <span class="input-group-text">£</span>
+                  <input type="text" class="form-control" id="paymentAmount" readonly>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mt-3" id="cryptoAmountDisplay" style="display: none;">
+              <div class="alert alert-info">
+                <div class="d-flex justify-content-between align-items-center">
+                  <span>결제할 암호화폐 수량:</span>
+                  <strong id="cryptoAmount">-</strong>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                  <span>현재 환율:</span>
+                  <small id="exchangeRate">-</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <style>
+          .payment-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #ffffff;
+            height: 100%;
+          }
+          
+          .payment-card:hover {
+            border-color: #007bff;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+            transform: translateY(-2px);
+          }
+          
+          .payment-card.selected {
+            border-color: #007bff;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+          }
+          
+          .payment-card-body {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+          }
+          
+          .payment-icon {
+            font-size: 2.5rem;
+            color: #007bff;
+            flex-shrink: 0;
+          }
+          
+          .payment-card.selected .payment-icon {
+            color: white;
+          }
+          
+          .payment-info {
+            flex: 1;
+          }
+          
+          .payment-title {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+          }
+          
+          .payment-desc {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #6c757d;
+          }
+          
+          .payment-card.selected .payment-desc {
+            color: rgba(255, 255, 255, 0.8);
+          }
+          
+          .payment-check {
+            font-size: 1.5rem;
+            color: transparent;
+            transition: all 0.3s ease;
+          }
+          
+          .payment-card.selected .payment-check {
+            color: white;
+          }
+          
+          .payment-details {
+            display: none;
+            animation: fadeIn 0.3s ease;
+          }
+          
+          .payment-details.active {
+            display: block;
+          }
+          
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+        </style>
       </div>
     </div>
     <div class="d-grid gap-2">
@@ -419,7 +556,7 @@
       return total;
     }
     
-    // 페이지 로드 시 총 결제금액 계산 및 결제위젯 초기화
+    // 페이지 로드 시 총 결제금액 계산 및 결제 카드 초기화
     document.addEventListener('DOMContentLoaded', function() {
       const total = updateTotalPrice();
       
@@ -430,7 +567,84 @@
         type: 'PUT',
         data: { id: orderId, totalPrice: total }
       });
+
+      // 결제 카드 클릭 이벤트
+      document.querySelectorAll('.payment-card').forEach(function(card) {
+        card.addEventListener('click', function() {
+          // 모든 카드에서 selected 클래스 제거
+          document.querySelectorAll('.payment-card').forEach(function(c) {
+            c.classList.remove('selected');
+          });
+          
+          // 클릭한 카드에 selected 클래스 추가
+          this.classList.add('selected');
+          
+          // 모든 결제 상세 정보 숨기기
+          document.querySelectorAll('.payment-details').forEach(function(detail) {
+            detail.classList.remove('active');
+          });
+          
+          // 선택한 결제 방식의 상세 정보 표시
+          const paymentType = this.getAttribute('data-payment');
+          document.getElementById(paymentType + '-details').classList.add('selected-payment');
+          document.getElementById(paymentType + '-details').classList.add('active');
+        });
+      });
+
+      // 기본적으로 Cash Payment 선택
+      document.getElementById('cash-card').classList.add('selected');
+
+      // 초기 결제 금액 설정
+      updatePaymentAmount();
+
+      // 암호화폐 선택 시 환율 조회
+      document.getElementById('cryptoCurrency').addEventListener('change', function() {
+        const currency = this.value;
+        if (currency) {
+          getCryptoExchangeRate(currency);
+        } else {
+          document.getElementById('cryptoAmountDisplay').style.display = 'none';
+        }
+      });
     });
+
+    // 결제 금액 업데이트 함수
+    function updatePaymentAmount() {
+      const paymentAmountInput = document.getElementById('paymentAmount');
+      if (paymentAmountInput) {
+        const totalPriceElement = document.getElementById('total-price');
+        if (totalPriceElement) {
+          const totalAmount = parseInt(totalPriceElement.getAttribute('data')) || 0;
+          paymentAmountInput.value = (totalAmount / 100).toFixed(2); // 파운드 단위로 변환
+        }
+      }
+    }
+
+    // 암호화폐 환율 조회
+    function getCryptoExchangeRate(currency) {
+      const totalAmount = parseFloat(document.getElementById('paymentAmount').value);
+      
+      $ajax({
+        url: '/api/payment/crypto/estimate',
+        type: 'POST',
+        data: {
+          price_amount: totalAmount,
+          price_currency: 'GBP',
+          pay_currency: currency.toUpperCase()
+        }
+      }).then(function(response) {
+        if (response && response.pay_amount) {
+          document.getElementById('cryptoAmount').textContent = 
+            response.pay_amount + ' ' + currency.toUpperCase();
+          document.getElementById('exchangeRate').textContent = 
+            '1 ' + currency.toUpperCase() + ' = £' + (totalAmount / response.pay_amount).toFixed(6);
+          document.getElementById('cryptoAmountDisplay').style.display = 'block';
+        }
+      }).catch(function(error) {
+        console.error('환율 조회 실패:', error);
+        $alert('환율 조회 실패', '암호화폐 환율을 조회할 수 없습니다.', 'error');
+      });
+    }
     
     document.getElementById('payBtn').addEventListener('click', function() {
 
@@ -447,8 +661,12 @@
       }
 
       // 선택된 결제 방식 확인
-      const activeTab = document.querySelector('#paymentTabs .nav-link.active');
-      const paymentMethod = activeTab.id.replace('-tab', '').toUpperCase();
+      const selectedCard = document.querySelector('.payment-card.selected');
+      if (!selectedCard) {
+        $alert('결제 방식 선택', '결제 방식을 선택해주세요.', 'warning');
+        return;
+      }
+      const paymentMethod = selectedCard.getAttribute('data-payment').toUpperCase();
 
       // 결제 방식별 처리
       if (paymentMethod === 'CASH') {
@@ -523,33 +741,137 @@
 
     // 코인 결제 처리 함수
     function processCoinPayment() {
-      const totalAmount = updateTotalPrice();
+      const cryptoCurrency = document.getElementById('cryptoCurrency').value;
+      const paymentAmount = document.getElementById('paymentAmount').value;
+      const buyerFirstName = document.getElementById('buyerFirstName').value;
+      const buyerLastName = document.getElementById('buyerLastName').value;
+      const buyerEmail = document.getElementById('buyerEmail').value;
+      const buyerPhone = document.getElementById('buyerPhone').value;
+      const addressNo = document.querySelector('input[name="addressNo"]:checked') ? 
+        document.querySelector('input[name="addressNo"]:checked').value : null;
+
+      // 유효성 검사
+      if (!cryptoCurrency) {
+        $alert('결제 통화 선택', '결제할 암호화폐를 선택해주세요.', 'warning');
+        return;
+      }
+
+      const cryptoAmount = document.getElementById('cryptoAmount').textContent;
+      
       $confirm(
-        '코인 결제 확인',
-        '코인으로 ' + totalAmount.toLocaleString() + '원을 결제하시겠습니까?',
+        '암호화폐 결제 확인',
+        `${cryptoAmount}로 결제하시겠습니까?\n결제 페이지로 이동합니다.`,
         'question',
         '결제하기',
         '취소'
       ).then((result) => {
         if (result.isConfirmed) {
-          $ajax({
-            url: '/api/shop/order/coin-payment',
-            type: 'POST',
-            data: { 
-              orderId: orderId,
-              paymentMethod: 'COIN',
-              coinAmount: totalAmount
-            }
-          }).then(function(res) {
-            if (res === 'SUCCESS') {
-              $alert('결제 완료', '코인 결제가 완료되었습니다.', 'success');
-              window.location.href = '/shop/order/complete?orderId=' + orderId;
-            } else if (res === 'INSUFFICIENT_COIN') {
-              $alert('코인 부족', '보유 코인이 부족합니다. 코인을 충전해주세요.', 'warning');
-            } else {
-              $alert('결제 실패', '코인 결제에 실패했습니다.', 'error');
+          // 로딩 표시
+          Swal.fire({
+            title: '결제 준비 중...',
+            text: '잠시만 기다려주세요.',
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading()
             }
           });
+
+          // NowPayments 결제 생성 요청
+          $ajax({
+            url: '/api/payment/crypto/create',
+            type: 'POST',
+            data: {
+              orderId: orderId,
+              price_amount: paymentAmount,
+              price_currency: 'GBP',
+              pay_currency: cryptoCurrency.toUpperCase(),
+              buyerFirstName: buyerFirstName,
+              buyerLastName: buyerLastName,
+              buyerEmail: buyerEmail,
+              buyerPhone: buyerPhone,
+              addressNo: addressNo
+            }
+          }).then(function(response) {
+            Swal.close();
+            
+            if (response && response.payment_url) {
+              // NowPayments 결제 페이지로 리다이렉트
+              window.location.href = response.payment_url;
+            } else if (response && response.pay_address) {
+              // QR 코드나 주소 표시 방식
+              showCryptoPaymentInfo(response);
+            } else {
+              $alert('결제 생성 실패', '암호화폐 결제를 생성할 수 없습니다.', 'error');
+            }
+          }).catch(function(error) {
+            Swal.close();
+            console.error('결제 생성 실패:', error);
+            $alert('결제 실패', '암호화폐 결제 생성에 실패했습니다.', 'error');
+          });
+        }
+      });
+    }
+
+    // 암호화폐 결제 정보 표시 (주소 방식)
+    function showCryptoPaymentInfo(paymentData) {
+      const modalHtml = `
+        <div class="modal fade" id="cryptoPaymentModal" tabindex="-1">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">암호화폐 결제</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body text-center">
+                <div class="alert alert-info">
+                  <strong>결제 금액:</strong> ${paymentData.pay_amount} ${paymentData.pay_currency}
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">결제 주소</label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" value="${paymentData.pay_address}" readonly id="payAddress">
+                    <button class="btn btn-outline-secondary" onclick="copyToClipboard('payAddress')">복사</button>
+                  </div>
+                </div>
+                <div class="alert alert-warning">
+                  <small>위 주소로 정확한 금액을 송금해주세요. 결제 완료 후 자동으로 처리됩니다.</small>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-primary" onclick="checkPaymentStatus('${paymentData.payment_id}')">결제 확인</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.body.insertAdjacentHTML('beforeend', modalHtml);
+      const modal = new bootstrap.Modal(document.getElementById('cryptoPaymentModal'));
+      modal.show();
+    }
+
+    // 클립보드 복사 함수
+    function copyToClipboard(elementId) {
+      const element = document.getElementById(elementId);
+      element.select();
+      document.execCommand('copy');
+      $toast({ title: '주소가 복사되었습니다.', icon: 'success' });
+    }
+
+    // 결제 상태 확인
+    function checkPaymentStatus(paymentId) {
+      $ajax({
+        url: '/api/payment/crypto/status/' + paymentId,
+        type: 'GET'
+      }).then(function(response) {
+        if (response.payment_status === 'finished') {
+          $alert('결제 완료', '암호화폐 결제가 완료되었습니다.', 'success');
+          window.location.href = '/pay/crypto/success?orderId=' + orderId;
+        } else if (response.payment_status === 'failed') {
+          $alert('결제 실패', '암호화폐 결제에 실패했습니다.', 'error');
+        } else {
+          $alert('결제 대기', '결제가 아직 완료되지 않았습니다. 잠시 후 다시 확인해주세요.', 'info');
         }
       });
     }
@@ -577,6 +899,9 @@
             
             // 총 결제금액 업데이트
             const total = updateTotalPrice();
+            
+            // 결제 금액도 업데이트
+            updatePaymentAmount();
             
             // 서버에도 totalPrice 동기화
             const orderId = "[[${order.id}]]" || 0;
@@ -616,6 +941,9 @@
             
             // 총 결제금액 업데이트
             const total = updateTotalPrice();
+
+            // 결제 금액도 업데이트
+            updatePaymentAmount();
 
             // 서버에도 totalPrice 동기화
             const orderId = "[[${order.id}]]" || 0;
