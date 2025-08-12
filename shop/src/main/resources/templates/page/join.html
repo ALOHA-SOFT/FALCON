@@ -90,6 +90,20 @@
             <label for="name" class="form-label">이름</label>
             <input type="text" class="form-control" id="name" name="name" required maxlength="30" placeholder="이름을 입력하세요">
           </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="firstName" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="firstName" name="firstName" required maxlength="50" placeholder="First Name">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="lastName" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="lastName" name="lastName" required maxlength="50" placeholder="Last Name">
+              </div>
+            </div>
+          </div>
           <div class="mb-3">
             <label for="email" class="form-label">이메일</label>
             <input type="email" class="form-control" id="email" name="email" required maxlength="50" placeholder="이메일을 입력하세요">
@@ -104,7 +118,7 @@
               <input class="form-check-input" type="checkbox" id="agreeAll" onclick="
               const checked = this.checked;
               document.querySelectorAll(
-                '#agree1, #agree2, #agree3, #marketing, #mailing, #sms, #age14'
+                '#agree1, #agree2, #agree3, #marketing, #mailing, #sms, #age18'
               ).forEach(cb => { cb.checked = checked; });
               ">
               <label class="form-check-label fw-bold cursor-pointer user-select-none" for="agreeAll">
@@ -175,13 +189,15 @@
                   </div>
                 </div>
               </li>
+              <li>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="age18" name="age18" required>
+                  <label class="form-check-label cursor-pointer user-select-none" for="age18">
+                    만 18세 이상입니다. <span class="text-danger ms-1">(필수)</span>
+                  </label>
+                </div>
+              </li>
             </ul>
-            <div class="form-check mt-2">
-              <input class="form-check-input" type="checkbox" id="age14" name="age14" required>
-              <label class="form-check-label cursor-pointer user-select-none" for="age14">
-                만 14세 이상입니다. <span class="text-danger ms-1">(필수)</span>
-              </label>
-            </div>
           </div>
           <div class="d-grid">
             <button type="submit" class="btn btn-primary">회원가입</button>
@@ -289,9 +305,9 @@
             // 필수 약관 동의 확인
             const agree1 = document.getElementById('agree1');
             const agree2 = document.getElementById('agree2');
-            const age14 = document.getElementById('age14');
+            const age18 = document.getElementById('age18');
             
-            if (!agree1.checked || !agree2.checked || !age14.checked) {
+            if (!agree1.checked || !agree2.checked || !age18.checked) {
               event.preventDefault();
               event.stopPropagation();
               $alert({

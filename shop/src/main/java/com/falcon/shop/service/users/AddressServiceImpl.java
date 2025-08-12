@@ -95,4 +95,15 @@ public class AddressServiceImpl extends BaseServiceImpl<Address, AddressMapper> 
       }
     }
   }
+
+  @Override
+  public Address selectByUser(Long userNo) {
+    QueryWrapper<Address> queryWrapper = new QueryWrapper<>();
+    queryWrapper.eq("user_no", userNo);
+    List<Address> addressList = addressMapper.selectList(queryWrapper);
+    if (addressList != null && !addressList.isEmpty()) {
+      return addressList.get(0);
+    }
+    return null;
+  }
 }

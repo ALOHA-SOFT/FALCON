@@ -1,8 +1,15 @@
 package com.falcon.shop.service.email;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -20,12 +27,8 @@ public class RealEmailServiceImpl implements RealEmailService {
     @Value("${email.from.name:FALCON}")
     private String fromName;
 
-    /* 
-     * TODO: Spring Mail 의존성 추가 후 활성화
-     * 
-     * @Autowired
-     * private JavaMailSender javaMailSender;
-     */
+    @Autowired
+    private JavaMailSender javaMailSender;
 
     @Override
     public boolean sendTempPassword(String to, String username, String tempPassword) {
@@ -40,79 +43,110 @@ public class RealEmailServiceImpl implements RealEmailService {
 
     @Override
     public boolean sendEmail(String to, String subject, String content) {
-        /*
-         * TODO: 실제 Spring Mail 구현
-         * 
-         * try {
-         *     SimpleMailMessage message = new SimpleMailMessage();
-         *     message.setFrom(fromAddress);
-         *     message.setTo(to);
-         *     message.setSubject(subject);
-         *     message.setText(content);
-         *     
-         *     javaMailSender.send(message);
-         *     log.info("이메일 발송 성공: {}", to);
-         *     return true;
-         *     
-         * } catch (MailException e) {
-         *     log.error("이메일 발송 실패: {}, 오류: {}", to, e.getMessage());
-         *     return false;
-         * }
-         */
-        
-        // 현재는 Mock으로 처리
-        log.info("=== 이메일 발송 (Mock) ===");
+        log.info("=== 이메일 발송 ===");
         log.info("발신자: {}", fromAddress);
         log.info("수신자: {}", to);
         log.info("제목: {}", subject);
         log.info("내용: {}", content);
         log.info("========================");
-        return true;
+          
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromAddress);
+            message.setTo(to);
+            message.setSubject(subject);
+            message.setText(content);
+            
+            javaMailSender.send(message);
+            log.info("이메일 발송 성공: {}", to);
+            return true;
+            
+        } catch (MailException e) {
+            log.error("이메일 발송 실패: {}, 오류: {}", to, e.getMessage());
+            return false;
+        }
+        
     }
 
     @Override
     public boolean sendHtmlEmail(String to, String subject, String htmlContent) {
-        /*
-         * TODO: 실제 Spring Mail 구현
-         * 
-         * try {
-         *     MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-         *     MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-         *     
-         *     helper.setFrom(fromAddress, fromName);
-         *     helper.setTo(to);
-         *     helper.setSubject(subject);
-         *     helper.setText(htmlContent, true);
-         *     
-         *     javaMailSender.send(mimeMessage);
-         *     log.info("HTML 이메일 발송 성공: {}", to);
-         *     return true;
-         *     
-         * } catch (MessagingException | MailException e) {
-         *     log.error("HTML 이메일 발송 실패: {}, 오류: {}", to, e.getMessage());
-         *     return false;
-         * } catch (Exception e) {
-         *     log.error("이메일 발송 중 예상치 못한 오류: {}, 오류: {}", to, e.getMessage());
-         *     return false;
-         * }
-         */
-        
-        // 현재는 Mock으로 처리
-        log.info("=== HTML 이메일 발송 (Mock) ===");
+        log.info("=== HTML 이메일 발송 ===");
         log.info("발신자: {} ({})", fromName, fromAddress);
         log.info("수신자: {}", to);
         log.info("제목: {}", subject);
         log.info("HTML 내용 길이: {} characters", htmlContent.length());
-        log.info("HTML 미리보기:");
-        
-        // HTML 내용에서 임시 비밀번호 부분만 추출해서 로그로 출력
-        if (htmlContent.contains("임시 비밀번호")) {
-            String preview = extractPasswordFromHtml(htmlContent);
-            log.info("임시 비밀번호: {}", preview);
+         
+        try {
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
+            
+            helper.setFrom(fromAddress, fromName);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(htmlContent, true); // HTML 모드로 설정
+            
+            // mailcap 오류 방지를 위한 추가 설정
+            mimeMessage.setHeader("Content-Type", "text/html; charset=UTF-8");
+            
+            if (htmlContent.contains("임시 비밀번호")) {
+                String preview = extractPasswordFromHtml(htmlContent);
+                log.info("임시 비밀번호: {}", preview);
+            }
+            
+            javaMailSender.send(mimeMessage);
+            log.info("HTML 이메일 발송 성공: {}", to);
+            return true;
+            
+        } catch (MessagingException e) {
+            log.error("HTML 이메일 발송 실패 (MessagingException): {}, 오류: {}", to, e.getMessage());
+            // HTML 발송 실패시 텍스트로 fallback
+            return sendTextEmail(to, subject, htmlToText(htmlContent));
+        } catch (MailException e) {
+            log.error("HTML 이메일 발송 실패 (MailException): {}, 오류: {}", to, e.getMessage());
+            return false;
+        } catch (Exception e) {
+            log.error("이메일 발송 중 예상치 못한 오류: {}, 오류: {}", to, e.getMessage());
+            // 예외 발생시 텍스트로 fallback
+            return sendTextEmail(to, subject, htmlToText(htmlContent));
         }
+    }
+    
+    /**
+     * 텍스트 이메일 발송 (HTML 실패시 fallback)
+     */
+    private boolean sendTextEmail(String to, String subject, String textContent) {
+        try {
+            log.info("텍스트 이메일로 fallback 발송: {}", to);
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromAddress);
+            message.setTo(to);
+            message.setSubject(subject);
+            message.setText(textContent);
+            
+            javaMailSender.send(message);
+            log.info("텍스트 이메일 발송 성공: {}", to);
+            return true;
+        } catch (Exception e) {
+            log.error("텍스트 이메일 발송도 실패: {}, 오류: {}", to, e.getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * HTML을 간단한 텍스트로 변환
+     */
+    private String htmlToText(String htmlContent) {
+        if (htmlContent == null) return "";
         
-        log.info("==============================");
-        return true;
+        // 기본적인 HTML 태그 제거
+        return htmlContent
+            .replaceAll("<[^>]+>", "") // HTML 태그 제거
+            .replaceAll("&nbsp;", " ") // &nbsp; 변환
+            .replaceAll("&amp;", "&")  // &amp; 변환
+            .replaceAll("&lt;", "<")   // &lt; 변환
+            .replaceAll("&gt;", ">")   // &gt; 변환
+            .replaceAll("\\s+", " ")   // 연속된 공백을 하나로
+            .trim();
     }
 
     /**

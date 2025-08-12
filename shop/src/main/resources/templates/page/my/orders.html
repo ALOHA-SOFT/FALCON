@@ -31,6 +31,9 @@
               <th:block th:if="${order.status == '주문취소'}">
                 <span class="badge bg-danger" th:text="${order.status}">주문취소</span>
               </th:block>
+              <th:block th:if="${order.status != '결제완료' && order.status != '결제대기' && order.status != '주문취소' }">
+                <span class="badge bg-primary" th:text="${order.status}"></span>
+              </th:block>
               
             </div>
             <div class="row justify-content-between align-items-center">

@@ -1,6 +1,6 @@
 package com.falcon.shop.domain.email;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import org.apache.ibatis.type.Alias;
 
@@ -39,20 +39,14 @@ public class Email extends Base {
     private String content;             // 내용
     @TableField(exist = false)
     private Boolean isHtml;             // HTML 여부
-    private SendStatus sendStatus;      // 발송상태
+    private String sendStatus;      // 발송상태 (PENDING, SENT, FAILED)
     private String sendType;            // 발송타입
     private String relatedId;           // 관련 ID
-    @TableField(exist = false)
-    private LocalDateTime sendAt;       // 발송일시
+    private Date sendAt;       // 발송일시
     private String errorMessage;        // 오류메시지
     @Builder.Default
     private Integer retryCount = 0;     // 재시도 횟수
 
-    public enum SendStatus {
-        PENDING,    // 대기중
-        SENT,       // 발송완료
-        FAILED      // 발송실패
-    }
     
     // 편의 메서드들
     public Boolean getIsHtml() {

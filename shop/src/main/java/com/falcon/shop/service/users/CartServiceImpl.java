@@ -8,8 +8,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.falcon.shop.domain.common.QueryParams;
 import com.falcon.shop.domain.products.Options;
@@ -17,11 +15,15 @@ import com.falcon.shop.domain.shop.CartItemOption;
 import com.falcon.shop.domain.shop.OrderItem;
 import com.falcon.shop.domain.shop.OrderItemOption;
 import com.falcon.shop.domain.shop.Orders;
+import com.falcon.shop.domain.users.Address;
 import com.falcon.shop.domain.users.Carts;
+import com.falcon.shop.domain.users.Users;
 import com.falcon.shop.mapper.products.OptionMapper;
 import com.falcon.shop.mapper.users.CartMapper;
 import com.falcon.shop.service.BaseServiceImpl;
 import com.falcon.shop.service.shop.OrderService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,6 +34,8 @@ public class CartServiceImpl extends BaseServiceImpl<Carts, CartMapper> implemen
     @Autowired private CartMapper cartMapper;
     @Autowired private OptionMapper optionMapper;
     @Autowired private OrderService orderService;
+    @Autowired private UserService userService;
+    @Autowired private AddressService addressService;
     
     @Override
     public PageInfo<Carts> pageByUserNo(QueryParams queryParams, Long userNo) {
@@ -143,16 +147,26 @@ public class CartServiceImpl extends BaseServiceImpl<Carts, CartMapper> implemen
     }
 
     @Override
-    public Orders createOrder(List<Carts> cartList) {
+    public Orders createOrder(Long userNo, List<Carts> cartList) {
         log.info("장바구니 목록으로 주문 생성 요청: {}", cartList);
         if (cartList == null || cartList.isEmpty()) {
             log.error("장바구니 목록이 비어 있습니다.");
             throw new RuntimeException("장바구니 목록이 비어 있습니다.");
         }
-        
+
+        // 주문 제목 설정
+        String title = "Cart Order";
+        if( !cartList.isEmpty() ) {
+            title = cartList.get(0).getProduct().getName();
+        }
+        if( cartList.size() > 1 ) {
+            title += " 외 " + (cartList.size() - 1) + "개";
+        }
+
+
         Orders order = Orders.builder()
-            .title("장바구니 주문")
-            .userNo(cartList.get(0).getUserNo())
+            .title(title)
+            .userNo(userNo)
             .status("결제대기")
             .build();
         
@@ -228,7 +242,7 @@ public class CartServiceImpl extends BaseServiceImpl<Carts, CartMapper> implemen
             log.warn("회원별 장바구니 목록이 비어 있습니다: userNo={}", userNo);
             throw new RuntimeException("회원별 장바구니 목록이 비어 있습니다.");
         }
-        return createOrder(cartList);
+        return createOrder(userNo, cartList);
     }
 
     @Override

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/admin/admin_layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>이메일 템플릿 수정</title>
+</head>
+<body layout:fragment="content">
+  <div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">이메일 템플릿 수정</h1>
+      <div>
+        <a href="/admin/email-template" class="btn btn-secondary">
+          <i class="fas fa-arrow-left"></i> 목록으로
+        </a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">템플릿 정보 수정</h6>
+            <div>
+              <span th:if="${emailTemplate.isActive}" class="badge badge-success">활성화</span>
+              <span th:unless="${emailTemplate.isActive}" class="badge badge-secondary">비활성화</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <form id="template-update-form">
+              <input type="hidden" name="no" th:value="${emailTemplate.no}">
+              <input type="hidden" name="id" th:value="${emailTemplate.id}">
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="name">템플릿명 <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="name" name="name" 
+                           th:value="${emailTemplate.name}" required>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="type">템플릿 타입 <span class="text-danger">*</span></label>
+                    <select class="form-control" id="type" name="type" required>
+                      <option value="">선택하세요</option>
+                      <option value="ORDER_CONFIRMATION" th:selected="${emailTemplate.type == 'ORDER_CONFIRMATION'}">주문 확인</option>
+                      <option value="PAYMENT_GUIDE" th:selected="${emailTemplate.type == 'PAYMENT_GUIDE'}">결제 안내</option>
+                      <option value="TEMP_PASSWORD" th:selected="${emailTemplate.type == 'TEMP_PASSWORD'}">임시 비밀번호</option>
+                      <option value="WELCOME" th:selected="${emailTemplate.type == 'WELCOME'}">환영 인사</option>
+                      <option value="NOTIFICATION" th:selected="${emailTemplate.type == 'NOTIFICATION'}">알림</option>
+                      <option value="MARKETING" th:selected="${emailTemplate.type == 'MARKETING'}">마케팅</option>
+                      <option value="CUSTOM" th:selected="${emailTemplate.type == 'CUSTOM'}">사용자 정의</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="subject">제목 템플릿 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="subject" name="subject" 
+                       th:value="${emailTemplate.subject}" required
+                       placeholder="예: [{{companyName}}] 주문이 접수되었습니다 (주문번호: {{orderCode}})">
+                <small class="form-text text-muted">{{변수명}} 형태로 변수를 사용할 수 있습니다.</small>
+              </div>
+
+              <div class="form-group">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="isHtml" name="isHtml" 
+                         th:checked="${emailTemplate.isHtml}">
+                  <label class="form-check-label" for="isHtml">
+                    HTML 템플릿
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="content">내용 템플릿 <span class="text-danger">*</span></label>
+                <div class="row">
+                  <div class="col-12">
+                    <textarea class="form-control" id="content" name="content" rows="20" required 
+                              th:text="${emailTemplate.content}"></textarea>
+                    <small class="form-text text-muted">
+                      {{변수명}} 형태로 변수를 사용하세요. 
+                      <button type="button" class="btn btn-link btn-sm p-0" onclick="showVariableGuide()">변수 가이드 보기</button>
+                    </small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="variables">사용 가능한 변수 (JSON 형태)</label>
+                <textarea class="form-control" id="variables" name="variables" rows="3" 
+                          th:text="${emailTemplate.variables}"
+                          placeholder='["customerName", "orderCode", "companyName"]'></textarea>
+                <small class="form-text text-muted">이 템플릿에서 사용할 수 있는 변수들을 JSON 배열 형태로 입력하세요.</small>
+              </div>
+
+              <div class="form-group">
+                <label for="description">설명</label>
+                <textarea class="form-control" id="description" name="description" rows="3" 
+                          th:text="${emailTemplate.description}"
+                          placeholder="이 템플릿의 용도와 사용법을 설명하세요..."></textarea>
+              </div>
+
+              <div class="form-group">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="isActive" name="isActive" 
+                         th:checked="${emailTemplate.isActive}">
+                  <label class="form-check-label" for="isActive">
+                    활성화
+                  </label>
+                  <small class="form-text text-muted">비활성화된 템플릿은 이메일 발송 시 선택할 수 없습니다.</small>
+                </div>
+              </div>
+
+              <hr>
+
+              <div class="row">
+                <div class="col-12">
+                  <div class="btn-group w-100" role="group">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-save"></i> 수정
+                    </button>
+                    <button type="button" class="btn btn-info" onclick="previewTemplate()">
+                      <i class="fas fa-eye"></i> 미리보기
+                    </button>
+                    <button type="button" class="btn btn-warning" onclick="testTemplate()">
+                      <i class="fas fa-paper-plane"></i> 테스트 발송
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="copyTemplate()">
+                      <i class="fas fa-copy"></i> 복사
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 미리보기 모달 -->
+  <div class="modal fade" id="previewModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">템플릿 미리보기</h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="font-weight-bold">제목:</label>
+            <div id="preview-subject" class="border p-2 bg-light"></div>
+          </div>
+          <div class="mb-3">
+            <label class="font-weight-bold">내용:</label>
+            <div id="preview-content" class="border p-3" style="min-height: 200px;"></div>
+          </div>
+          <div class="mb-3">
+            <label class="font-weight-bold">사용된 변수:</label>
+            <div id="preview-variables" class="text-muted"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 변수 가이드 모달 -->
+  <div class="modal fade" id="variableGuideModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">템플릿 변수 가이드</h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h6>기본 변수</h6>
+          <ul>
+            <li><code>{{customerName}}</code> - 고객 이름</li>
+            <li><code>{{companyName}}</code> - 회사명</li>
+            <li><code>{{orderCode}}</code> - 주문번호</li>
+            <li><code>{{orderDate}}</code> - 주문일시</li>
+            <li><code>{{paymentMethod}}</code> - 결제방식</li>
+          </ul>
+          
+          <h6>사용자 정보 변수</h6>
+          <ul>
+            <li><code>{{username}}</code> - 사용자명</li>
+            <li><code>{{tempPassword}}</code> - 임시 비밀번호</li>
+            <li><code>{{email}}</code> - 이메일 주소</li>
+          </ul>
+          
+          <h6>사용법</h6>
+          <p>변수는 이중 중괄호로 감싸서 사용합니다. 예: <code>{{customerName}}님, 안녕하세요!</code></p>
+          <p>실제 이메일 발송 시 해당 변수들이 실제 값으로 치환됩니다.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 테스트 발송 모달 -->
+  <div class="modal fade" id="testModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">테스트 이메일 발송</h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="test-email-form">
+            <div class="form-group">
+              <label for="testEmail">테스트 이메일 주소</label>
+              <input type="email" class="form-control" id="testEmail" required>
+            </div>
+            <div class="form-group">
+              <label for="testName">받는사람 이름</label>
+              <input type="text" class="form-control" id="testName" value="테스트 사용자">
+            </div>
+            <div class="form-group">
+              <label>테스트 변수값</label>
+              <div id="test-variables"></div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+          <button type="button" class="btn btn-primary" onclick="sendTestEmail()">발송</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 폼 제출 처리
+    document.getElementById('template-update-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const templateData = {
+        no: formData.get('no'),
+        name: formData.get('name'),
+        type: formData.get('type'),
+        subject: formData.get('subject'),
+        content: formData.get('content'),
+        isHtml: formData.get('isHtml') === 'on',
+        variables: formData.get('variables'),
+        description: formData.get('description'),
+        isActive: formData.get('isActive') === 'on'
+      };
+
+      $ajax({
+        url: '/api/admin/email-template',
+        type: 'PUT',
+        data: templateData
+      }).then(function(response) {
+        if (response === 'SUCCESS') {
+          $alert('성공', '템플릿이 수정되었습니다.', 'success').then(() => {
+            window.location.href = '/admin/email-template';
+          });
+        } else {
+          $alert('오류', '템플릿 수정에 실패했습니다.', 'error');
+        }
+      }).catch(function(error) {
+        $alert('오류', '템플릿 수정 중 오류가 발생했습니다.', 'error');
+      });
+    });
+
+    // 미리보기 기능
+    function previewTemplate() {
+      const subject = document.getElementById('subject').value;
+      const content = document.getElementById('content').value;
+      const isHtml = document.getElementById('isHtml').checked;
+      const variables = document.getElementById('variables').value;
+
+      // 샘플 데이터로 변수 치환
+      const sampleData = {
+        customerName: '홍길동',
+        companyName: 'Falcon Cartons',
+        orderCode: 'ORD20250811001',
+        orderDate: '2025-08-11 17:30:00',
+        paymentMethod: '현금결제',
+        username: 'testuser',
+        tempPassword: 'temp123456',
+        email: 'test@example.com'
+      };
+
+      let previewSubject = subject;
+      let previewContent = content;
+
+      // 변수 치환
+      Object.keys(sampleData).forEach(key => {
+        const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
+        previewSubject = previewSubject.replace(regex, sampleData[key]);
+        previewContent = previewContent.replace(regex, sampleData[key]);
+      });
+
+      document.getElementById('preview-subject').textContent = previewSubject;
+      
+      const previewContentDiv = document.getElementById('preview-content');
+      if (isHtml) {
+        previewContentDiv.innerHTML = previewContent;
+      } else {
+        previewContentDiv.textContent = previewContent;
+      }
+
+      // 사용된 변수 표시
+      const usedVariables = [];
+      Object.keys(sampleData).forEach(key => {
+        if (subject.includes(`{{${key}}}`) || content.includes(`{{${key}}}`)) {
+          usedVariables.push(key);
+        }
+      });
+      document.getElementById('preview-variables').textContent = usedVariables.join(', ') || '사용된 변수 없음';
+
+      $('#previewModal').modal('show');
+    }
+
+    // 변수 가이드 표시
+    function showVariableGuide() {
+      $('#variableGuideModal').modal('show');
+    }
+
+    // 테스트 발송
+    function testTemplate() {
+      const variables = document.getElementById('variables').value;
+      let variableList = [];
+      
+      try {
+        if (variables) {
+          variableList = JSON.parse(variables);
+        }
+      } catch (e) {
+        variableList = [];
+      }
+
+      // 테스트 변수 입력 필드 생성
+      const testVariablesDiv = document.getElementById('test-variables');
+      testVariablesDiv.innerHTML = '';
+
+      if (variableList.length > 0) {
+        variableList.forEach(variable => {
+          const div = document.createElement('div');
+          div.className = 'form-group';
+          div.innerHTML = `
+            <label for="var_${variable}">${variable}</label>
+            <input type="text" class="form-control" id="var_${variable}" value="테스트값">
+          `;
+          testVariablesDiv.appendChild(div);
+        });
+      } else {
+        testVariablesDiv.innerHTML = '<p class="text-muted">이 템플릿에는 변수가 없습니다.</p>';
+      }
+
+      $('#testModal').modal('show');
+    }
+
+    // 테스트 이메일 발송
+    function sendTestEmail() {
+      const testEmail = document.getElementById('testEmail').value;
+      const testName = document.getElementById('testName').value;
+      const templateId = document.querySelector('input[name="id"]').value;
+
+      if (!testEmail) {
+        $alert('오류', '테스트 이메일 주소를 입력하세요.', 'warning');
+        return;
+      }
+
+      // 변수값 수집
+      const variables = {};
+      document.querySelectorAll('#test-variables input').forEach(input => {
+        const varName = input.id.replace('var_', '');
+        variables[varName] = input.value;
+      });
+
+      $ajax({
+        url: `/api/admin/email-template/${templateId}/test`,
+        type: 'POST',
+        data: {
+          email: testEmail,
+          name: testName,
+          variables: JSON.stringify(variables)
+        }
+      }).then(function(response) {
+        if (response === 'SUCCESS') {
+          $alert('성공', '테스트 이메일이 발송되었습니다.', 'success');
+          $('#testModal').modal('hide');
+        } else {
+          $alert('실패', '테스트 이메일 발송에 실패했습니다.', 'error');
+        }
+      }).catch(function() {
+        $alert('오류', '테스트 이메일 발송 중 오류가 발생했습니다.', 'error');
+      });
+    }
+
+    // 템플릿 복사
+    function copyTemplate() {
+      const templateData = {
+        name: document.getElementById('name').value + ' (복사본)',
+        type: document.getElementById('type').value,
+        subject: document.getElementById('subject').value,
+        content: document.getElementById('content').value,
+        isHtml: document.getElementById('isHtml').checked,
+        variables: document.getElementById('variables').value,
+        description: document.getElementById('description').value,
+        isActive: false
+      };
+
+      $ajax({
+        url: '/api/admin/email-template',
+        type: 'POST',
+        data: templateData
+      }).then(function(response) {
+        if (response === 'SUCCESS') {
+          $alert('성공', '템플릿이 복사되었습니다.', 'success').then(() => {
+            window.location.href = '/admin/email-template';
+          });
+        } else {
+          $alert('오류', '템플릿 복사에 실패했습니다.', 'error');
+        }
+      }).catch(function() {
+        $alert('오류', '템플릿 복사 중 오류가 발생했습니다.', 'error');
+      });
+    }
+
+    // HTML 체크박스 변경시 안내
+    document.getElementById('isHtml').addEventListener('change', function() {
+      if (this.checked) {
+        document.getElementById('content').setAttribute('placeholder', 'HTML 형식으로 템플릿을 작성하세요...');
+      } else {
+        document.getElementById('content').setAttribute('placeholder', '텍스트 형식으로 템플릿을 작성하세요...');
+      }
+    });
+  </script>
+</body>
+</html>

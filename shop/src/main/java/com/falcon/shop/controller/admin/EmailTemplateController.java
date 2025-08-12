@@ -69,14 +69,4 @@ public class EmailTemplateController {
         return "page/admin/email-template/update";
     }
 
-    @GetMapping("/{id}/view")
-    public String view(@PathVariable("id") String id, Model model) {
-        EmailTemplate emailTemplate = emailTemplateService.selectById(id);
-        if (emailTemplate == null) {
-            log.error("EmailTemplate with id {} not found", id);
-            return "redirect:/admin/email-template";
-        }
-        model.addAttribute("emailTemplate", emailTemplate);
-        return "page/admin/email-template/view";
-    }
 }

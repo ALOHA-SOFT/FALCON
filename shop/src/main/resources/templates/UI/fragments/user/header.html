@@ -28,12 +28,19 @@
           <!-- 🔐 로그인 ⭕ -->
           <th:block sec:authorize="isAuthenticated()">
             <a href="/my" class="btn-menu"><span class="material-icons">person</span></a>
+            <!-- 로그아웃 -->
+            <th:block sec:authorize="isAuthenticated()">
+              <a href="javascript:;" class="btn-menu" onclick="logout()"><span class="material-icons">logout</span></a>
+            </th:block>
             <th:block sec:authorize="hasRole('ADMIN')">
               <a href="/admin" class="btn btn-falcon-danger btn-sm d-flex align-items-center justify-content-center p-2">
                 <span class="material-icons">admin_panel_settings</span>
               </a>
             </th:block>
+
           </th:block>
+
+
         </div>
       </div>
     </div>

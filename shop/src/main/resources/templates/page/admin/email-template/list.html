@@ -111,30 +111,24 @@
                     </button>
                     <ul class="dropdown-menu" th:aria-labelledby="'dropdownMenuButton-' + ${template.id}">
                       <li>
-                        <a class="dropdown-item" th:href="@{'/admin/email-template/' + ${template.id} + '/view'}">
-                          <i class="material-icons-two-tone">visibility</i> 상세보기
-                        </a>
-                      </li>
-                      <li>
                         <a class="dropdown-item" th:href="@{'/admin/email-template/' + ${template.id}}">
-                          <i class="material-icons-two-tone">edit</i> 수정
+                          수정
                         </a>
                       </li>
                       <li>
                         <a class="dropdown-item" href="#" th:onclick="toggleStatus([[${template.id}]])">
-                          <i class="material-icons-two-tone">toggle_on</i> 
                           <span th:text="${template.isActive} ? '비활성화' : '활성화'">상태변경</span>
                         </a>
                       </li>
                       <li>
-                        <a class="dropdown-item" href="#" th:onclick="'previewTemplate(' + [[${template.id}]] + ')'"></a>
-                          <i class="material-icons-two-tone">preview</i> 미리보기
+                        <a class="dropdown-item" href="#" th:onclick="previewTemplate( [[${template.id}]] )">
+                          미리보기
                         </a>
                       </li>
                       <li><hr class="dropdown-divider"></li>
                       <li>
-                        <a class="dropdown-item text-danger" href="#" th:onclick="'deleteTemplate(' + [[${template.id}]] + ')'"></a>
-                          <i class="material-icons-two-tone">delete</i> 삭제
+                        <a class="dropdown-item text-danger" href="#" th:onclick="deleteTemplate( [[${template.id}]] )">
+                          삭제
                         </a>
                       </li>
                     </ul>
@@ -235,81 +229,94 @@
     }
 
     function toggleStatus(templateId) {
-        if (confirm('템플릿 상태를 변경하시겠습니까?')) {
-            fetch(`/api/admin/email-template/${templateId}/toggle-active`, {
-                method: 'PUT'
-            })
-            .then(response => response.ok ? response.text() : Promise.reject('Failed'))
-            .then(() => {
-                alert('상태가 변경되었습니다.');
-                location.reload();
-            })
-            .catch(() => {
-                alert('상태 변경에 실패했습니다.');
-            });
-        }
+        $confirm('확인', '템플릿 상태를 변경하시겠습니까?', 'question', '변경', '취소').then(function(result) {
+            if (result.isConfirmed) {
+                $ajax({
+                    url: `/api/admin/email-template/${templateId}/toggle-active`,
+                    type: 'PUT',
+                    data: {}
+                }).then(function(response) {
+                    if (response === 'SUCCESS' || response.status == 200) {
+                        $alert('성공', '상태가 변경되었습니다.', 'success').then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        $alert('실패', '상태 변경에 실패했습니다.', 'error');
+                    }
+                }).catch(function() {
+                    $alert('오류', '상태 변경에 실패했습니다.', 'error');
+                });
+            }
+        });
     }
 
     function previewTemplate(templateId) {
-        fetch(`/api/admin/email-template/${templateId}`)
-            .then(response => response.json())
-            .then(template => {
-                const previewContent = document.getElementById('previewContent');
-                
-                let content = `
-                    <div class="mb-3">
-                        <strong>템플릿명:</strong> ${template.name}
+        $ajax({
+            url: `/api/admin/email-template/${templateId}`,
+            type: 'GET',
+            data: {}
+        }).then(function(template) {
+            const previewContent = document.getElementById('previewContent');
+            
+            let content = `
+                <div class="mb-3">
+                    <strong>템플릿명:</strong> ${template.name}
+                </div>
+                <div class="mb-3">
+                    <strong>타입:</strong> <span class="badge bg-info">${template.type}</span>
+                </div>
+                <div class="mb-3">
+                    <strong>제목:</strong> ${template.subject}
+                </div>
+                <div class="mb-3">
+                    <strong>내용:</strong>
+                    <div class="border p-3 mt-2">
+            `;
+            
+            if (template.isHtml) {
+                content += template.content;
+            } else {
+                content += `<pre style="white-space: pre-wrap;">${template.content}</pre>`;
+            }
+            
+            content += `
                     </div>
-                    <div class="mb-3">
-                        <strong>타입:</strong> <span class="badge bg-info">${template.type}</span>
-                    </div>
-                    <div class="mb-3">
-                        <strong>제목:</strong> ${template.subject}
-                    </div>
-                    <div class="mb-3">
-                        <strong>내용:</strong>
-                        <div class="border p-3 mt-2">
-                `;
-                
-                if (template.isHtml) {
-                    content += template.content;
-                } else {
-                    content += `<pre style="white-space: pre-wrap;">${template.content}</pre>`;
-                }
-                
-                content += `
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <strong>사용 가능한 변수:</strong> 
-                        <code>${template.variables || '없음'}</code>
-                    </div>
-                `;
-                
-                previewContent.innerHTML = content;
-                
-                const modal = new bootstrap.Modal(document.getElementById('previewModal'));
-                modal.show();
-            })
-            .catch(() => {
-                alert('템플릿을 불러오는데 실패했습니다.');
-            });
+                </div>
+                <div class="mb-3">
+                    <strong>사용 가능한 변수:</strong> 
+                    <code>${template.variables || '없음'}</code>
+                </div>
+            `;
+            
+            previewContent.innerHTML = content;
+            
+            const modal = new bootstrap.Modal(document.getElementById('previewModal'));
+            modal.show();
+        }).catch(function() {
+            $alert('오류', '템플릿을 불러오는데 실패했습니다.', 'error');
+        });
     }
 
     function deleteTemplate(templateId) {
-        if (confirm('템플릿을 삭제하시겠습니까?')) {
-            fetch(`/api/admin/email-template/${templateId}`, {
-                method: 'DELETE'
-            })
-            .then(response => response.ok ? response.text() : Promise.reject('Failed'))
-            .then(() => {
-                alert('삭제되었습니다.');
-                location.reload();
-            })
-            .catch(() => {
-                alert('삭제에 실패했습니다.');
-            });
-        }
+        $confirm('확인', '템플릿을 삭제하시겠습니까?', 'warning', '삭제', '취소').then(function(result) {
+            if (result.isConfirmed) {
+                $ajax({
+                    url: `/api/admin/email-template/${templateId}`,
+                    type: 'DELETE',
+                    data: {}
+                }).then(function(response) {
+                    if (response === 'SUCCESS' || response.status == 200) {
+                        $alert('성공', '삭제되었습니다.', 'success').then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        $alert('실패', '삭제에 실패했습니다.', 'error');
+                    }
+                }).catch(function() {
+                    $alert('오류', '삭제에 실패했습니다.', 'error');
+                });
+            }
+        });
     }
   </script>
 

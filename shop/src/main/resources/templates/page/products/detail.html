@@ -349,9 +349,14 @@
             </button>
           </div>
         </div>
-        
+
+        <!-- totalPrice 섹션 -->
+        <div class="total-price-section product-price">
+          Total Price: <span id="totalPrice" class="product-price" th:text="${product.price == null ? '' : '£' + #numbers.formatInteger(product.price, 0, 'COMMA')}">£52.30</span>
+        </div>
+
         <!-- Add to Cart 버튼 -->
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 justify-content-between">
           <button type="button" id="" class="btn btn-outline-dark" onclick="showCartOffcanvas()">
             <span class="material-icons">shopping_bag</span>
           </button>
@@ -365,6 +370,11 @@
           <button type="button" class="sold-out-btn" disabled th:if="${product.isSoldOut}">
             Sold Out
           </button>
+        </div>
+
+        <!-- Order -->
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-outline-dark w-100" th:if="${!product.isSoldOut}" onclick="orderNow()">Order Now</button>
         </div>
         
       </div>
@@ -418,11 +428,13 @@
   </div>
 
   <script th:inline="javascript">
-    var userName = /*[[${ session.SPRING_SECURITY_CONTEXT != null ? #authentication.principal.user.name : '' }]]*/ '';
+    var userName = [[${ session.SPRING_SECURITY_CONTEXT != null ? #authentication.principal.user.name : '' }]]
     var isLogin = userName || false;
-    var productNo = /*[[${product.no}]]*/ 0;
-    var basePrice = /*[[${product.price}]]*/ 0;
-    var isSoldOut = /*[[${product.isSoldOut}]]*/ false;
+    var productNo = [[${product.no}]]
+    var productId = [[${product.id}]]
+    var basePrice = [[${product.price}]]
+    var price = [[${product.price}]]
+    var isSoldOut = [[${product.isSoldOut}]]
   </script>
   
   <script>
@@ -451,12 +463,20 @@
         if (currentQuantity > 1) {
           currentQuantity--;
           quantityInput.value = currentQuantity;
+          // id="totalPrice" 업데이트
+          price = basePrice * currentQuantity;
+          document.getElementById('totalPrice').innerText = '£' + (price).toFixed(2);
+
         }
+
       });
       
       increaseBtn.addEventListener('click', function() {
         currentQuantity++;
         quantityInput.value = currentQuantity;
+        // id="totalPrice" 업데이트
+        price = basePrice * currentQuantity;
+        document.getElementById('totalPrice').innerText = '£' + (price).toFixed(2);
       });
     }
     
@@ -499,7 +519,7 @@
           showCancelButton: true
         }).then((result) => {
           if (result.isConfirmed) {
-            window.location.href = '/login?redirect=/products/' + productNo;
+            window.location.href = '/login?redirect=/products/' + productId;
           }
         });
         return;
@@ -721,6 +741,72 @@
         });
       }
     });
+    
+
+    
+    function orderNow() {
+      const totalQuantity = document.getElementById('quantity').value
+
+      if (!isLogin) {
+        $alert_({
+          title: '로그인이 필요합니다',
+          text: '구매를 위해 로그인이 필요합니다.',
+          icon: 'warning',
+          confirmButtonText: '로그인하기',
+          cancelButtonText: '취소',
+          showCancelButton: true
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/login?redirect=/products/' + /*[[${product.id}]]*/ '';
+          }
+        });
+        return;
+      }
+      // 주문 데이터 생성
+      const orderData = {
+        title: "[[${product.name}]]",
+        totalPrice: price,
+        totalQuantity: totalQuantity,
+        totalItemCount: 1,
+        status: '결제대기',
+        orderItems: [{
+          productNo: "[[${product.no}]]",
+          quantity: 1,
+          price: "[[${product.price}]]",
+        }],
+      };
+
+      console.dir(orderData);
+      
+      // 주문 생성 API 호출
+      $ajax({
+        url: '/orders/create',
+        type: 'POST',
+        data: orderData
+      }).then(function(data) {
+        console.log('주문 성공 여부:', data);
+        if( data == 'FAIL' ) {
+          $alert({
+            title: '주문 생성 실패',
+            text: '주문 생성 중 오류가 발생했습니다. 다시 시도해주세요.',
+            icon: 'error',
+            confirmButtonText: '확인'
+          });
+          return;
+        }
+        $toast_({
+          title: '주문 생성 성공',
+          icon: 'success',
+          timer: 1000,
+        }).then(() => {
+          // 주문 생성 후 결제 페이지로 이동
+          window.location.href = `/pay/order/${data.id}`;
+        });
+      }).catch(function(error) {
+        console.error('주문 생성 오류:', error);
+        alert('주문 생성 중 오류가 발생했습니다.');
+      });
+    }
   </script>
 
 </body>

@@ -88,7 +88,7 @@ public interface EmailService extends BaseService<Email> {
      * @param sendStatus 발송 상태
      * @return 이메일 목록
      */
-    List<Email> getEmailsBySendStatus(Email.SendStatus sendStatus);
+    List<Email> getEmailsBySendStatus(String sendStatus);
     
     /**
      * 발송 타입별 이메일 목록 조회

@@ -93,7 +93,8 @@ public class CartController {
         for (Carts cart : cartList) {
             cart.setUserNo(customUser.getUser().getNo());
         }
-        Orders createdOrder = cartService.createOrder(cartList);
+        Long userNo = customUser.getUser().getNo();
+        Orders createdOrder = cartService.createOrder(userNo, cartList);
         String orderId = createdOrder.getId();
         log.info("장바구니 목록으로 주문 생성 완료: {}", orderId);
         if (orderId == null || orderId.isEmpty()) {

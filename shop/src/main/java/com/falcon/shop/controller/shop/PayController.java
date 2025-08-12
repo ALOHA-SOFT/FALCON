@@ -176,28 +176,44 @@ public class PayController {
 
     // 현금 결제 성공 페이지
     @GetMapping("/cash/success")
-    public String cashPaySuccess(@RequestParam("orderId") String orderId, Model model) {
+    public String cashPaySuccess(@RequestParam(value = "orderId", required = false) String orderId, Model model) {
+        if( orderId == null || orderId.isEmpty() ) {
+            model.addAttribute("error", "유효하지 않은 주문입니다.");
+            return "page/pay/cash/invalid";
+        }
         model.addAttribute("orderId", orderId);
         return "page/pay/cash/success";
     }
 
     // 현금 결제 실패 페이지
     @GetMapping("/cash/fail")
-    public String cashPayFail(@RequestParam("orderId") String orderId, Model model) {
+    public String cashPayFail(@RequestParam(value = "orderId", required = false) String orderId, Model model) {
+        if( orderId == null || orderId.isEmpty() ) {
+            model.addAttribute("error", "유효하지 않은 주문입니다.");
+            return "page/pay/cash/invalid";
+        }
         model.addAttribute("orderId", orderId);
         return "page/pay/cash/fail";
     }
 
     // 코인 결제 성공 페이지
     @GetMapping("/coin/success")
-    public String coinPaySuccess(@RequestParam("orderId") String orderId, Model model) {
+    public String coinPaySuccess(@RequestParam(value = "orderId", required = false) String orderId, Model model) {
+        if( orderId == null || orderId.isEmpty() ) {
+            model.addAttribute("error", "유효하지 않은 주문입니다.");
+            return "page/pay/coin/invalid";
+        }
         model.addAttribute("orderId", orderId);
         return "page/pay/coin/success";
     }
 
     // 코인 결제 실패 페이지
     @GetMapping("/coin/fail")
-    public String coinPayFail(@RequestParam("orderId") String orderId, Model model) {
+    public String coinPayFail(@RequestParam(value = "orderId", required = false) String orderId, Model model) {
+        if( orderId == null || orderId.isEmpty() ) {
+            model.addAttribute("error", "유효하지 않은 주문입니다.");
+            return "page/pay/coin/invalid";
+        }
         model.addAttribute("orderId", orderId);
         return "page/pay/coin/fail";
     }

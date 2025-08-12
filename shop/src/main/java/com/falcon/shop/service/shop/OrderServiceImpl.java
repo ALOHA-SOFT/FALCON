@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.falcon.shop.domain.common.QueryParams;
 import com.falcon.shop.domain.products.Products;
 import com.falcon.shop.domain.shop.OrderItem;
@@ -20,13 +18,17 @@ import com.falcon.shop.domain.shop.OrderItemOption;
 import com.falcon.shop.domain.shop.Orders;
 import com.falcon.shop.domain.system.Seq;
 import com.falcon.shop.domain.system.SeqGroups;
+import com.falcon.shop.domain.users.Address;
 import com.falcon.shop.mapper.products.ProductMapper;
 import com.falcon.shop.mapper.shop.OrderItemMapper;
 import com.falcon.shop.mapper.shop.OrderItemOptionMapper;
 import com.falcon.shop.mapper.shop.OrderMapper;
 import com.falcon.shop.mapper.system.SeqGroupsMapper;
 import com.falcon.shop.mapper.system.SeqMapper;
+import com.falcon.shop.mapper.users.AddressMapper;
 import com.falcon.shop.service.BaseServiceImpl;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,6 +42,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Orders, OrderMapper> imple
     @Autowired private ProductMapper productMapper;
     @Autowired private SeqGroupsMapper seqGroupsMapper;
     @Autowired private SeqMapper seqMapper;
+    @Autowired private AddressMapper addressMapper;
 
 
     @Override
@@ -73,14 +76,19 @@ public class OrderServiceImpl extends BaseServiceImpl<Orders, OrderMapper> imple
             throw new IllegalArgumentException("주문 항목이 필요합니다.");
         }
         Long totalPrice = 0L;
+        Long totalQuantity = 0L;
         for (OrderItem item : orderItems) {
             if (item.getPrice() == null || item.getQuantity() == null) {
                 log.error("주문 항목의 가격 또는 수량이 없습니다: {}", item);
                 throw new RuntimeException("주문 항목의 가격 또는 수량이 없습니다.");
             }
             totalPrice += item.getPrice() * item.getQuantity();
+            totalQuantity += item.getQuantity();
         }
         order.setTotalPrice(totalPrice);
+        order.setTotalQuantity(totalQuantity);
+        order.setTotalItemCount( orderItems.size() + 0L );
+
         // 주문 등록
         orderMapper.insert(order);
 

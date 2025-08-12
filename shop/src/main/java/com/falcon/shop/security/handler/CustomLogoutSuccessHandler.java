@@ -19,6 +19,13 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response,
                                  Authentication authentication) throws IOException, ServletException {
       log.info("로그아웃 성공: {}", authentication.getName());
+      // redirect 파라미터 있으면, 해당 페이지로 이동
+      String redirect = request.getParameter("redirect");
+      if( redirect != null && !redirect.isEmpty() ) {
+        response.sendRedirect(redirect);
+        return;
+      }
+
       String targetUrl = "/login?logout";
       response.sendRedirect(targetUrl);
     }

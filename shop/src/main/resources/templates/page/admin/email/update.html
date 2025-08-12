@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/admin/admin_layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>이메일 수정</title>
+</head>
+<body layout:fragment="content">
+  <div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">이메일 수정</h1>
+      <div>
+        <a href="/admin/email" class="btn btn-secondary">
+          <i class="fas fa-arrow-left"></i> 목록으로
+        </a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">이메일 정보 수정</h6>
+          </div>
+          <div class="card-body">
+            <form id="email-update-form">
+              <input type="hidden" name="no" th:value="${email.no}">
+              <input type="hidden" name="id" th:value="${email.id}">
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="recipientEmail">받는사람 이메일 <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" id="recipientEmail" name="recipientEmail" 
+                           th:value="${email.recipientEmail}" required>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="recipientName">받는사람 이름</label>
+                    <input type="text" class="form-control" id="recipientName" name="recipientName" 
+                           th:value="${email.recipientName}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="senderEmail">보내는사람 이메일 <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" id="senderEmail" name="senderEmail" 
+                           th:value="${email.senderEmail}" required>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="senderName">보내는사람 이름</label>
+                    <input type="text" class="form-control" id="senderName" name="senderName" 
+                           th:value="${email.senderName}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="subject">제목 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="subject" name="subject" 
+                       th:value="${email.subject}" required>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="sendType">발송 타입</label>
+                    <select class="form-control" id="sendType" name="sendType">
+                      <option value="">선택하세요</option>
+                      <option value="ORDER_CONFIRMATION" th:selected="${email.sendType == 'ORDER_CONFIRMATION'}">주문 확인</option>
+                      <option value="PAYMENT_GUIDE" th:selected="${email.sendType == 'PAYMENT_GUIDE'}">결제 안내</option>
+                      <option value="TEMP_PASSWORD" th:selected="${email.sendType == 'TEMP_PASSWORD'}">임시 비밀번호</option>
+                      <option value="SIMPLE" th:selected="${email.sendType == 'SIMPLE'}">일반 이메일</option>
+                      <option value="HTML" th:selected="${email.sendType == 'HTML'}">HTML 이메일</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="relatedId">관련 ID</label>
+                    <input type="text" class="form-control" id="relatedId" name="relatedId" 
+                           th:value="${email.relatedId}" placeholder="주문번호, 사용자번호 등">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="isHtml" name="isHtml" 
+                         th:checked="${email.isHtml}">
+                  <label class="form-check-label" for="isHtml">
+                    HTML 이메일
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="content">내용 <span class="text-danger">*</span></label>
+                <textarea class="form-control" id="content" name="content" rows="15" required 
+                          th:text="${email.content}"></textarea>
+                <small class="form-text text-muted">HTML 이메일인 경우 HTML 태그를 사용할 수 있습니다.</small>
+              </div>
+
+              <!-- 현재 상태 정보 -->
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label>발송 상태</label>
+                    <div class="form-control-plaintext">
+                      <span th:if="${email.sendStatus == 'PENDING'}" class="badge badge-warning">대기중</span>
+                      <span th:if="${email.sendStatus == 'SENT'}" class="badge badge-success">발송완료</span>
+                      <span th:if="${email.sendStatus == 'FAILED'}" class="badge badge-danger">발송실패</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label>재시도 횟수</label>
+                    <div class="form-control-plaintext" th:text="${email.retryCount ?: 0}">0</div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label>발송일시</label>
+                    <div class="form-control-plaintext" th:text="${email.sendAt == null ? '미발송' : #dates.format(email.sendAt, 'yyyy-MM-dd HH:mm')}">미발송</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group" th:if="${email.errorMessage}">
+                <label>오류 메시지</label>
+                <div class="alert alert-danger" th:text="${email.errorMessage}">오류 메시지</div>
+              </div>
+
+              <hr>
+
+              <div class="row">
+                <div class="col-12">
+                  <div class="btn-group w-100" role="group">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-save"></i> 수정
+                    </button>
+                    <button type="button" class="btn btn-info" onclick="previewEmail()">
+                      <i class="fas fa-eye"></i> 미리보기
+                    </button>
+                    <button type="button" class="btn btn-warning" onclick="testSendEmail()" th:if="${email.sendStatus != 'SENT'}">
+                      <i class="fas fa-paper-plane"></i> 테스트 발송
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="resendEmail()" th:if="${email.sendStatus == 'FAILED' or email.sendStatus == 'SENT'}">
+                      <i class="fas fa-redo"></i> 재발송
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="deleteEmail()">
+                      <i class="fas fa-trash"></i> 삭제
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 미리보기 모달 -->
+  <div class="modal fade" id="previewModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">이메일 미리보기</h5>
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-sm btn-outline-primary" id="htmlViewBtn" onclick="switchPreviewMode('html')">
+              <i class="fas fa-code"></i> HTML 보기
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="textViewBtn" onclick="switchPreviewMode('text')">
+              <i class="fas fa-file-text"></i> 텍스트 보기
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-success" id="renderViewBtn" onclick="switchPreviewMode('render')">
+              <i class="fas fa-eye"></i> 렌더링 보기
+            </button>
+          </div>
+          <button type="button" class="close" data-dismiss="modal">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="mb-3">
+                <strong>제목:</strong> 
+                <div class="border p-2 bg-light rounded" id="preview-subject"></div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <strong>받는사람:</strong> 
+                <div class="border p-2 bg-light rounded" id="preview-recipient"></div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <strong>보내는사람:</strong> 
+                <div class="border p-2 bg-light rounded" id="preview-sender"></div>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="mb-3">
+            <strong>내용:</strong>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="badge" id="preview-mode-badge">렌더링 모드</span>
+              <small class="text-muted" id="preview-info">HTML이 렌더링된 상태로 표시됩니다</small>
+            </div>
+            <!-- 렌더링 보기 (기본) -->
+            <div id="preview-content-render" class="border p-3 rounded" style="min-height: 300px; background-color: #fff;"></div>
+            <!-- HTML 소스 보기 -->
+            <div id="preview-content-html" class="border p-3 rounded" style="min-height: 300px; background-color: #f8f9fa; display: none;">
+              <pre><code id="preview-html-code" class="language-html"></code></pre>
+            </div>
+            <!-- 텍스트 보기 -->
+            <div id="preview-content-text" class="border p-3 rounded" style="min-height: 300px; background-color: #f8f9fa; white-space: pre-wrap; display: none;"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+          <button type="button" class="btn btn-primary" onclick="copyToClipboard()">
+            <i class="fas fa-copy"></i> 내용 복사
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 폼 제출 처리
+    document.getElementById('email-update-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const emailData = {
+        no: formData.get('no'),
+        recipientEmail: formData.get('recipientEmail'),
+        recipientName: formData.get('recipientName'),
+        senderEmail: formData.get('senderEmail'),
+        senderName: formData.get('senderName'),
+        subject: formData.get('subject'),
+        content: formData.get('content'),
+        isHtml: formData.get('isHtml') === 'on',
+        sendType: formData.get('sendType'),
+        relatedId: formData.get('relatedId')
+      };
+
+      $ajax({
+        url: '/api/admin/email',
+        type: 'PUT',
+        data: emailData
+      }).then(function(response) {
+        if (response === 'SUCCESS') {
+          $alert('성공', '이메일이 수정되었습니다.', 'success').then(() => {
+            window.location.href = '/admin/email';
+          });
+        } else {
+          $alert('오류', '이메일 수정에 실패했습니다.', 'error');
+        }
+      }).catch(function(error) {
+        $alert('오류', '이메일 수정 중 오류가 발생했습니다.', 'error');
+      });
+    });
+
+    // 미리보기 기능
+    function previewEmail() {
+      const subject = document.getElementById('subject').value;
+      const recipientEmail = document.getElementById('recipientEmail').value;
+      const recipientName = document.getElementById('recipientName').value;
+      const senderEmail = document.getElementById('senderEmail').value;
+      const senderName = document.getElementById('senderName').value;
+      const content = document.getElementById('content').value;
+      const isHtml = document.getElementById('isHtml').checked;
+
+      // 기본 정보 설정
+      document.getElementById('preview-subject').textContent = subject;
+      document.getElementById('preview-recipient').textContent = `${recipientName} <${recipientEmail}>`;
+      document.getElementById('preview-sender').textContent = `${senderName} <${senderEmail}>`;
+      
+      // 전역 변수에 저장 (다른 함수에서 사용)
+      window.previewData = {
+        content: content,
+        isHtml: isHtml
+      };
+
+      // 기본적으로 렌더링 모드로 시작
+      switchPreviewMode('render');
+      
+      $('#previewModal').modal('show');
+    }
+
+    // 미리보기 모드 전환
+    function switchPreviewMode(mode) {
+      const { content, isHtml } = window.previewData || {};
+      
+      // 모든 컨텐츠 영역 숨기기
+      document.getElementById('preview-content-render').style.display = 'none';
+      document.getElementById('preview-content-html').style.display = 'none';
+      document.getElementById('preview-content-text').style.display = 'none';
+      
+      // 모든 버튼 비활성화
+      document.getElementById('htmlViewBtn').classList.remove('btn-primary');
+      document.getElementById('htmlViewBtn').classList.add('btn-outline-primary');
+      document.getElementById('textViewBtn').classList.remove('btn-primary');
+      document.getElementById('textViewBtn').classList.add('btn-outline-secondary');
+      document.getElementById('renderViewBtn').classList.remove('btn-primary');
+      document.getElementById('renderViewBtn').classList.add('btn-outline-success');
+      
+      const badge = document.getElementById('preview-mode-badge');
+      const info = document.getElementById('preview-info');
+      
+      switch(mode) {
+        case 'html':
+          document.getElementById('preview-content-html').style.display = 'block';
+          document.getElementById('htmlViewBtn').classList.remove('btn-outline-primary');
+          document.getElementById('htmlViewBtn').classList.add('btn-primary');
+          document.getElementById('preview-html-code').textContent = content;
+          badge.textContent = 'HTML 소스';
+          badge.className = 'badge badge-info';
+          info.textContent = 'HTML 소스 코드가 표시됩니다';
+          break;
+          
+        case 'text':
+          document.getElementById('preview-content-text').style.display = 'block';
+          document.getElementById('textViewBtn').classList.remove('btn-outline-secondary');
+          document.getElementById('textViewBtn').classList.add('btn-primary');
+          document.getElementById('preview-content-text').textContent = content;
+          badge.textContent = '텍스트 모드';
+          badge.className = 'badge badge-secondary';
+          info.textContent = '순수 텍스트로 표시됩니다';
+          break;
+          
+        case 'render':
+        default:
+          document.getElementById('preview-content-render').style.display = 'block';
+          document.getElementById('renderViewBtn').classList.remove('btn-outline-success');
+          document.getElementById('renderViewBtn').classList.add('btn-primary');
+          
+          const renderDiv = document.getElementById('preview-content-render');
+          if (isHtml) {
+            renderDiv.innerHTML = content;
+            badge.textContent = 'HTML 렌더링';
+            badge.className = 'badge badge-success';
+            info.textContent = 'HTML이 렌더링된 상태로 표시됩니다';
+          } else {
+            renderDiv.innerHTML = `<pre style="white-space: pre-wrap; margin: 0;">${content}</pre>`;
+            badge.textContent = '텍스트 렌더링';
+            badge.className = 'badge badge-secondary';
+            info.textContent = '텍스트가 보기 좋게 표시됩니다';
+          }
+          break;
+      }
+    }
+
+    // 클립보드 복사
+    function copyToClipboard() {
+      const { content } = window.previewData || {};
+      if (content) {
+        navigator.clipboard.writeText(content).then(() => {
+          $alert('성공', '내용이 클립보드에 복사되었습니다.', 'success');
+        }).catch(() => {
+          // Fallback for older browsers
+          const textarea = document.createElement('textarea');
+          textarea.value = content;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+          $alert('성공', '내용이 클립보드에 복사되었습니다.', 'success');
+        });
+      }
+    }
+
+    // 테스트 발송
+    function testSendEmail() {
+      const emailNo = document.querySelector('input[name="no"]').value;
+      
+      $confirm('테스트 발송', '현재 입력된 내용으로 테스트 이메일을 발송하시겠습니까?', 'question', '발송', '취소')
+        .then((result) => {
+          if (result.isConfirmed) {
+            // 먼저 현재 내용으로 업데이트
+            const formData = new FormData(document.getElementById('email-update-form'));
+            const emailData = {
+              no: formData.get('no'),
+              recipientEmail: formData.get('recipientEmail'),
+              recipientName: formData.get('recipientName'),
+              senderEmail: formData.get('senderEmail'),
+              senderName: formData.get('senderName'),
+              subject: formData.get('subject'),
+              content: formData.get('content'),
+              isHtml: formData.get('isHtml') === 'on',
+              sendType: formData.get('sendType'),
+              relatedId: formData.get('relatedId')
+            };
+
+            $ajax({
+              url: '/api/admin/email',
+              type: 'PUT',
+              data: emailData
+            }).then(function() {
+              // 업데이트 성공 후 테스트 발송
+              return $ajax({
+                url: `/api/admin/email/${emailNo}/send`,
+                type: 'POST'
+              });
+            }).then(function(response) {
+              if (response === 'SUCCESS') {
+                $alert('성공', '테스트 이메일이 발송되었습니다.', 'success');
+                setTimeout(() => location.reload(), 1000);
+              } else {
+                $alert('실패', '테스트 이메일 발송에 실패했습니다.', 'error');
+              }
+            }).catch(function() {
+              $alert('오류', '테스트 이메일 발송 중 오류가 발생했습니다.', 'error');
+            });
+          }
+        });
+    }
+
+    // 재발송
+    function resendEmail() {
+      const emailNo = document.querySelector('input[name="no"]').value;
+      const emailId = document.querySelector('input[name="id"]').value;
+      console.log('재발송 이메일 ID:', emailId);
+
+      $confirm('재발송 확인', '이메일을 재발송하시겠습니까?', 'question', '재발송', '취소')
+        .then((result) => {
+          if (result.isConfirmed) {
+            $ajax({
+              url: `/api/admin/email/${emailId}/resend`,
+              type: 'POST',
+              data: {}
+            }).then(function(response) {
+              console.log('재발송 응답:', response);
+              if (response === 'Email resent successfully' || response.includes('successfully')) {
+                $alert('성공', '이메일이 재발송되었습니다.', 'success').then(() => {
+                  location.reload();
+                });
+              } else {
+                $alert('실패', '이메일 재발송에 실패했습니다.', 'error');
+              }
+            }).catch(function(error) {
+              console.error('재발송 오류:', error);
+              $alert('오류', '이메일 재발송 중 오류가 발생했습니다.', 'error');
+            });
+          }
+        });
+    }
+
+    // 삭제
+    function deleteEmail() {
+      const emailNo = document.querySelector('input[name="no"]').value;
+      
+      $confirm('삭제 확인', '이 이메일을 삭제하시겠습니까?', 'warning', '삭제', '취소')
+        .then((result) => {
+          if (result.isConfirmed) {
+            $ajax({
+              url: `/api/admin/email/${emailNo}`,
+              type: 'DELETE',
+              data: {}
+            }).then(function(response) {
+              if (response === 'SUCCESS' || response === true) {
+                $alert('성공', '이메일이 삭제되었습니다.', 'success').then(() => {
+                  window.location.href = '/admin/email';
+                });
+              } else {
+                $alert('실패', '이메일 삭제에 실패했습니다.', 'error');
+              }
+            }).catch(function(error) {
+              console.error('삭제 오류:', error);
+              $alert('오류', '이메일 삭제 중 오류가 발생했습니다.', 'error');
+            });
+          }
+        });
+    }
+
+    // HTML 체크박스 변경시 미리보기 업데이트
+    document.getElementById('isHtml').addEventListener('change', function() {
+      if (this.checked) {
+        document.getElementById('content').setAttribute('placeholder', 'HTML 형식으로 이메일 내용을 입력하세요...');
+      } else {
+        document.getElementById('content').setAttribute('placeholder', '텍스트 형식으로 이메일 내용을 입력하세요...');
+      }
+    });
+  </script>
+</body>
+</html>

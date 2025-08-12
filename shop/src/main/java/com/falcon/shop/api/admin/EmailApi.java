@@ -108,19 +108,19 @@ public class EmailApi {
      */
     @PostMapping("/{id}/resend")
     public ResponseEntity<?> resend(@PathVariable("id") String id) {
-        try {
-            Email email = emailService.selectById(id);
-            if (email == null) {
-                return new ResponseEntity<>("Email not found", HttpStatus.NOT_FOUND);
-            }
-            
-            // 이메일 재발송 로직
-            boolean result = emailService.resendEmail(email.getNo());
-            if (result) {
-                return new ResponseEntity<>("Email resent successfully", HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>("Failed to resend email", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+    try {
+        Email email = emailService.selectById(id);
+        if (email == null) {
+            return new ResponseEntity<>("Email not found", HttpStatus.NOT_FOUND);
+        }
+        
+        // 이메일 재발송 로직
+        boolean result = emailService.resendEmail(email.getNo());
+        if (result) {
+            return new ResponseEntity<>("Email resent successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Failed to resend email", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         } catch (Exception e) {
             log.error("Error resending email by id: {}", id, e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

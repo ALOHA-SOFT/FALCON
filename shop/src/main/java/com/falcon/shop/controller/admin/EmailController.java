@@ -69,14 +69,4 @@ public class EmailController {
         return "page/admin/email/update";
     }
 
-    @GetMapping("/{id}/view")
-    public String view(@PathVariable("id") String id, Model model) {
-        Email email = emailService.selectById(id);
-        if (email == null) {
-            log.error("Email with id {} not found", id);
-            return "redirect:/admin/email";
-        }
-        model.addAttribute("email", email);
-        return "page/admin/email/view";
-    }
 }

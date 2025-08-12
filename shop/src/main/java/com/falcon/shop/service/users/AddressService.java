@@ -15,6 +15,5 @@ public interface AddressService extends BaseService<Address> {
     boolean delete(Long no);                          
     boolean deleteById(String id);                          
 
-    
-  
+    Address selectByUser(Long userNo);
 }

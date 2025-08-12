@@ -52,8 +52,10 @@ public class OrderController {
       for (OrderItem orderItem : orderItems) {
         log.info("주문 항목: {}", orderItem);
         List<OrderItemOption> orderItemOptions = orderItem.getOrderItemOptions();
-        for (OrderItemOption option : orderItemOptions) {
-            log.info("주문 항목 옵션: {}", option);
+        if( orderItem.getOrderItemOptions() != null && !orderItem.getOrderItemOptions().isEmpty() ) {
+          for (OrderItemOption option : orderItemOptions) {
+              log.info("주문 항목 옵션: {}", option);
+          }
         }
       }
       

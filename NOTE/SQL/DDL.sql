@@ -1,4 +1,4 @@
--- Active: 1754738700814@@127.0.0.1@3306@falcon
+-- Active: 1750388006843@@127.0.0.1@3306@falcon
 
 CREATE DATABASE IF NOT EXISTS `falcon` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `falcon`;

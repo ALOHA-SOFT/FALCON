@@ -19,7 +19,7 @@ public interface CartService extends BaseService<Carts> {
     Orders createOrder(Carts cart);
 
     // 장바구니로 여러상품 주문 생성
-    Orders createOrder(List<Carts> cartList);
+    Orders createOrder(Long userNo, List<Carts> cartList);
 
     // 장바구니 전체 주문 생성
     Orders createOrder(Long userNo);

@@ -16,7 +16,7 @@ public interface EmailMapper extends BaseMapper<Email> {
      * @param sendStatus 발송 상태
      * @return 이메일 목록
      */
-    List<Email> selectBySendStatus(@Param("sendStatus") Email.SendStatus sendStatus);
+    List<Email> selectBySendStatus(@Param("sendStatus") String sendStatus);
     
     /**
      * 발송 타입별 이메일 목록 조회

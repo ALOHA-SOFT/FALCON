@@ -8,8 +8,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import com.github.pagehelper.PageInfo;
 import com.falcon.shop.domain.admin.Banners;
 import com.falcon.shop.domain.admin.Popups;
 import com.falcon.shop.domain.common.QueryParams;
@@ -17,8 +17,10 @@ import com.falcon.shop.domain.products.Products;
 import com.falcon.shop.service.admin.BannerService;
 import com.falcon.shop.service.admin.PopupService;
 import com.falcon.shop.service.products.ProductService;
+import com.github.pagehelper.PageInfo;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
@@ -141,13 +143,27 @@ public class HomeController {
   */
   @GetMapping("/logout")
   public String logout(
-    HttpSession session
+    HttpSession session,
+    HttpServletResponse response,
+    @RequestParam("redirect") String redirect,
+    @CookieValue(value = "remember-me", required = false) String rememberMe,
+    @CookieValue(value = "remember-id", required = false) String rememberId
   ) {
     log.info("로그아웃 요청");
     // 세션 무효화
     if (session != null) {
         session.invalidate();
+        Cookie cookie = new Cookie("remember-me", null);
+        cookie.setMaxAge(0); // 쿠키 삭제
+        Cookie cookie2 = new Cookie("remember-id", null);
+        cookie2.setMaxAge(0); // 쿠키 삭제
+        response.addCookie(cookie);
+        response.addCookie(cookie2);
         log.info("세션 무효화 완료");
+    }
+    // redirect 파라미터 있으면, 해당 페이지로 이동
+    if( redirect != null && !redirect.isEmpty() ) {
+      return "redirect:" + redirect;
     }
     return "redirect:/";
   }
