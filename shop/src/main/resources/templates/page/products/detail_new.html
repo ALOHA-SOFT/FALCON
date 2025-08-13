@@ -6,7 +6,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>상품 상세</title>
+  <title>Product Details</title>
   <style>
     .product-image {
       width: 255px;
@@ -177,7 +177,7 @@
 
     <!-- 상품이 없을 때-->
     <div th:unless="${product != null}" class="text-center py-5">
-      <p>상품 정보를 불러올 수 없습니다.</p>
+      <p>Product information could not be loaded.</p>
     </div>
     
     <!-- 상품 정보 -->
@@ -188,24 +188,24 @@
         <img th:if="${product.mainImg != null}" 
              th:src="${product.mainImg.content}" 
              class="product-image cursor-pointer" 
-             alt="상품 이미지" 
+             alt="Product Image" 
              data-bs-toggle="modal" 
              data-bs-target="#imageModal">
         <img th:if="${product.mainImg == null}" 
              src="https://placehold.co/255x400?text=No+Image" 
              class="product-image" 
-             alt="이미지 없음">
+             alt="No Image">
              
         <!-- Image Modal -->
         <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
           <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="imageModalLabel">상품 이미지</h5>
+                <h5 class="modal-title" id="imageModalLabel">Product Image</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body text-center">
-                <img id="modalImage" src="" class="img-fluid" alt="상품 이미지">
+                <img id="modalImage" src="" class="img-fluid" alt="Product Image">
               </div>
             </div>
           </div>
@@ -267,7 +267,7 @@
       <div id="cartItems">
         <!-- 장바구니 아이템들이 여기에 로드됩니다 -->
         <div class="text-center text-muted">
-          장바구니가 비어있습니다.
+          Your cart is empty.
         </div>
       </div>
       
@@ -320,11 +320,11 @@
       
       if (!isLogin) {
         $alert_({
-          title: '로그인이 필요합니다',
-          text: '장바구니 이용을 위해 로그인이 필요합니다.',
+          title: 'Login Required',
+          text: 'Please login to use the shopping cart.',
           icon: 'warning',
-          confirmButtonText: '로그인하기',
-          cancelButtonText: '취소',
+          confirmButtonText: 'Login',
+          cancelButtonText: 'Cancel',
           showCancelButton: true
         }).then((result) => {
           if (result.isConfirmed) {
@@ -349,10 +349,10 @@
       }).then(function(result) {
         if (result === 'FAIL') {
           $alert({
-            title: '장바구니 등록 실패',
-            text: '장바구니 등록 중 오류가 발생했습니다. 다시 시도해주세요.',
+            title: 'Cart Registration Failed',
+            text: 'An error occurred while adding to cart. Please try again.',
             icon: 'error',
-            confirmButtonText: '확인'
+            confirmButtonText: 'OK'
           });
           return;
         }
@@ -363,10 +363,10 @@
       }).catch(function(error) {
         console.error('장바구니 등록 오류:', error);
         $alert({
-          title: '장바구니 등록 실패',
-          text: '장바구니 등록 중 오류가 발생했습니다.',
+          title: 'Cart Registration Failed',
+          text: 'An error occurred while adding to cart.',
           icon: 'error',
-          confirmButtonText: '확인'
+          confirmButtonText: 'OK'
         });
       });
     });
@@ -395,7 +395,7 @@
       const cartTotal = document.getElementById('cartTotal');
       
       if (!cartList || cartList.length === 0) {
-        cartItemsDiv.innerHTML = '<div class="text-center text-muted">장바구니가 비어있습니다.</div>';
+        cartItemsDiv.innerHTML = '<div class="text-center text-muted">Your cart is empty.</div>';
         cartSummary.style.display = 'none';
         return;
       }

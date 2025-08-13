@@ -6,23 +6,23 @@
     </h5>
     <ul class="nav flex-column">
       <li class="nav-item">
-        <a class="nav-link text-dark" href="/my/orders">주문내역</a>
+        <a class="nav-link text-dark" href="/my/orders">Order History</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-dark" href="/my/address">배송지 관리</a>
+        <a class="nav-link text-dark" href="/my/address">Address Management</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-dark" href="/my/carts">장바구니</a>
+        <a class="nav-link text-dark" href="/my/carts">Shopping Cart</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-dark" href="/my/cancel">취소/환불</a>
+        <a class="nav-link text-dark" href="/my/cancel">Cancel/Refund</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-dark" href="/my/edit">회원정보 수정</a>
+        <a class="nav-link text-dark" href="/my/edit">Edit Profile</a>
       </li>
       <hr>
       <li class="nav-item">
-        <a class="nav-link text-danger" href="/my/delete">회원 탈퇴</a>
+        <a class="nav-link text-danger" href="/my/delete">Delete Account</a>
       </li>
       <hr>
       <li class="nav-item">
@@ -30,7 +30,7 @@
           <!-- 💍 CSRF TOKEN -->
           <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
           <button type="submit" class="nav-link text-dark d-flex align-items-center">
-            <span>로그아웃</span>
+            <span>Logout</span>
           </button>
         </form>
       </li>

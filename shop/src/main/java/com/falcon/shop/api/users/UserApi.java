@@ -191,7 +191,8 @@ public class UserApi {
               return ResponseEntity.ok(response);
           } else {
               // 실패 응답
-              return ResponseEntity.ok(createErrorResponse("입력하신 정보와 일치하는 아이디가 없습니다."));
+            //   return ResponseEntity.ok(createErrorResponse("입력하신 정보와 일치하는 아이디가 없습니다."));
+              return ResponseEntity.ok(createErrorResponse("No username matches the provided information."));
           }
           
       } catch (Exception e) {

@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>장바구니 - FALCON</title>
+  <title>Shopping Cart - FALCON</title>
   <style>
     .cart-container {
       max-width: 1080px;
@@ -393,8 +393,8 @@
     <!-- 장바구니가 비어있을 때 -->
     <div th:if="${pageInfo.list.size() == 0}" class="empty-cart">
       <i class="material-icons">shopping_cart</i>
-      <p>장바구니가 비어있습니다.</p>
-      <a href="/products" class="btn btn-primary">쇼핑하러 가기</a>
+      <p>Your cart is empty.</p>
+      <a href="/products" class="btn btn-primary">Start Shopping</a>
     </div>
     
     <!-- 장바구니 내용 -->
@@ -409,12 +409,12 @@
             
             <!-- 상품 이미지 -->
             <img th:src="${cart.product != null && cart.product.mainImg != null ? cart.product.mainImg.content : 'https://placehold.co/120x200?text=No+Image'}"
-                 th:alt="${cart.product != null ? cart.product.name : '상품 이미지'}"
+                 th:alt="${cart.product != null ? cart.product.name : 'Product Image'}"
                  class="cart-image">
             
             <!-- 상품 정보 -->
             <div class="cart-details">
-              <h3 class="cart-product-name" th:text="${cart.product != null ? cart.product.name : '상품명'}">King Blue</h3>
+              <h3 class="cart-product-name" th:text="${cart.product != null ? cart.product.name : 'Product Name'}">King Blue</h3>
               <div class="cart-product-price" th:text="${cart.product != null and cart.product.price != null ? '£' + #numbers.formatDecimal(cart.product.price, 0, 2) : '£0.00'}">£52.30</div>
             </div>
             
@@ -469,17 +469,17 @@ SHIPPING & HANDLING FEES
           <h2 class="summary-title">Order Summary</h2>
           
           <div class="summary-row">
-            <span class="summary-label">선택 상품 (<span id="item-count" th:text="${pageInfo.list.size()}">1</span>개)</span>
+            <span class="summary-label">Selected Items (<span id="item-count" th:text="${pageInfo.list.size()}">1</span> items)</span>
             <span class="summary-value" id="subtotal">£0.00</span>
           </div>
           
           <div class="summary-row">
-            <span class="summary-label">배송비</span>
+            <span class="summary-label">Shipping</span>
             <span class="summary-value shipping" id="shipping-fee">£10.00</span>
           </div>
           
           <div class="summary-total mb-5">
-            <span class="label">총 결제금액</span>
+            <span class="label">Total Amount</span>
             <span class="value" id="final-total">£0.00</span>
           </div>
           
@@ -590,19 +590,19 @@ SHIPPING & HANDLING FEES
           
         } else {
           $alert({
-            title: '수량 업데이트 실패',
-            text: '수량 업데이트 중 오류가 발생했습니다.',
+            title: 'Quantity Update Failed',
+            text: 'An error occurred while updating quantity.',
             icon: 'error',
-            confirmButtonText: '확인'
+            confirmButtonText: 'OK'
           });
         }
       } catch (error) {
         console.error('수량 업데이트 오류:', error);
         $alert({
-          title: '수량 업데이트 실패',
-          text: '수량 업데이트 중 오류가 발생했습니다.',
+          title: 'Quantity Update Failed',
+          text: 'An error occurred while updating quantity.',
           icon: 'error',
-          confirmButtonText: '확인'
+          confirmButtonText: 'OK'
         });
       }
     }
@@ -642,27 +642,27 @@ SHIPPING & HANDLING FEES
             }
             
             $toast_({ 
-              title: '삭제되었습니다', 
+              title: 'Item Deleted', 
               icon: 'success', 
               timer: 1500 
             });
             
           } else {
             $alert({
-              title: '삭제 실패',
-              text: '상품 삭제 중 오류가 발생했습니다.',
+              title: 'Delete Failed',
+              text: 'An error occurred while deleting the item.',
               icon: 'error',
-              confirmButtonText: '확인'
+              confirmButtonText: 'OK'
             });
           }
         }
       } catch (error) {
         console.error('삭제 오류:', error);
         $alert({
-          title: '삭제 실패',
-          text: '상품 삭제 중 오류가 발생했습니다.',
+          title: 'Delete Failed',
+          text: 'An error occurred while deleting the item.',
           icon: 'error',
-          confirmButtonText: '확인'
+          confirmButtonText: 'OK'
         });
       }
     }

@@ -5,15 +5,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>결제 실패</title>
+  <title>Payment Failed</title>
 </head>
 <body layout:fragment="content">
   <div class="container my-5 text-center">
     <div class="alert alert-danger py-5">
-      <h2 class="mb-4">결제에 실패했습니다</h2>
-      <p class="mb-4">결제 과정에서 오류가 발생했습니다.<br>다시 시도하거나, 문제가 지속될 경우 고객센터로 문의해 주세요.</p>
-      <a th:href="@{/pay/order/{orderId}(orderId=${param.orderId})}" class="btn btn-primary">주문서로 돌아가기</a>
-      <a href="/" class="btn btn-outline-secondary ms-2">메인으로</a>
+      <h2 class="mb-4">Payment Failed</h2>
+      <p class="mb-4">An error occurred during the payment process.<br>Please try again or contact customer service if the problem persists.</p>
+      <a th:href="@{/pay/order/{orderId}(orderId=${param.orderId})}" class="btn btn-primary">Return to Order</a>
+      <a href="/" class="btn btn-outline-secondary ms-2">Home</a>
     </div>
   </div>
 </body>

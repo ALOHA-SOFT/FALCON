@@ -9,7 +9,7 @@
 
     <div>
       <div class="p-2 fw-bold">
-        <span th:text="|${#authentication.principal.username} 님|">사용자</span>
+        <span th:text="${#authentication.principal.username}">User</span>
       </div>
     </div>
   </div>

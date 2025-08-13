@@ -6,7 +6,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>아이디 찾기 - FALCON</title>
+  <title>Find ID - FALCON</title>
   <style>
     .find-container {
       max-width: 500px;
@@ -153,11 +153,11 @@
   <div class="container">
     <div class="find-container">
       <div class="find-header">
-        <h2>
-          <i class="fas fa-user-search me-2" style="color: #667eea;"></i>
-          아이디 찾기
+        <h2 class="d-flex justify-content-center align-items-center">
+            <span class="material-icons fs-1">manage_search</span>
+            <span class="fs-2">Find ID</span>
         </h2>
-        <p>가입 시 등록한 이름과 이메일을 입력해주세요</p>
+  <p>Please enter your name and email used during registration.</p>
       </div>
 
       <form id="findIdForm" class="needs-validation" novalidate>
@@ -166,31 +166,32 @@
         
         <div class="form-group">
           <label for="name" class="form-label">
-            <i class="fas fa-user me-2"></i>이름
+            <i class="fas fa-user me-2"></i>Name
           </label>
           <input type="text" class="form-control" id="name" name="name" 
-                 placeholder="가입 시 등록한 이름을 입력하세요" required>
-          <div class="invalid-feedback">이름을 입력해주세요.</div>
+                 placeholder="Enter your name used during registration" required>
+          <div class="invalid-feedback">Please enter your name.</div>
         </div>
 
         <div class="form-group">
           <label for="email" class="form-label">
-            <i class="fas fa-envelope me-2"></i>이메일
+            <i class="fas fa-envelope me-2"></i>Email
           </label>
           <input type="email" class="form-control" id="email" name="email" 
-                 placeholder="가입 시 등록한 이메일을 입력하세요" required>
-          <div class="invalid-feedback">올바른 이메일을 입력해주세요.</div>
+                 placeholder="Enter your email used during registration" required>
+          <div class="invalid-feedback">Please enter a valid email.</div>
         </div>
 
-        <button type="submit" class="btn btn-find" id="findBtn">
-          <i class="fas fa-search me-2"></i>아이디 찾기
+        <button type="submit" class="btn btn-dark btn-lg w-100 d-flex justify-content-center align-items-center" id="findBtn">
+          <span class="material-icons fs-4">manage_search</span>
+          <span class="fs-5">Find ID</span>
         </button>
       </form>
 
       <!-- 로딩 -->
       <div class="loading" id="loading">
         <div class="spinner"></div>
-        <p>아이디를 찾고 있습니다...</p>
+        <p>Searching for your ID...</p>
       </div>
 
       <!-- 결과 표시 -->
@@ -200,13 +201,13 @@
 
       <div class="links">
         <a href="/find-pw">
-          <i class="fas fa-key me-1"></i>비밀번호 찾기
+          <i class="fas fa-key me-1"></i>Find Password
         </a>
         <a href="/login">
-          <i class="fas fa-sign-in-alt me-1"></i>로그인
+          <i class="fas fa-sign-in-alt me-1"></i>Login
         </a>
         <a href="/join">
-          <i class="fas fa-user-plus me-1"></i>회원가입
+          <i class="fas fa-user-plus me-1"></i>Sign Up
         </a>
       </div>
     </div>
@@ -253,33 +254,33 @@
           console.log('Response:', response);
           
           if (response === 'FAIL') {
-            showResult(false, null, '아이디 찾기 중 오류가 발생했습니다.');
+            showResult(false, null, 'An error occurred while finding your ID.');
             return;
           }
           
           if (response.success) {
             showResult(true, response.username, response.message);
           } else {
-            showResult(false, null, response.message || '아이디를 찾을 수 없습니다.');
+            showResult(false, null, response.message || 'Unable to find your ID.');
           }
         })
         .catch(error => {
           hideLoading();
           console.error('Error:', error);
-          showResult(false, null, '아이디 찾기 중 오류가 발생했습니다.');
+          showResult(false, null, 'An error occurred while finding your ID.');
         });
       });
 
       function showLoading() {
         findBtn.disabled = true;
-        findBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>찾는 중...';
+  findBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>Searching...';
         loading.style.display = 'block';
         resultContainer.style.display = 'none';
       }
 
       function hideLoading() {
         findBtn.disabled = false;
-        findBtn.innerHTML = '<i class="fas fa-search me-2"></i>아이디 찾기';
+  findBtn.innerHTML = '<i class="fas fa-search me-2"></i>Find ID';
         loading.style.display = 'none';
       }
 
@@ -290,21 +291,21 @@
           resultContainer.className = 'result-container result-success';
           resultContent.innerHTML = `
             <i class="fas fa-check-circle fa-2x mb-3"></i>
-            <h5>아이디를 찾았습니다!</h5>
+            <h5>Your ID has been found!</h5>
             <div class="found-id">${username}</div>
             <p class="mb-3">${message}</p>
             <a href="/login" class="btn btn-primary">
-              <i class="fas fa-sign-in-alt me-2"></i>로그인하기
+              <i class="fas fa-sign-in-alt me-2"></i>Go to Login
             </a>
           `;
         } else {
           resultContainer.className = 'result-container result-error';
           resultContent.innerHTML = `
             <i class="fas fa-exclamation-circle fa-2x mb-3"></i>
-            <h5>아이디를 찾을 수 없습니다</h5>
+            <h5>Unable to find your ID</h5>
             <p class="mb-3">${message}</p>
             <button class="btn btn-secondary" onclick="resetForm()">
-              <i class="fas fa-redo me-2"></i>다시 시도
+              <i class="fas fa-redo me-2"></i>Try Again
             </button>
           `;
         }
