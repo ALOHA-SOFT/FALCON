@@ -20,8 +20,8 @@
                 <i class="material-icons">add</i>
               </a>
                 <ul class="dropdown-menu" aria-labelledby="addDropdownLink">
-                  <li><a class="dropdown-item" href="/admin/orders">주문처리</a></li>
-                  <li><a class="dropdown-item" href="/admin/products/create">상품등록</a></li>
+                  <li><a class="dropdown-item" href="/admin/orders">Order Processing</a></li>
+                  <li><a class="dropdown-item" href="/admin/products/create">Product Registration</a></li>
                 </ul>
             </li>
           </ul>
@@ -34,7 +34,7 @@
                   <!-- 💍 CSRF TOKEN -->
                   <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                   <button type="submit" class="btn btn-link nav-link text-dark d-flex align-items-center">
-                    <span>로그아웃</span>
+                    <span>Logout</span>
                   </button>
                 </form>
               </li>

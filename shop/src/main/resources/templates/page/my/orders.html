@@ -6,13 +6,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>주문 내역 - FALCON</title>
+  <title>Order History - FALCON</title>
 </head>
 <body layout:fragment="content">
 
   <div class="card">
     <div class="card-header">
-      <h5>주문 내역 조회</h5>
+      <h5>Order History</h5>
     </div>
     <div class="card-body">
       <!-- 주문 목록 -->
@@ -21,15 +21,15 @@
           <!-- 주문 항목 -->
           <div class="border p-3 mb-3 rounded">
             <div class="d-flex justify-content-between align-items-center mb-2">
-              <span class="fw-bold" th:text="'주문번호: ' + ${order.code}">주문번호: 20250630001</span>
+              <span class="fw-bold" th:text="'Order No: ' + ${order.code}">Order No: 20250630001</span>
               <th:block th:if="${order.status == '결제완료'}">
-                <span class="badge bg-success" th:text="${order.status}">결제완료</span>
+                <span class="badge bg-success">Payment Complete</span>
               </th:block>
               <th:block th:if="${order.status == '결제대기'}">
-                <span class="badge bg-secondary" th:text="${order.status}">결제대기</span>
+                <span class="badge bg-secondary">Pending Payment</span>
               </th:block>
               <th:block th:if="${order.status == '주문취소'}">
-                <span class="badge bg-danger" th:text="${order.status}">주문취소</span>
+                <span class="badge bg-danger">Order Cancelled</span>
               </th:block>
               <th:block th:if="${order.status != '결제완료' && order.status != '결제대기' && order.status != '주문취소' }">
                 <span class="badge bg-primary" th:text="${order.status}"></span>
@@ -39,38 +39,38 @@
             <div class="row justify-content-between align-items-center">
               <div class="col-md-2">
                 <img th:src="${order.orderItems != null && order.orderItems.size() > 0 && order.orderItems[0].product != null && order.orderItems[0].product.thumbImg != null ? order.orderItems[0].product.thumbImg.content : 'https://placehold.co/120x120?text=Image'}" 
-                  th:alt="${order.orderItems != null && order.orderItems.size() > 0 && order.orderItems[0].product != null ? order.orderItems[0].product.name : '상품 이미지'}"
+                  th:alt="${order.orderItems != null && order.orderItems.size() > 0 && order.orderItems[0].product != null ? order.orderItems[0].product.name : 'Product Image'}"
                   width="120" height="120" class="rounded object-fit-contain">
               </div>
               <div class="col-md-6">
-                <h6 th:text="${order.title}">주문제목</h6>
-                <p class="text-muted mb-1">옵션:</p>
+                <h6 th:text="${order.title}">Order Title</h6>
+                <p class="text-muted mb-1">Options:</p>
                 <p class="text-muted mb-1"> 
                   <th:block th:each="item, itemStat : ${order.orderItems}">
                     <th:block th:each="option, optionStat : ${item.orderItemOptions}">
                       <span th:text="${option.option.name} + ': ' + ${#numbers.formatInteger(option.option.price * option.quantity, 0, 'COMMA')}"></span>
-                      <span th:text="|(${#numbers.formatInteger(option.option.price, 0, 'COMMA')}x${#numbers.formatInteger(option.quantity, 0, 'COMMA')})|">옵션명 (2개)</span>
+                      <span th:text="|(${#numbers.formatInteger(option.option.price, 0, 'COMMA')}x${#numbers.formatInteger(option.quantity, 0, 'COMMA')})|">Option Name (2 pcs)</span>
                       <span th:if="!${optionStat.last}">, </span>
                     </th:block>
                     <span th:if="!${itemStat.last}"> | </span>
                   </th:block>
                 </p>
-                <p class="text-muted mb-1" th:text="'배송비: ₩' + ${#numbers.formatInteger(order.shipPrice, 3, 'COMMA')}">배송비: ₩3,000</p>
-                <p class="text-muted mb-1" th:text="'수량: ' + ${order.orderItems.size()} + '개'">수량: 1개</p>
+                <p class="text-muted mb-1" th:text="'Shipping: ₩' + ${#numbers.formatInteger(order.shipPrice, 3, 'COMMA')}">Shipping: ₩3,000</p>
+                <p class="text-muted mb-1" th:text="'Quantity: ' + ${order.orderItems.size()} + ' items'">Quantity: 1 items</p>
               </div>
               <div class="col-md-2">
                 <p class="fw-bold" th:text="'₩' + ${order.totalPrice != null ? #numbers.formatInteger(order.totalPrice, 3, 'COMMA') : '0'}">₩20,000</p>
                 <th:block th:if="${order.status == '결제대기'}">
-                  <a th:href="@{/pay/order/{id}(id=${order.id})}" class="btn btn-primary btn-sm mt-2">결제하기</a>
+                  <a th:href="@{/pay/order/{id}(id=${order.id})}" class="btn btn-primary btn-sm mt-2">Pay Now</a>
                 </th:block>
                 <th:block th:if="${order.status == '결제완료'}">
-                  <a th:href="@{/my/cancel/{id}(id=${order.id})}" class="btn btn-danger btn-sm mt-2">주문취소</a>
+                  <a th:href="@{/my/cancel/{id}(id=${order.id})}" class="btn btn-danger btn-sm mt-2">Cancel Order</a>
                 </th:block>
               </div>
               
             </div>
             <div class="text-end mt-2">
-              <small class="text-muted" th:text="'주문일시: ' + ${#dates.format(order.createdAt, 'yyyy.MM.dd')}">주문일시: 2025.06.30</small>
+              <small class="text-muted" th:text="'Order Date: ' + ${#dates.format(order.createdAt, 'yyyy.MM.dd')}">Order Date: 2025.06.30</small>
             </div>
           </div>
         </th:block>
@@ -79,8 +79,8 @@
         <th:block th:if="${pageInfo.list.size() == 0}">
           <div class="text-center py-5">
             <i class="material-icons" style="font-size: 48px; color: #ccc;">shopping_cart</i>
-            <p class="text-muted mt-3">주문 내역이 없습니다.</p>
-            <a href="/" class="btn btn-primary">쇼핑하러 가기</a>
+            <p class="text-muted mt-3">No order history found.</p>
+            <a href="/" class="btn btn-primary">Start Shopping</a>
           </div>
         </th:block>
       </div>

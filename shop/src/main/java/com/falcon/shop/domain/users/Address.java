@@ -25,7 +25,6 @@ public class Address extends Base {
   private String country; // 국가/지역
   private String postcode; // 우편번호
   private String address;
-  private String addressDong;
   private String addressDetail;
   private String city; // 도시
   private Boolean isMain;

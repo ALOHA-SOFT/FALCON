@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>취소/반품 - FALCON</title>
+  <title>Cancel/Return - FALCON</title>
 </head>
 
 <body layout:fragment="content">
@@ -13,33 +13,33 @@
   <!-- 주문 정보 요약 -->
   <div class="card mb-4">
     <div class="card-header bg-light">
-      <strong>주문 정보</strong>
+      <strong>Order Information</strong>
     </div>
     <div class="card-body">
       <div class="row align-items-center">
         <div class="col-md-2">
           <img th:src="${order.orderItems[0].product.imageUrl != null ? order.orderItems[0].product.imageUrl : '/img/products/p1.png'}"
-            class="img-fluid" alt="상품 이미지">
+            class="img-fluid" alt="Product Image">
         </div>
         <div class="col-md-6">
-          <h6 th:text="${order.title}">주문제목</h6>
-          <p class="text-muted mb-1">옵션:</p>
+          <h6 th:text="${order.title}">Order Title</h6>
+          <p class="text-muted mb-1">Options:</p>
           <p class="text-muted mb-1">
             <th:block th:each="item, itemStat : ${order.orderItems}">
               <th:block th:each="option, optionStat : ${item.orderItemOptions}">
                 <span
                   th:text="${option.option.name} + ': ' + ${#numbers.formatInteger(option.option.price * option.quantity, 0, 'COMMA')}"></span>
                 <span
-                  th:text="|(${#numbers.formatInteger(option.option.price, 0, 'COMMA')}x${#numbers.formatInteger(option.quantity, 0, 'COMMA')})|">옵션명
-                  (2개)</span>
+                  th:text="|(${#numbers.formatInteger(option.option.price, 0, 'COMMA')}x${#numbers.formatInteger(option.quantity, 0, 'COMMA')})|">Option Name
+                  (2)</span>
                 <span th:if="!${optionStat.last}">, </span>
               </th:block>
               <span th:if="!${itemStat.last}"> | </span>
             </th:block>
           </p>
           <p class="text-muted mb-1"
-            th:text="'배송비: ₩' + ${#numbers.formatInteger(order.shipPrice, 3, 'COMMA')}">배송비: ₩3,000</p>
-          <p class="text-muted mb-1" th:text="'수량: ' + ${order.orderItems.size()} + '개'">수량: 1개</p>
+            th:text="'Shipping: ₩' + ${#numbers.formatInteger(order.shipPrice, 3, 'COMMA')}">Shipping: ₩3,000</p>
+          <p class="text-muted mb-1" th:text="'Quantity: ' + ${order.orderItems.size()} + ' items'">Quantity: 1 item</p>
         </div>
         <div class="col-md-4">
           <p class="fw-bold fs-5" th:text="'₩' + ${#numbers.formatInteger(order.totalPrice, 3, 'COMMA')}">₩20,000</p>
@@ -52,40 +52,40 @@
   <div class="container p-0">
     <div class="card">
       <div class="card-header">
-        <h5 class="mb-0">주문 취소 신청</h5>
+        <h5 class="mb-0">Order Cancellation Request</h5>
       </div>
       <div class="card-body">
         <form id="cancelForm" method="post" >
           <input type="hidden" name="orderNo" th:value="${order.no}" />
           <div class="mb-3">
-            <label class="form-label">취소 구분</label>
+            <label class="form-label">Cancellation Type</label>
             <select class="form-select" name="type" required>
-              <option value="주문취소">주문취소</option>
-              <option value="반품">반품</option>
+              <option value="주문취소">Order Cancellation</option>
+              <option value="반품">Return</option>
             </select>
           </div>
           <div class="mb-3">
-            <label class="form-label">취소/반품 사유</label>
-            <textarea class="form-control" name="reason" rows="3" required placeholder="취소 또는 반품 사유를 입력해주세요."></textarea>
+            <label class="form-label">Reason for Cancellation/Return</label>
+            <textarea class="form-control" name="reason" rows="3" required placeholder="Please enter the reason for cancellation or return."></textarea>
           </div>
           <div class="mb-3">
-            <label class="form-label">환불 계좌 정보 (필요시)</label>
+            <label class="form-label">Refund Account Information (if needed)</label>
             <div class="row g-2">
               <div class="col-md-4">
-                <input type="text" class="form-control" name="bankName" placeholder="은행명">
+                <input type="text" class="form-control" name="bankName" placeholder="Bank Name">
               </div>
               <div class="col-md-4">
-                <input type="text" class="form-control" name="accountNumber" placeholder="계좌번호">
+                <input type="text" class="form-control" name="accountNumber" placeholder="Account Number">
               </div>
               <div class="col-md-4">
-                <input type="text" class="form-control" name="depositor" placeholder="예금주">
+                <input type="text" class="form-control" name="depositor" placeholder="Account Holder">
               </div>
             </div>
-            <div class="form-text">환불이 필요한 경우에만 입력하세요.</div>
+            <div class="form-text">Please fill in only if refund is needed.</div>
           </div>
           <div class="d-grid gap-2">
-            <button type="button" class="btn btn-danger btn-lg" id="btnCancel">주문 취소</button>
-            <a href="/my/orders" class="btn btn-secondary">취소</a>
+            <button type="button" class="btn btn-danger btn-lg" id="btnCancel">Cancel Order</button>
+            <a href="/my/orders" class="btn btn-secondary">Back</a>
           </div>
         </form>
       </div>
@@ -94,11 +94,11 @@
   <script>
   document.getElementById('btnCancel').addEventListener('click', function() {
     $confirmHTML(
-      '주문 취소 확인',
-      '정말로 주문을 취소하시겠습니까? <br> <span style="font-size: 12px;">주문 취소 시, 관리자가 승인 후 2~7일내에 환불이 진행됩니다.</span>',
+      'Order Cancellation Confirmation',
+      'Are you sure you want to cancel this order? <br> <span style="font-size: 12px;">After cancellation, refund will be processed within 2-7 days after admin approval.</span>',
       'warning',
-      '주문취소',
-      '닫기'
+      'Cancel Order',
+      'Close'
     ).then((result) => {
       if (result.isConfirmed) {
         const form = document.getElementById('cancelForm');
@@ -111,7 +111,7 @@
         })
         .then(data => {
           $toast({
-            title: '취소 신청이 완료되었습니다.',
+            title: 'Cancellation request has been completed.',
             icon: 'success'
           });
           setTimeout(() => {
@@ -119,7 +119,7 @@
           }, 1500);
         })
         .catch(error => {
-          $alert('오류', '취소 신청 중 오류가 발생했습니다.', 'error');
+          $alert('Error', 'An error occurred during the cancellation request.', 'error');
         });
       }
     });

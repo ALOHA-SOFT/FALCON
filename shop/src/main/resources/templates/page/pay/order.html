@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:layout="http://www.ultraq.net.nz/layout"
       layout:decorate="~{UI/layouts/user/main_layout}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>주문/결제</title>
+  <title>Order/Payment</title>
 </head>
 <body layout:fragment="content">
   <div class="container my-5">
-    <h2 class="mb-4">주문/결제</h2>
+    <h2 class="mb-4">Order/Payment</h2>
 
     <div class="row">
       <div class="col-12 col-md-6">
@@ -30,7 +30,7 @@
               <input type="text" class="form-control" id="buyerLastName" name="buyerLastName" th:value="${user.lastName}" required>
             </div>
             <div class="col-12">
-              <label for="buyerPhone" class="form-label">연락처</label>
+              <label for="buyerPhone" class="form-label">Phone</label>
               <input type="tel" class="form-control" id="buyerPhone" name="buyerPhone" th:value="${user.tel}" required>
             </div>
           </div>
@@ -43,7 +43,7 @@
           <div class="card-header">
             <div class="col-12 d-flex justify-content-between align-items-center">
               <span>Delivery Details</span>
-              <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAddressModal">+ 새 배송지 추가</button>
+              <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAddressModal">+ Add New Address</button>
             </div>
           </div>
           <div class="card-body" style="height: 338px; overflow-y: auto;">
@@ -56,19 +56,19 @@
                       <label th:for="'address_' + ${addr.no}" class="w-100 mb-0 cursor-pointer address-label">
                         <div class="d-flex justify-content-between align-items-center">
                           <div>
-                            <strong th:text="${addr.recipient}">수령인</strong>
-                            <span class="ms-2" th:text="${addr.tel}">연락처</span>
+                            <strong th:text="${addr.recipient}">Recipient</strong>
+                            <span class="ms-2" th:text="${addr.tel}">Phone</span>
                           </div>
                           <div>
-                            <span class="ms-2 badge bg-primary" th:if="${addr.isMain}">기본배송지</span>
+                            <span class="ms-2 badge bg-primary" th:if="${addr.isMain}">Default Address</span>
                           </div>
                         </div>
                         <!-- <div th:text="${addr.postcode} + ' ' + ${addr.address} + ' ' + ${addr.addressDong} + ' ' + ${addr.addressDetail}">주소</div> -->
                         <div class="fs-6">
-                          <span class="badge bg-secondary" th:text="${addr.postcode}">우편번호</span>
-                          <span th:text="${addr.address} + ' ' + ${addr.addressDetail}" class="span-address" th:classappend="${addr.isMain} ? 'main' : ''">주소</span> <br>
-                          <span th:text="${addr.addressDong} + ' ' + ${addr.addressDetail}">주소</span>
-                          <div class="text-muted small" th:if="${addr.deliveryRequest}" th:text="'요청사항: ' + ${addr.deliveryRequest}">요청사항</div>
+                          <span class="badge bg-secondary" th:text="${addr.postcode}">Postal Code</span>
+                          <span th:text="${addr.address} + ' ' + ${addr.addressDetail}" class="span-address" th:classappend="${addr.isMain} ? 'main' : ''">Address</span> <br>
+                          <span th:text="${addr.addressDong} + ' ' + ${addr.addressDetail}">Address</span>
+                          <div class="text-muted small" th:if="${addr.deliveryRequest}" th:text="'Delivery Note: ' + ${addr.deliveryRequest}">Delivery Note</div>
                         </div>
                       </label>
                     </div>
@@ -77,82 +77,82 @@
               </div>
                 <div th:if="${addressList == null or #lists.isEmpty(addressList)}" class="text-muted text-center py-4">
                   <i class="material-icons" style="font-size: 36px; color: #ccc;">local_shipping</i>
-                  <p class="mt-2 mb-2">등록된 배송지가 없습니다.</p>
-                  <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAddressModal">+ 새 배송지 추가</button>
+                  <p class="mt-2 mb-2">No delivery address registered.</p>
+                  <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAddressModal">+ Add New Address</button>
                 </div>
                 <!-- 배송지 추가/수정 모달 -->
                 <div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressModalLabel" aria-hidden="true">
                   <div class="modal-dialog">
                     <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title" id="addAddressModalLabel">배송지 추가</h5>
+                      <h5 class="modal-title" id="addAddressModalLabel">Add Address</h5>
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                       <form id="order-address-form">
                       <input type="hidden" name="userNo" th:value="${user.no}">
                       <div class="mb-2">
-                        <label class="form-label">수령인</label>
+                        <label class="form-label">Recipient</label>
                         <input type="text" class="form-control" name="recipient" id="orderRecipient" required>
                       </div>
                       <div class="mb-2">
-                        <label class="form-label">연락처</label>
+                        <label class="form-label">Phone</label>
                         <input type="tel" class="form-control" name="tel" id="orderTel" required>
                       </div>
                       <div class="mb-2">
                         <label class="form-label">Country/Region</label>
                         <select class="form-select" name="country" id="orderCountry">
-                          <option value="">국가/지역을 선택해주세요</option>
-                          <option value="KR">대한민국</option>
-                          <option value="US">미국</option>
-                          <option value="JP">일본</option>
-                          <option value="CN">중국</option>
-                          <option value="GB">영국</option>
-                          <option value="DE">독일</option>
-                          <option value="FR">프랑스</option>
-                          <option value="CA">캐나다</option>
-                          <option value="AU">호주</option>
+                          <option value="">Please select country/region</option>
+                          <option value="KR">South Korea</option>
+                          <option value="US">United States</option>
+                          <option value="JP">Japan</option>
+                          <option value="CN">China</option>
+                          <option value="GB">United Kingdom</option>
+                          <option value="DE">Germany</option>
+                          <option value="FR">France</option>
+                          <option value="CA">Canada</option>
+                          <option value="AU">Australia</option>
                         </select>
                       </div>
                       <div class="mb-2">
                         <label class="form-label">Address</label>
                         <div class="input-group">
-                        <input type="text" id="orderPostcode" class="form-control" name="postcode" placeholder="우편번호" readonly>
-                        <button type="button" class="btn btn-outline-secondary" onclick="execOrderDaumPostcode()">주소 찾기</button>
+                        <input type="text" id="orderPostcode" class="form-control" name="postcode" placeholder="Postal Code" readonly>
+                        <button type="button" class="btn btn-outline-secondary" onclick="execOrderDaumPostcode()">Find Address</button>
                         </div>
-                        <input type="text" class="form-control mt-2" name="address" id="orderAddress" placeholder="도로명주소" readonly required>
-                        <input type="text" class="form-control mt-2" name="addressDong" id="orderAddressDong" placeholder="지번주소" readonly>
+                        <input type="text" class="form-control mt-2" name="address" id="orderAddress" placeholder="Street Address" readonly required>
+                        <input type="text" class="form-control mt-2" name="addressDong" id="orderAddressDong" placeholder="District Address" readonly>
                       </div>
                       <div class="mb-2">
                         <label class="form-label">City</label>
-                        <input type="text" class="form-control" name="city" id="orderCity" placeholder="도시명">
+                        <input type="text" class="form-control" name="city" id="orderCity" placeholder="City Name">
                       </div>
                       <div class="mb-2">
                         <label class="form-label">Zip/Postal code</label>
-                        <input type="text" class="form-control" name="zipCode" id="orderZipCode" placeholder="우편번호">
+                        <input type="text" class="form-control" name="postcode" id="orderPostcodeField" placeholder="Postal Code">
                       </div>
                       <div class="mb-2">
-                        <label class="form-label">상세주소</label>
-                        <input type="text" class="form-control" name="addressDetail" id="orderAddressDetail" placeholder="상세주소 (아파트, 동호수 등)" required>
+                        <label class="form-label">Detailed Address</label>
+                        <input type="text" class="form-control" name="addressDetail" id="orderAddressDetail" placeholder="Detailed Address (Apartment, Unit No., etc.)" required>
                       </div>
                       <div class="mb-2">
-                        <label class="form-label">요청사항</label>
+                        <label class="form-label">Delivery Note</label>
                         <select id="orderDeliveryRequestSelect" class="form-select mt-2">
-                        <option value="">배송 요청사항을 선택해주세요</option>
-                        <option value="부재 시 문 앞에 놓아주세요">부재 시 문 앞에 놓아주세요</option>
-                        <option value="경비실에 맡겨주세요">경비실에 맡겨주세요</option>
-                        <option value="택배함에 넣어주세요">택배함에 넣어주세요</option>
-                        <option value="벨 누르지 마세요">벨 누르지 마세요</option>
-                        <option value="배송 전에 연락주세요">배송 전에 연락주세요</option>
-                        <option value="custom">직접 입력</option>
+                        <option value="">Please select delivery instructions</option>
+                        <option value="Please leave at the door if not available">Please leave at the door if not available</option>
+                        <option value="Please leave with security office">Please leave with security office</option>
+                        <option value="Please put in the mailbox">Please put in the mailbox</option>
+                        <option value="Please do not ring the bell">Please do not ring the bell</option>
+                        <option value="Please contact before delivery">Please contact before delivery</option>
+                        <option value="custom">Custom Input</option>
                         </select>
-                        <input type="text" class="form-control d-none" name="deliveryRequest" id="orderDeliveryRequest" placeholder="배송 요청사항 (선택)" readonly>
+                        <input type="text" class="form-control d-none" name="deliveryRequest" id="orderDeliveryRequest" placeholder="Delivery Instructions (Optional)" readonly>
                       </div>
                       <div class="form-check mb-2">
                         <input class="form-check-input" type="checkbox" id="orderIsMain" name="isMain">
-                        <label class="form-check-label" for="orderIsMain">기본 배송지로 설정</label>
+                        <label class="form-check-label" for="orderIsMain">Set as default address</label>
                       </div>
-                      <button type="submit" class="btn btn-primary w-100">저장</button>
+                      <button type="submit" class="btn btn-primary w-100">Save</button>
                       </form>
                     </div>
                     </div>
@@ -209,7 +209,7 @@
                       data: addressData
                     });
                     await $toast({
-                      title: '배송지가 등록되었습니다.',
+                      title: 'Address has been registered.',
                       icon: 'success'
                     });
                     // 모달 닫기
@@ -217,7 +217,7 @@
                     modal.hide();
                     location.reload();
                     } catch (error) {
-                    $alert('오류', '배송지 등록에 실패했습니다.', 'error');
+                    $alert('Error', 'Failed to register address.', 'error');
                     }
                   });
 
@@ -242,7 +242,7 @@
       </div>
     <!-- 주문 상품/옵션 상세 -->
     <div class="card mb-4">
-      <div class="card-header">주문 상품 상세</div>
+      <div class="card-header">Order Product Details</div>
       <div class="card-body">
         <div class="row g-3" th:each="item : ${order.orderItems}">
           <div class="col-12">
@@ -252,20 +252,20 @@
                   <div class="col-md-6">
                     <div class="row mb-2">
                       <div class="col-6">
-                        <img th:src="${item.product.thumbImg != null and item.product.thumbImg.content != null ? item.product.thumbImg.content : 'https://placehold.co/120x120?text=Image'}" alt="상품 이미지" class="img-fluid rounded" style="max-height:120px;">
+                        <img th:src="${item.product.thumbImg != null and item.product.thumbImg.content != null ? item.product.thumbImg.content : 'https://placehold.co/120x120?text=Image'}" alt="Product Image" class="img-fluid rounded" style="max-height:120px;">
                       </div>
                       <div class="col-6 d-flex flex-column justify-content-between">
                         <div>
-                          <strong>상품명:</strong> <span th:text="${item.product.name}">상품명</span>
+                          <strong>Product Name:</strong> <span th:text="${item.product.name}">Product Name</span>
                         </div>
                         <div>
-                          <strong>상품번호:</strong> <span th:text="${item.productNo}">상품번호</span>
+                          <strong>Product No:</strong> <span th:text="${item.productNo}">Product No</span>
                         </div>
                         <div>
-                          <strong>수량:</strong> <span th:text="${item.quantity}">1</span>
+                          <strong>Quantity:</strong> <span th:text="${item.quantity}">1</span>
                         </div>
                         <div>
-                          <strong>가격:</strong> <span th:text="${'£' + #numbers.formatInteger(item.price, 0, 'COMMA')}" class="item-price" data-item-id="${item.productNo}">£0</span>
+                          <strong>Price:</strong> <span th:text="${'£' + #numbers.formatInteger(item.price, 0, 'COMMA')}" class="item-price" data-item-id="${item.productNo}">£0</span>
                         </div>
                       </div>
                     </div>
@@ -276,9 +276,9 @@
                         <div class="col-12">
                           <div class="border rounded p-2 d-flex align-items-center justify-content-between flex-column flex-md-row gap-2">
                             <div>
-                              <span class="me-2"><span th:text="${opt.option.name}" class="fw-bold p-2 fs-5">옵션명</span></span>
-                              <span class="me-2">가격: <span th:text="${'£' + #numbers.formatInteger(opt.price, 0, 'COMMA')}">£0</span></span>
-                              <span class="me-2">수량: <span class="opt-qty-view" th:text="${opt.quantity}" th:data-id="${opt.id}">1</span></span>
+                              <span class="me-2"><span th:text="${opt.option.name}" class="fw-bold p-2 fs-5">Option Name</span></span>
+                              <span class="me-2">Price: <span th:text="${'£' + #numbers.formatInteger(opt.price, 0, 'COMMA')}">£0</span></span>
+                              <span class="me-2">Quantity: <span class="opt-qty-view" th:text="${opt.quantity}" th:data-id="${opt.id}">1</span></span>
                               <span class="fw-bold text-primary">
                                 <span class="opt-total-view" th:text="${'£' + #numbers.formatInteger(opt.price * opt.quantity, 0, 'COMMA')}" th:data-id="${opt.id}">£0</span>
                               </span>
@@ -304,33 +304,33 @@
     
     <!-- 주문 정보 요약 -->
     <div class="card mb-4">
-      <div class="card-header">주문 정보</div>
+      <div class="card-header">Order Information</div>
       <div class="card-body fs-4">
         <div class="row mb-2">
-          <div class="col-md-4"><strong>주문번호</strong></div>
+          <div class="col-md-4"><strong>Order Number</strong></div>
           <div class="col-md-8 text-end" th:text="${order.code}">ORDER_CODE</div>
         </div>
         <div class="row mb-2">
-          <div class="col-md-4"><strong>주문자</strong></div>
-          <div class="col-md-8 text-end" th:text="${order.userNo}">주문자번호</div>
+          <div class="col-md-4"><strong>Customer</strong></div>
+          <div class="col-md-8 text-end" th:text="${order.userNo}">Customer Number</div>
         </div>
         <div class="row mb-2">
-          <div class="col-md-4"><strong>배송비</strong></div>
+          <div class="col-md-4"><strong>Shipping Fee</strong></div>
           <div id="shipping-price" class="col-md-8 text-end" th:text="${'£' + #numbers.formatInteger(order.shipPrice, 0, 'COMMA')}">£0</div>
         </div>
         <div class="row mb-2">
-          <div class="col-md-4"><strong>상태</strong></div>
-          <div class="col-md-8 text-end" th:text="${order.status}">결제대기</div>
+          <div class="col-md-4"><strong>Status</strong></div>
+          <div class="col-md-8 text-end" th:text="${order.status}">Pending Payment</div>
         </div>
         <div class="row mb-2 text-danger">
-          <div class="col-md-4"><strong>총 결제금액</strong></div>
+          <div class="col-md-4"><strong>Total Amount</strong></div>
           <div id="total-price" th:data="${order.totalPrice}" class="col-md-8 text-end" th:text="${'£' + #numbers.formatInteger(order.totalPrice + order.shipPrice, 0, 'COMMA')}">£0</div>
         </div>
       </div>
     </div>
     <!-- 결제 영역 -->
     <div class="card mb-4">
-      <div class="card-header">결제수단 선택</div>
+      <div class="card-header">Payment Method Selection</div>
       <div class="card-body">
         <!-- 결제 방식 선택 카드 버튼 -->
         <div class="row g-3 mb-4">
@@ -342,7 +342,7 @@
                 </div>
                 <div class="payment-info">
                   <h5 class="payment-title">Cash Payment</h5>
-                  <p class="payment-desc">이메일로 결제 정보 안내</p>
+                  <p class="payment-desc">Payment information sent via email</p>
                 </div>
                 <div class="payment-check">
                   <i class="material-icons">check_circle</i>
@@ -358,7 +358,7 @@
                 </div>
                 <div class="payment-info">
                   <h5 class="payment-title">Coin Payment</h5>
-                  <p class="payment-desc">보유 코인으로 즉시 결제</p>
+                  <p class="payment-desc">Instant payment with your coins</p>
                 </div>
                 <div class="payment-check">
                   <i class="material-icons">check_circle</i>
@@ -375,8 +375,8 @@
             <div class="alert alert-info d-flex align-items-center">
               <i class="material-icons me-2">email</i>
               <div>
-                <strong>현금 결제 안내</strong><br>
-                <small>주문 완료 후 입력하신 이메일로 결제 정보와 안내사항을 발송해드립니다.</small>
+                <strong>Cash Payment Guide</strong><br>
+                <small>Payment information and instructions will be sent to your email after order completion.</small>
               </div>
             </div>
           </div>
@@ -386,16 +386,16 @@
             <div class="alert alert-warning d-flex align-items-center">
               <i class="material-icons me-2">account_balance_wallet</i>
               <div>
-                <strong>암호화폐 결제 안내</strong><br>
-                <small>NowPayments를 통해 다양한 암호화폐로 결제할 수 있습니다.</small>
+                <strong>Cryptocurrency Payment Guide</strong><br>
+                <small>You can pay with various cryptocurrencies through NowPayments.</small>
               </div>
             </div>
             
             <div class="row g-3">
               <div class="col-md-6">
-                <label class="form-label">결제 통화 선택</label>
+                <label class="form-label">Select Payment Currency</label>
                 <select class="form-select" id="cryptoCurrency">
-                  <option value="">통화를 선택해주세요</option>
+                  <option value="">Please select a currency</option>
                   <option value="btc">Bitcoin (BTC)</option>
                   <option value="eth">Ethereum (ETH)</option>
                   <option value="usdt">Tether (USDT)</option>
@@ -405,7 +405,7 @@
                 </select>
               </div>
               <div class="col-md-6">
-                <label class="form-label">결제 금액</label>
+                <label class="form-label">Payment Amount</label>
                 <div class="input-group">
                   <span class="input-group-text">£</span>
                   <input type="text" class="form-control" id="paymentAmount" readonly>
@@ -416,11 +416,11 @@
             <div class="mt-3" id="cryptoAmountDisplay" style="display: none;">
               <div class="alert alert-info">
                 <div class="d-flex justify-content-between align-items-center">
-                  <span>결제할 암호화폐 수량:</span>
+                  <span>Cryptocurrency amount to pay:</span>
                   <strong id="cryptoAmount">-</strong>
                 </div>
                 <div class="d-flex justify-content-between align-items-center mt-2">
-                  <span>현재 환율:</span>
+                  <span>Current exchange rate:</span>
                   <small id="exchangeRate">-</small>
                 </div>
               </div>
@@ -516,7 +516,7 @@
       </div>
     </div>
     <div class="d-grid gap-2">
-      <button type="button" class="btn btn-primary btn-lg" id="payBtn">결제하기</button>
+      <button type="button" class="btn btn-primary btn-lg" id="payBtn">Complete Payment</button>
     </div>
   </div>
 
@@ -642,7 +642,7 @@
         }
       }).catch(function(error) {
         console.error('환율 조회 실패:', error);
-        $alert('환율 조회 실패', '암호화폐 환율을 조회할 수 없습니다.', 'error');
+        $alert('Exchange Rate Error', 'Unable to retrieve cryptocurrency exchange rate.', 'error');
       });
     }
     
@@ -656,14 +656,14 @@
       buyerPhone = buyerPhone.replace(/[^\d]/g, '');
       
       if (!buyerFirstName || !buyerLastName || !buyerEmail || !buyerPhone) {
-        $alert('입력 오류', 'Customer details를 모두 입력해주세요.', 'warning');
+        $alert('Input Error', 'Please fill in all customer details.', 'warning');
         return;
       }
 
       // 선택된 결제 방식 확인
       const selectedCard = document.querySelector('.payment-card.selected');
       if (!selectedCard) {
-        $alert('결제 방식 선택', '결제 방식을 선택해주세요.', 'warning');
+        $alert('Payment Method Selection', 'Please select a payment method.', 'warning');
         return;
       }
       const paymentMethod = selectedCard.getAttribute('data-payment').toUpperCase();
@@ -687,11 +687,11 @@
       const addressNo = document.querySelector('input[name="addressNo"]:checked') ? document.querySelector('input[name="addressNo"]:checked').value : null;
 
       $confirm(
-        '현금 결제 확인', 
-        '현금 결제로 주문을 완료하시겠습니까?\n주문 완료 후 이메일로 결제 정보를 안내해드립니다.', 
+        'Cash Payment Confirmation', 
+        'Do you want to complete the order with cash payment?\nPayment information will be sent to your email after order completion.', 
         'question',
-        '결제하기',
-        '취소'
+        'Pay',
+        'Cancel'
       ).then((result) => {
         if (result.isConfirmed) {
           // 타이머 만들어서 "메일 발송 및 주문 처리 중입니다..." 
@@ -699,8 +699,8 @@
           // AJAX 요청이 끝나면 로딩 종료
           const loadingTimer = setTimeout(() => {
             Swal.fire({
-              title: '메일 발송 및 주문 처리 중입니다...',
-              text: '잠시만 기다려주세요...',
+              title: 'Processing order and sending email...',
+              text: 'Please wait...',
               allowOutsideClick: false,
               didOpen: () => {
                 Swal.showLoading()
@@ -728,11 +728,11 @@
             Swal.close();
 
             if (res === 'SUCCESS') {
-              $alert_('주문 완료', '주문이 완료되었습니다. 입력하신 이메일로 결제 정보를 발송했습니다.', 'success').then(() => {
+              $alert_('Order Completed', 'Your order has been completed. Payment information has been sent to your email.', 'success').then(() => {
                 window.location.href = '/pay/cash/success?orderId=' + orderId;
               });
             } else {
-              $alert('주문 실패', '주문 처리에 실패했습니다.', 'error');
+              $alert('Order Failed', 'Order processing failed.', 'error');
             }
           });
         }
@@ -752,24 +752,24 @@
 
       // 유효성 검사
       if (!cryptoCurrency) {
-        $alert('결제 통화 선택', '결제할 암호화폐를 선택해주세요.', 'warning');
+        $alert('Payment Currency Selection', 'Please select a cryptocurrency to pay.', 'warning');
         return;
       }
 
       const cryptoAmount = document.getElementById('cryptoAmount').textContent;
       
       $confirm(
-        '암호화폐 결제 확인',
-        `${cryptoAmount}로 결제하시겠습니까?\n결제 페이지로 이동합니다.`,
+        'Cryptocurrency Payment Confirmation',
+        `Would you like to pay with ${cryptoAmount}?\nYou will be redirected to the payment page.`,
         'question',
-        '결제하기',
-        '취소'
+        'Pay',
+        'Cancel'
       ).then((result) => {
         if (result.isConfirmed) {
           // 로딩 표시
           Swal.fire({
-            title: '결제 준비 중...',
-            text: '잠시만 기다려주세요.',
+            title: 'Preparing payment...',
+            text: 'Please wait.',
             allowOutsideClick: false,
             didOpen: () => {
               Swal.showLoading()
@@ -801,12 +801,12 @@
               // QR 코드나 주소 표시 방식
               showCryptoPaymentInfo(response);
             } else {
-              $alert('결제 생성 실패', '암호화폐 결제를 생성할 수 없습니다.', 'error');
+              $alert('Payment Creation Failed', 'Unable to create cryptocurrency payment.', 'error');
             }
           }).catch(function(error) {
             Swal.close();
             console.error('결제 생성 실패:', error);
-            $alert('결제 실패', '암호화폐 결제 생성에 실패했습니다.', 'error');
+            $alert('Payment Failed', 'Failed to create cryptocurrency payment.', 'error');
           });
         }
       });
@@ -856,7 +856,7 @@
       const element = document.getElementById(elementId);
       element.select();
       document.execCommand('copy');
-      $toast({ title: '주소가 복사되었습니다.', icon: 'success' });
+      $toast({ title: 'Address copied.', icon: 'success' });
     }
 
     // 결제 상태 확인
@@ -866,12 +866,12 @@
         type: 'GET'
       }).then(function(response) {
         if (response.payment_status === 'finished') {
-          $alert('결제 완료', '암호화폐 결제가 완료되었습니다.', 'success');
+          $alert('Payment Completed', 'Cryptocurrency payment has been completed.', 'success');
           window.location.href = '/pay/crypto/success?orderId=' + orderId;
         } else if (response.payment_status === 'failed') {
-          $alert('결제 실패', '암호화폐 결제에 실패했습니다.', 'error');
+          $alert('Payment Failed', 'Cryptocurrency payment failed.', 'error');
         } else {
-          $alert('결제 대기', '결제가 아직 완료되지 않았습니다. 잠시 후 다시 확인해주세요.', 'info');
+          $alert('Payment Pending', 'Payment is not yet completed. Please check again later.', 'info');
         }
       });
     }
@@ -882,7 +882,7 @@
         const id = this.getAttribute('data-id');
         let qty = parseInt(this.value, 10);
         if (isNaN(qty) || qty < 1) {
-          $alert('수량 오류', '수량은 1 이상이어야 합니다.', 'warning');
+          $alert('Quantity Error', 'Quantity must be 1 or more.', 'warning');
           this.value = 1;
           return;
         }
@@ -911,7 +911,7 @@
               data: { id: orderId, totalPrice: total }
             });
           } else {
-            $alert('수량 변경 실패', '수량 변경에 실패했습니다.', 'error');
+            $alert('Quantity Update Failed', 'Failed to update quantity.', 'error');
           }
         });
       });
@@ -953,7 +953,7 @@
               data: { id: orderId, totalPrice: total }
             });
           } else {
-            $alert('수량 변경 실패', '수량 변경에 실패했습니다.', 'error');
+            $alert('Quantity Update Failed', 'Failed to update quantity.', 'error');
           }
         });
       });

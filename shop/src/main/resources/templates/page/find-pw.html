@@ -6,7 +6,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>비밀번호 찾기 - FALCON</title>
+  <title>Find Password - FALCON</title>
   <style>
     .find-container {
       max-width: 500px;
@@ -173,15 +173,15 @@
       <div class="find-header">
         <h2>
           <i class="fas fa-key me-2" style="color: #667eea;"></i>
-          비밀번호 찾기
+          Find Password
         </h2>
-        <p>가입 시 등록한 아이디와 이메일을 입력해주세요</p>
+        <p>Please enter your username and email used during registration.</p>
       </div>
 
       <div class="security-notice">
         <i class="fas fa-shield-alt"></i>
-        <strong>보안 안내:</strong> 임시 비밀번호가 등록된 이메일로 발송됩니다. 
-        로그인 후 반드시 새로운 비밀번호로 변경해주세요.
+  <strong>Security Notice:</strong> A temporary password will be sent to your registered email. 
+  Please change your password after logging in.
       </div>
 
       <form id="findPasswordForm" class="needs-validation" novalidate>
@@ -190,35 +190,35 @@
         
         <div class="form-group">
           <label for="username" class="form-label">
-            <i class="fas fa-user me-2"></i>아이디
+            <i class="fas fa-user me-2"></i>Username
           </label>
           <input type="text" class="form-control" id="username" name="username" 
-                 placeholder="가입 시 등록한 아이디를 입력하세요" required>
-          <div class="invalid-feedback">아이디를 입력해주세요.</div>
+                 placeholder="Enter your username used during registration" required>
+          <div class="invalid-feedback">Please enter your username.</div>
         </div>
 
         <div class="form-group">
           <label for="email" class="form-label">
-            <i class="fas fa-envelope me-2"></i>이메일
+            <i class="fas fa-envelope me-2"></i>Email
           </label>
           <input type="email" class="form-control" id="email" name="email" 
-                 placeholder="가입 시 등록한 이메일을 입력하세요" required>
-          <div class="invalid-feedback">올바른 이메일을 입력해주세요.</div>
+                 placeholder="Enter your email used during registration" required>
+          <div class="invalid-feedback">Please enter a valid email.</div>
           <div class="email-info">
             <i class="fas fa-info-circle me-2"></i>
-            입력한 이메일로 8자리 임시 비밀번호가 발송됩니다.
+            An 8-digit temporary password will be sent to the entered email.
           </div>
         </div>
 
-        <button type="submit" class="btn btn-find" id="findBtn">
-          <i class="fas fa-paper-plane me-2"></i>임시 비밀번호 발송
+        <button type="submit" class="btn btn-lg btn-dark w-100" id="findBtn">
+            <span class="material-icons me-2" style="vertical-align: middle;">send</span>Send Temporary Password
         </button>
       </form>
 
       <!-- 로딩 -->
       <div class="loading" id="loading">
         <div class="spinner"></div>
-        <p>임시 비밀번호를 생성하고 발송하고 있습니다...</p>
+        <p>Generating and sending temporary password...</p>
       </div>
 
       <!-- 결과 표시 -->
@@ -228,13 +228,13 @@
 
       <div class="links">
         <a href="/find-id">
-          <i class="fas fa-user-search me-1"></i>아이디 찾기
+          <i class="fas fa-user-search me-1"></i>Find ID
         </a>
         <a href="/login">
-          <i class="fas fa-sign-in-alt me-1"></i>로그인
+          <i class="fas fa-sign-in-alt me-1"></i>Login
         </a>
         <a href="/join">
-          <i class="fas fa-user-plus me-1"></i>회원가입
+          <i class="fas fa-user-plus me-1"></i>Sign Up
         </a>
       </div>
     </div>
@@ -259,11 +259,55 @@
           this.classList.add('was-validated');
           return;
         }
-
         // 확인 메시지
-        if (!confirm('임시 비밀번호를 이메일로 발송하시겠습니까?\\n\\n기존 비밀번호는 사용할 수 없게 됩니다.')) {
-          return;
-        }
+        $confirm(
+          'Send Temporary Password',
+          'Do you want to send a temporary password to your email?\n\nYour current password will no longer be usable.',
+          'warning',
+          'Yes, send it',
+          'Cancel'
+        ).then(result => {
+          if (!result.isConfirmed) {
+            return;
+          }
+          // 로딩 시작
+          showLoading();
+
+          // 폼 데이터 수집
+          const formData = new FormData(form);
+          const data = {};
+          formData.forEach((value, key) => {
+            data[key] = value;
+          });
+
+          // AJAX 요청 ($ajax 함수 사용)
+          $ajax({
+            url: '/api/users/find-password',
+            type: 'POST',
+            data: data
+          })
+          .then(response => {
+            hideLoading();
+            console.log('Response:', response);
+
+            if (response === 'FAIL') {
+                showResult(false, null, 'An error occurred while sending the temporary password.');
+              return;
+            }
+
+            if (response.success) {
+              showResult(true, response.email, response.message);
+            } else {
+                showResult(false, null, response.message || 'Failed to send temporary password.');
+            }
+          })
+            .catch(error => {
+            hideLoading();
+            console.error('Error:', error);
+            showResult(false, null, 'An error occurred while sending the temporary password.');
+          });
+        });
+        return;
 
         // 로딩 시작
         showLoading();
@@ -286,33 +330,33 @@
           console.log('Response:', response);
           
           if (response === 'FAIL') {
-            showResult(false, null, '임시 비밀번호 발송 중 오류가 발생했습니다.');
+            showResult(false, null, 'An error occurred while sending the temporary password.');
             return;
           }
           
           if (response.success) {
             showResult(true, response.email, response.message);
           } else {
-            showResult(false, null, response.message || '임시 비밀번호 발송에 실패했습니다.');
+            showResult(false, null, response.message || 'Failed to send temporary password.');
           }
         })
         .catch(error => {
           hideLoading();
           console.error('Error:', error);
-          showResult(false, null, '임시 비밀번호 발송 중 오류가 발생했습니다.');
+          showResult(false, null, 'An error occurred while sending the temporary password.');
         });
       });
 
       function showLoading() {
         findBtn.disabled = true;
-        findBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>발송 중...';
+        findBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>Sending...';
         loading.style.display = 'block';
         resultContainer.style.display = 'none';
       }
 
       function hideLoading() {
         findBtn.disabled = false;
-        findBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>임시 비밀번호 발송';
+        findBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Send Temporary Password';
         loading.style.display = 'none';
       }
 
@@ -322,39 +366,39 @@
         if (success) {
           resultContainer.className = 'result-container result-success';
           resultContent.innerHTML = `
-            <i class="fas fa-check-circle fa-2x mb-3"></i>
-            <h5>임시 비밀번호가 발송되었습니다!</h5>
-            <p class="mb-3">
-              <strong>${email}</strong>로<br>
-              8자리 임시 비밀번호가 발송되었습니다.
-            </p>
-            <p class="mb-3 text-warning">
-              <i class="fas fa-exclamation-triangle me-2"></i>
-              <small>보안을 위해 로그인 후 반드시 비밀번호를 변경해주세요.</small>
-            </p>
-            <div class="d-grid gap-2">
-              <a href="/login" class="btn btn-primary">
-                <i class="fas fa-sign-in-alt me-2"></i>로그인하기
-              </a>
-              <button class="btn btn-outline-secondary btn-sm" onclick="resetForm()">
-                <i class="fas fa-redo me-2"></i>다시 발송
-              </button>
-            </div>
+        <i class="fas fa-check-circle fa-2x mb-3"></i>
+        <h5>Temporary password has been sent!</h5>
+        <p class="mb-3">
+          An 8-digit temporary password has been sent to<br>
+          <strong>${email}</strong>.
+        </p>
+        <p class="mb-3 text-warning">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          <small>For security, please change your password after logging in.</small>
+        </p>
+        <div class="d-grid gap-2">
+          <a href="/login" class="btn btn-primary">
+            <i class="fas fa-sign-in-alt me-2"></i>Login
+          </a>
+          <button class="btn btn-outline-secondary btn-sm" onclick="resetForm()">
+            <i class="fas fa-redo me-2"></i>Send Again
+          </button>
+        </div>
           `;
         } else {
           resultContainer.className = 'result-container result-error';
           resultContent.innerHTML = `
-            <i class="fas fa-exclamation-circle fa-2x mb-3"></i>
-            <h5>임시 비밀번호 발송 실패</h5>
-            <p class="mb-3">${message}</p>
-            <div class="d-grid gap-2">
-              <button class="btn btn-secondary" onclick="resetForm()">
-                <i class="fas fa-redo me-2"></i>다시 시도
-              </button>
-              <a href="/find-id" class="btn btn-outline-info btn-sm">
-                <i class="fas fa-user-search me-2"></i>아이디 찾기
-              </a>
-            </div>
+        <i class="fas fa-exclamation-circle fa-2x mb-3"></i>
+        <h5>Failed to send temporary password</h5>
+        <p class="mb-3">${message}</p>
+        <div class="d-grid gap-2">
+          <button class="btn btn-secondary" onclick="resetForm()">
+            <i class="fas fa-redo me-2"></i>Try Again
+          </button>
+          <a href="/find-id" class="btn btn-outline-info btn-sm">
+            <i class="fas fa-user-search me-2"></i>Find ID
+          </a>
+        </div>
           `;
         }
       }

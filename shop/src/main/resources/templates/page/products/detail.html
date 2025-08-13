@@ -6,7 +6,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>상품 상세</title>
+  <title>Product Detail</title>
   <style>
     .product-image {
       width: 255px;
@@ -285,35 +285,35 @@
 
     <!-- 상품이 없을 때-->
     <div th:unless="${product != null}" class="text-center py-5">
-      <p>상품 정보를 불러올 수 없습니다.</p>
+      <p>Unable to load product information.</p>
     </div>
     
     <!-- 상품 정보 -->
     <div th:if="${product != null}" class="product-container">
       
-      <!-- 상품 이미지 -->
-      <div class="product-image-section">
-        <img th:if="${product.mainImg != null}" 
-             th:src="${product.mainImg.content}" 
-             class="product-image cursor-pointer" 
-             alt="상품 이미지" 
-             data-bs-toggle="modal" 
-             data-bs-target="#imageModal">
-        <img th:if="${product.mainImg == null}" 
-             src="https://placehold.co/255x400?text=No+Image" 
-             class="product-image" 
-             alt="이미지 없음">
+   <!-- 상품 이미지 -->
+   <div class="product-image-section">
+     <img th:if="${product.mainImg != null}" 
+       th:src="${product.mainImg.content}" 
+       class="product-image cursor-pointer" 
+       alt="Product Image" 
+       data-bs-toggle="modal" 
+       data-bs-target="#imageModal">
+     <img th:if="${product.mainImg == null}" 
+       src="https://placehold.co/255x400?text=No+Image" 
+       class="product-image" 
+       alt="No Image">
              
         <!-- Image Modal -->
         <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
           <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="imageModalLabel">상품 이미지</h5>
+                <h5 class="modal-title" id="imageModalLabel">Product Image</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body text-center">
-                <img id="modalImage" src="" class="img-fluid" alt="상품 이미지">
+                <img id="modalImage" src="" class="img-fluid" alt="Product Image">
               </div>
             </div>
           </div>
@@ -410,7 +410,7 @@
       <div id="cartItems">
         <!-- 장바구니 아이템들이 여기에 로드됩니다 -->
         <div class="text-center text-muted">
-          장바구니가 비어있습니다.
+          Your cart is empty.
         </div>
       </div>
       
@@ -501,21 +501,21 @@
       // 품절 상품 체크
       if (isSoldOut) {
         $alert({
-          title: '품절 상품입니다',
-          text: '현재 품절된 상품으로 주문할 수 없습니다.',
+          title: 'Sold Out',
+          text: 'This product is currently sold out and cannot be ordered.',
           icon: 'warning',
-          confirmButtonText: '확인'
+          confirmButtonText: 'OK'
         });
         return;
       }
       
       if (!isLogin) {
         $alert_({
-          title: '로그인이 필요합니다',
-          text: '장바구니 이용을 위해 로그인이 필요합니다.',
+          title: 'Login Required',
+          text: 'You need to log in to use the cart.',
           icon: 'warning',
-          confirmButtonText: '로그인하기',
-          cancelButtonText: '취소',
+          confirmButtonText: 'Login',
+          cancelButtonText: 'Cancel',
           showCancelButton: true
         }).then((result) => {
           if (result.isConfirmed) {
@@ -540,10 +540,10 @@
       }).then(function(result) {
         if (result === 'FAIL') {
           $alert({
-            title: '장바구니 등록 실패',
-            text: '장바구니 등록 중 오류가 발생했습니다. 다시 시도해주세요.',
+            title: 'Cart Registration Failed',
+            text: 'An error occurred while adding to cart. Please try again.',
             icon: 'error',
-            confirmButtonText: '확인'
+            confirmButtonText: 'OK'
           });
           return;
         }
@@ -554,10 +554,10 @@
       }).catch(function(error) {
         console.error('장바구니 등록 오류:', error);
         $alert({
-          title: '장바구니 등록 실패',
-          text: '장바구니 등록 중 오류가 발생했습니다.',
+          title: 'Cart Registration Failed',
+          text: 'An error occurred while adding to cart.',
           icon: 'error',
-          confirmButtonText: '확인'
+          confirmButtonText: 'OK'
         });
       });
     }
@@ -586,7 +586,7 @@
       const cartTotal = document.getElementById('cartTotal');
       
       if (!cartList || cartList.length === 0) {
-        cartItemsDiv.innerHTML = '<div class="text-center text-muted">장바구니가 비어있습니다.</div>';
+        cartItemsDiv.innerHTML = '<div class="text-center text-muted">Your cart is empty.</div>';
         cartSummary.style.display = 'none';
         return;
       }
@@ -671,10 +671,10 @@
       }).catch(function(error) {
         console.error('장바구니 수량 업데이트 오류:', error);
         $alert({
-          title: '수량 업데이트 실패',
-          text: '수량 업데이트 중 오류가 발생했습니다.',
+          title: 'Quantity Update Failed',
+          text: 'An error occurred while updating quantity.',
           icon: 'error',
-          confirmButtonText: '확인'
+          confirmButtonText: 'OK'
         });
       });
     }
@@ -689,19 +689,19 @@
         
         // 성공 메시지 표시
         $alert({
-          title: '삭제 완료',
-          text: '상품이 장바구니에서 삭제되었습니다.',
+          title: 'Removed',
+          text: 'The product has been removed from your cart.',
           icon: 'success',
-          confirmButtonText: '확인',
+          confirmButtonText: 'OK',
           timer: 1500
         });
       }).catch(function(error) {
         console.error('장바구니 삭제 오류:', error);
         $alert({
-          title: '삭제 실패',
-          text: '상품 삭제 중 오류가 발생했습니다.',
+          title: 'Remove Failed',
+          text: 'An error occurred while removing the product.',
           icon: 'error',
-          confirmButtonText: '확인'
+          confirmButtonText: 'OK'
         });
       });
     }
@@ -718,10 +718,10 @@
           }).then(function(cartList) {
             if (!cartList || cartList.length === 0) {
               $alert({
-                title: '장바구니가 비어있습니다',
-                text: '주문할 상품이 없습니다.',
+                title: 'Cart is Empty',
+                text: 'There are no products to order.',
                 icon: 'warning',
-                confirmButtonText: '확인'
+                confirmButtonText: 'OK'
               });
               return;
             }
@@ -732,10 +732,10 @@
           }).catch(function(error) {
             console.error('장바구니 확인 오류:', error);
             $alert({
-              title: '오류 발생',
-              text: '장바구니 확인 중 오류가 발생했습니다.',
+              title: 'Error Occurred',
+              text: 'An error occurred while checking the cart.',
               icon: 'error',
-              confirmButtonText: '확인'
+              confirmButtonText: 'OK'
             });
           });
         });
@@ -749,11 +749,11 @@
 
       if (!isLogin) {
         $alert_({
-          title: '로그인이 필요합니다',
-          text: '구매를 위해 로그인이 필요합니다.',
+          title: 'Login Required',
+          text: 'You need to log in to purchase.',
           icon: 'warning',
-          confirmButtonText: '로그인하기',
-          cancelButtonText: '취소',
+          confirmButtonText: 'Login',
+          cancelButtonText: 'Cancel',
           showCancelButton: true
         }).then((result) => {
           if (result.isConfirmed) {
@@ -787,15 +787,15 @@
         console.log('주문 성공 여부:', data);
         if( data == 'FAIL' ) {
           $alert({
-            title: '주문 생성 실패',
-            text: '주문 생성 중 오류가 발생했습니다. 다시 시도해주세요.',
+            title: 'Order Creation Failed',
+            text: 'An error occurred while creating the order. Please try again.',
             icon: 'error',
-            confirmButtonText: '확인'
+            confirmButtonText: 'OK'
           });
           return;
         }
         $toast_({
-          title: '주문 생성 성공',
+          title: 'Order Created Successfully',
           icon: 'success',
           timer: 1000,
         }).then(() => {
@@ -804,7 +804,7 @@
         });
       }).catch(function(error) {
         console.error('주문 생성 오류:', error);
-        alert('주문 생성 중 오류가 발생했습니다.');
+        alert('An error occurred while creating the order.');
       });
     }
   </script>
