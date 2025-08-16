@@ -23,7 +23,10 @@ phases:
     commands:
       - echo "Build phase started on `date`"
       - echo "Starting gradle war build from shop directory..."
-      - cd shop && ./gradlew clean build war -x test
+      - echo "Current working directory:"
+      - pwd
+      - echo "Running gradlew from shop directory..."
+      - (cd shop && ./gradlew clean build war -x test)
       - echo "Gradle war build finished successfully!"
       
   post_build:
