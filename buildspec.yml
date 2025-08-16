@@ -22,9 +22,7 @@ phases:
   build:
     commands:
       - echo "Build phase started on `date`"
-      - echo "Changing to shop directory and building..."
-      - cd shop && pwd
-      - cd shop && echo "Starting gradle war build..."
+      - echo "Starting gradle war build from shop directory..."
       - cd shop && ./gradlew clean build war -x test
       - echo "Gradle war build finished successfully!"
       
