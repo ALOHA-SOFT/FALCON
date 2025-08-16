@@ -1,0 +1,44 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+    commands:
+      - echo "Installing dependencies..."
+      
+  pre_build:
+    commands:
+      - echo "Pre-build phase started on `date`"
+      - echo "Changing to shop directory..."
+      - cd shop
+      - echo "Making gradlew executable..."
+      - chmod +x gradlew
+      - echo "Checking Java version..."
+      - java -version
+      
+  build:
+    commands:
+      - echo "Build phase started on `date`"
+      - echo "Starting gradle war build..."
+      - ./gradlew clean build war -x test
+      - echo "Gradle war build finished successfully!"
+      
+  post_build:
+    commands:
+      - echo "Post-build phase started on `date`"
+      - echo "Listing build artifacts..."
+      - ls -la build/libs/
+      - echo "Build completed on `date`"
+
+artifacts:
+  files:
+    - shop/build/libs/*.war
+    - shop/appspec.yml
+    - shop/scripts/**/*
+  name: falcon-shop-$(date +%Y-%m-%d-%H-%M-%S)
+  
+cache:
+  paths:
+    - '/root/.gradle/caches/**/*'
+    - '/root/.gradle/wrapper/**/*'
