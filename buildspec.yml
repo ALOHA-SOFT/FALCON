@@ -23,10 +23,10 @@ phases:
       - ls -la
       - echo "Checking shop directory..."
       - ls -la shop/
-      - echo "Checking gradle wrapper..."
-      - ls -la shop/gradle/wrapper/
-      - echo "Making gradlew executable..."
-      - chmod +x shop/gradlew
+      - echo "Checking if gradlew exists..."
+      - ls -la shop/gradlew || echo "gradlew not found, will use system gradle"
+      - echo "Gradle installation check..."
+      - gradle --version
       - echo "Checking Java version..."
       - java -version
       
