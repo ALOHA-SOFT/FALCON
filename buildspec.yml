@@ -6,6 +6,15 @@ phases:
       java: corretto17
     commands:
       - echo "Installing dependencies..."
+      - echo "Installing Gradle..."
+      - yum install -y wget unzip
+      - cd /tmp
+      - wget https://services.gradle.org/distributions/gradle-8.3-bin.zip
+      - unzip gradle-8.3-bin.zip
+      - mv gradle-8.3 /opt/gradle
+      - ln -s /opt/gradle/bin/gradle /usr/local/bin/gradle
+      - gradle --version
+      - cd $CODEBUILD_SRC_DIR
       
   pre_build:
     commands:
@@ -14,6 +23,8 @@ phases:
       - ls -la
       - echo "Checking shop directory..."
       - ls -la shop/
+      - echo "Checking gradle wrapper..."
+      - ls -la shop/gradle/wrapper/
       - echo "Making gradlew executable..."
       - chmod +x shop/gradlew
       - echo "Checking Java version..."
@@ -25,8 +36,8 @@ phases:
       - echo "Starting gradle war build from shop directory..."
       - echo "Current working directory:"
       - pwd
-      - echo "Running gradlew from shop directory..."
-      - (cd shop && ./gradlew clean build war -x test)
+      - echo "Running gradle from shop directory..."
+      - (cd shop && gradle clean build war -x test)
       - echo "Gradle war build finished successfully!"
       
   post_build:
