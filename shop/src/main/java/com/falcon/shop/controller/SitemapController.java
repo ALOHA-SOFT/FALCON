@@ -34,7 +34,7 @@ public class SitemapController {
         log.info("동적 사이트맵 생성 요청");
         
         StringBuilder sitemap = new StringBuilder();
-        String baseUrl = "https://foutainmarket.com";
+        String baseUrl = "https://falcon.com";
         String currentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         
         // XML 헤더
