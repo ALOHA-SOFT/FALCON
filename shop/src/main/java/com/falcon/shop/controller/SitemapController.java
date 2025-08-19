@@ -34,7 +34,7 @@ public class SitemapController {
         log.info("동적 사이트맵 생성 요청");
         
         StringBuilder sitemap = new StringBuilder();
-        String baseUrl = "https://falcon.com";
+        String baseUrl = "https://falconcartons.com";
         String currentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         
         // XML 헤더
@@ -46,13 +46,6 @@ public class SitemapController {
         
         // 상품 목록 페이지
         addUrl(sitemap, baseUrl + "/products", currentDate, "daily", "0.9");
-        
-        // 회사 소개
-        addUrl(sitemap, baseUrl + "/info", currentDate, "monthly", "0.7");
-        
-        // 이용약관
-        addUrl(sitemap, baseUrl + "/terms/service", currentDate, "monthly", "0.5");
-        addUrl(sitemap, baseUrl + "/terms/privacy", currentDate, "monthly", "0.5");
         
         try {
             // 카테고리 페이지들

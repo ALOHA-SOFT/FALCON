@@ -10,4 +10,4 @@ Disallow: /login
 Disallow: /join
 
 # Sitemap 위치
-Sitemap: https://foutainmarket.com/sitemap.xml
+Sitemap: https://falconcartons.com/sitemap.xml

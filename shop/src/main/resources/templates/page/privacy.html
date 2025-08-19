@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/user/main_layout}"
+      >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FALCON - Privacy Policy</title>
+  
+  <style>
+    .privacy-page {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.7;
+      color: #333;
+    }
+    
+    .hero-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 80px 0;
+      text-align: center;
+    }
+    
+    .hero-title {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 0.8s ease-out 0.2s forwards;
+    }
+    
+    .hero-subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.8s ease-out 0.4s forwards;
+    }
+    
+    .last-updated {
+      font-size: 0.9rem;
+      margin-top: 20px;
+      opacity: 0.8;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.8s ease-out 0.6s forwards;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    .content-section {
+      padding: 60px 0;
+      background: white;
+    }
+    
+    .privacy-content {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease-out;
+    }
+    
+    .privacy-content.animate {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .section {
+      margin-bottom: 40px;
+      padding: 30px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      border-left: 4px solid #667eea;
+    }
+    
+    .section h2 {
+      color: #2c3e50;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .section-icon {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      background: #667eea;
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 24px;
+      font-size: 0.8rem;
+    }
+    
+    .section p {
+      margin-bottom: 15px;
+      color: #555;
+    }
+    
+    .section ul {
+      margin-left: 20px;
+      color: #555;
+    }
+    
+    .section li {
+      margin-bottom: 8px;
+    }
+    
+    .highlight-box {
+      background: #e3f2fd;
+      border: 1px solid #bbdefb;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    
+    .highlight-box h3 {
+      color: #1976d2;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+    
+  
+    
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.2rem;
+      }
+      
+      .section {
+        padding: 20px;
+        margin-bottom: 25px;
+      }
+      
+      .content-section {
+        padding: 40px 0;
+      }
+    }
+  </style>
+</head>
+<body layout:fragment="content">
+  <div class="privacy-page">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container">
+        <h1 class="hero-title">Privacy Policy</h1>
+        <p class="hero-subtitle">
+          We are committed to protecting your privacy and personal information
+        </p>
+        <p class="last-updated">Last updated: January 2025</p>
+      </div>
+    </section>
+
+    <!-- Content Section -->
+    <section class="content-section">
+      <div class="container">
+        <div class="privacy-content">
+          
+          <div class="section">
+            <h2><span class="section-icon">📋</span>Information We Collect</h2>
+            <p>We collect information you provide directly to us, such as when you:</p>
+            <ul>
+              <li>Create an account or make a purchase</li>
+              <li>Subscribe to our newsletter</li>
+              <li>Contact our customer support</li>
+              <li>Participate in surveys or promotions</li>
+            </ul>
+            <p>This may include your name, email address, phone number, shipping address, payment information, and age verification details.</p>
+          </div>
+
+          <div class="section">
+            <h2><span class="section-icon">🔒</span>How We Use Your Information</h2>
+            <p>We use the information we collect to:</p>
+            <ul>
+              <li>Process and fulfill your orders</li>
+              <li>Verify age and legal compliance</li>
+              <li>Communicate with you about your orders</li>
+              <li>Provide customer support</li>
+              <li>Send marketing communications (with your consent)</li>
+              <li>Improve our products and services</li>
+            </ul>
+          </div>
+
+          <div class="section">
+            <h2><span class="section-icon">🤝</span>Information Sharing</h2>
+            <p>We do not sell, trade, or otherwise transfer your personal information to third parties except:</p>
+            <ul>
+              <li>To trusted service providers who assist in operating our website and conducting business</li>
+              <li>When required by law or to protect our rights</li>
+              <li>In connection with a business transfer or acquisition</li>
+            </ul>
+            
+            <div class="highlight-box">
+              <h3>Age Verification</h3>
+              <p>As a tobacco retailer, we are required to verify the age of our customers. This information is processed securely and in compliance with applicable laws.</p>
+            </div>
+          </div>
+
+          <div class="section">
+            <h2><span class="section-icon">🛡️</span>Data Security</h2>
+            <p>We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. This includes:</p>
+            <ul>
+              <li>SSL encryption for data transmission</li>
+              <li>Secure payment processing</li>
+              <li>Regular security audits</li>
+              <li>Limited access to personal information</li>
+            </ul>
+          </div>
+
+          <div class="section">
+            <h2><span class="section-icon">🍪</span>Cookies and Tracking</h2>
+            <p>We use cookies and similar technologies to enhance your browsing experience, analyze site traffic, and personalize content. You can control cookie preferences through your browser settings.</p>
+          </div>
+
+          <div class="section">
+            <h2><span class="section-icon">⚖️</span>Your Rights</h2>
+            <p>Depending on your location, you may have certain rights regarding your personal information:</p>
+            <ul>
+              <li>Access to your personal data</li>
+              <li>Correction of inaccurate information</li>
+              <li>Deletion of your personal data</li>
+              <li>Opt-out of marketing communications</li>
+              <li>Data portability</li>
+            </ul>
+          </div>
+
+          <div class="section">
+            <h2><span class="section-icon">🌍</span>International Transfers</h2>
+            <p>As we serve customers internationally, your personal information may be transferred to and processed in countries other than your own. We ensure appropriate safeguards are in place to protect your information.</p>
+          </div>
+
+          <div class="section">
+            <h2><span class="section-icon">📝</span>Policy Updates</h2>
+            <p>We may update this Privacy Policy from time to time. We will notify you of any material changes by posting the new policy on this page and updating the "Last updated" date.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // Scroll animation
+    function handleScrollAnimation() {
+      const content = document.querySelector('.privacy-content');
+      const contentTop = content.offsetTop;
+      const windowHeight = window.innerHeight;
+      const scrollTop = window.pageYOffset;
+      
+      if (scrollTop + windowHeight > contentTop + 100) {
+        content.classList.add('animate');
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      handleScrollAnimation();
+    });
+    
+    window.addEventListener('scroll', handleScrollAnimation);
+  </script>
+</body>
+</html>

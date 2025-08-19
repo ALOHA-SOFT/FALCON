@@ -176,6 +176,50 @@ public class HomeController {
   }  
 
 
+  /**
+   * Loyalty Program
+   * @param param
+   * @return
+   */
+  @GetMapping("/loyalty")
+  public String loyalty() {
+      return "page/loyalty";
+  }
+  
+
+  /**
+   * FAQ
+   * @return
+   */
+  @GetMapping("/faq")
+  public String faq() {
+      return "page/faq";
+  }
+
+  /**
+   * Privacy Policy
+   * @return
+   */
+  @GetMapping("/privacy")
+  public String privacy() {
+      return "page/privacy";
+  }
+  
+
+  /**
+   * Contact Us
+   * @return
+   */
+  @GetMapping("/contact")
+  public String contact() {
+      return "page/contact";
+  }
+  
+  
+
+
+
+
 
 }
 

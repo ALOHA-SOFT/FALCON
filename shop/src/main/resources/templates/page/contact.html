@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/user/main_layout}"
+      >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FALCON - Contact Us</title>
+  
+  <style>
+    .contact-page {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    
+    .contact-card {
+      background: white;
+      border-radius: 20px;
+      padding: 60px 50px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(50px) scale(0.9);
+      animation: cardAppear 1s ease-out 0.3s forwards;
+    }
+    
+    .contact-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .contact-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      margin: 0 auto 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      color: white;
+      opacity: 0;
+      transform: scale(0);
+      animation: iconPop 0.6s ease-out 0.8s forwards;
+    }
+    
+    .contact-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 15px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.8s ease-out 1.2s forwards;
+    }
+    
+    .contact-subtitle {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 40px;
+      line-height: 1.6;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.8s ease-out 1.4s forwards;
+    }
+    
+    .email-container {
+      background: #f8f9fa;
+      border-radius: 15px;
+      padding: 30px;
+      margin: 30px 0;
+      border: 2px solid #e9ecef;
+      transition: all 0.3s ease;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.8s ease-out 1.6s forwards;
+    }
+    
+    .email-container:hover {
+      border-color: #667eea;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.1);
+    }
+    
+    .email-label {
+      font-size: 0.9rem;
+      color: #666;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+    
+    .email-address {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #667eea;
+      text-decoration: none;
+      display: block;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .email-address:hover {
+      color: #5a6fd8;
+      transform: scale(1.05);
+    }
+    
+    .email-address::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 2px;
+      background: #667eea;
+      transition: width 0.3s ease;
+    }
+    
+    .email-address:hover::after {
+      width: 100%;
+    }
+    
+    .copy-btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 12px 30px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 20px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.8s ease-out 1.8s forwards;
+    }
+    
+    .copy-btn:hover {
+      background: #5a6fd8;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+    
+    .copy-btn:active {
+      transform: translateY(0);
+    }
+    
+    .success-message {
+      color: #28a745;
+      font-size: 0.9rem;
+      margin-top: 15px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .success-message.show {
+      opacity: 1;
+    }
+    
+    @keyframes cardAppear {
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    
+    @keyframes iconPop {
+      0% {
+        opacity: 0;
+        transform: scale(0);
+      }
+      70% {
+        transform: scale(1.1);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .contact-page {
+        padding: 20px 15px;
+      }
+      
+      .contact-card {
+        padding: 40px 30px;
+      }
+      
+      .contact-title {
+        font-size: 2rem;
+      }
+      
+      .email-address {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body layout:fragment="content">
+  <div class="contact-page">
+    <div class="contact-card">
+      <div class="contact-icon">
+        📧
+      </div>
+      
+      <h1 class="contact-title">Contact Us</h1>
+      <p class="contact-subtitle">
+        Have a question or need assistance? We're here to help.<br>
+        Send us an email and we'll get back to you as soon as possible.
+      </p>
+      
+      <div class="email-container">
+        <div class="email-label">Email Address</div>
+        <a href="mailto:info@falconcartons.com" class="email-address" id="emailAddress">
+          info@falconcartons.com
+        </a>
+        <button class="copy-btn" onclick="copyEmail()">
+          📋 Copy Email
+        </button>
+        <div class="success-message" id="successMessage">
+          ✓ Email copied to clipboard!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function copyEmail() {
+      const email = 'info@falconcartons.com';
+      const successMessage = document.getElementById('successMessage');
+      
+      // Copy to clipboard
+      if (navigator.clipboard && window.isSecureContext) {
+        // Modern browsers
+        navigator.clipboard.writeText(email).then(() => {
+          showSuccessMessage();
+        });
+      } else {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = email;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        textArea.remove();
+        showSuccessMessage();
+      }
+      
+      function showSuccessMessage() {
+        successMessage.classList.add('show');
+        setTimeout(() => {
+          successMessage.classList.remove('show');
+        }, 3000);
+      }
+    }
+    
+    // Email click animation
+    document.getElementById('emailAddress').addEventListener('click', function(e) {
+      this.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        this.style.transform = 'scale(1)';
+      }, 150);
+    });
+  </script>
+</body>
+</html>

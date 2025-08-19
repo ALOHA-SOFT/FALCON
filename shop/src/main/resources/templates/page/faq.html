@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/user/main_layout}"
+      >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FALCON - Frequently Asked Questions</title>
+  
+  <style>
+    .faq-page {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+    }
+    
+    .hero-section {
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      color: white;
+      padding: 100px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="20" cy="80" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+    }
+    
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 20px;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: translateY(50px);
+      animation: fadeInUp 1s ease-out 0.3s forwards;
+    }
+    
+    .hero-subtitle {
+      font-size: 1.3rem;
+      opacity: 0.9;
+      margin-bottom: 40px;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1s ease-out 0.6s forwards;
+    }
+    
+    .hero-image {
+      width: 150px;
+      height: 150px;
+      background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
+                  linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
+                  linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
+                  linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+      border: 2px dashed rgba(255,255,255,0.3);
+      border-radius: 50%;
+      margin: 0 auto 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.9rem;
+      font-weight: 600;
+      opacity: 0;
+      transform: scale(0.8);
+      animation: fadeInScale 1s ease-out 0.9s forwards;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    .faq-section {
+      padding: 80px 0;
+      background: #f8f9fa;
+    }
+    
+    .section-title {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #2c3e50;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease-out;
+    }
+    
+    .section-subtitle {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 60px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s ease-out 0.2s;
+    }
+    
+    .faq-categories {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 80px;
+    }
+    
+    .category-card {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: all 0.3s ease;
+      opacity: 0;
+      transform: translateY(50px);
+      cursor: pointer;
+    }
+    
+    .category-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    }
+    
+    .category-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+    }
+    
+    .category-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+    
+    .category-desc {
+      color: #666;
+      font-size: 0.95rem;
+    }
+    
+    .faq-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .faq-item {
+      background: white;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      overflow: hidden;
+      opacity: 0;
+      transform: translateX(-50px);
+      transition: all 0.8s ease-out;
+    }
+    
+    .faq-question {
+      padding: 25px 30px;
+      background: white;
+      border: none;
+      width: 100%;
+      text-align: left;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #2c3e50;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .faq-question:hover {
+      background: #f8f9fa;
+    }
+    
+    .faq-question::after {
+      content: '+';
+      font-size: 1.5rem;
+      font-weight: 300;
+      transition: transform 0.3s ease;
+      color: #667eea;
+    }
+    
+    .faq-question.active::after {
+      transform: rotate(45deg);
+    }
+    
+    .faq-answer {
+      padding: 0 30px;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      background: #f8f9fa;
+    }
+    
+    .faq-answer.show {
+      padding: 25px 30px;
+      max-height: 300px;
+    }
+    
+    .faq-answer p {
+      color: #555;
+      line-height: 1.7;
+      margin: 0;
+    }
+    
+    .contact-section:not(footer *) {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 80px 0;
+      text-align: center;
+    }
+    
+    .contact-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    
+    .contact-desc {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+      opacity: 0.9;
+    }
+    
+    .contact-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+      margin-top: 50px;
+    }
+    
+    .contact-item {
+      background: rgba(255,255,255,0.1);
+      padding: 30px;
+      border-radius: 10px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .contact-item h4 {
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+    }
+    
+    .contact-item p {
+      margin: 0;
+      opacity: 0.9;
+    }
+    
+    .animate {
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+      transform: translateX(0) !important;
+    }
+    
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeInScale {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.5rem;
+      }
+      
+      .section-title {
+        font-size: 2rem;
+      }
+      
+      .faq-categories {
+        grid-template-columns: 1fr;
+      }
+      
+      .category-card {
+        padding: 20px;
+      }
+      
+      .faq-question {
+        padding: 20px;
+        font-size: 1rem;
+      }
+      
+      .faq-answer.show {
+        padding: 20px;
+      }
+      
+      .contact-info {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+<body layout:fragment="content">
+  <div class="faq-page">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="hero-image">FAQ Icon</div>
+        <h1 class="hero-title">Frequently Asked Questions</h1>
+        <p class="hero-subtitle">
+          Find answers to common questions about our international tobacco distribution services
+        </p>
+      </div>
+    </section>
+
+    <!-- FAQ Categories -->
+    <section class="faq-section">
+      <div class="container">
+        <h2 class="section-title">Browse by Category</h2>
+        <p class="section-subtitle">Select a category to find the information you need</p>
+        
+        <div class="faq-categories">
+          <div class="category-card" data-category="shipping">
+            <div class="category-icon">🚚</div>
+            <h3 class="category-title">Shipping & Delivery</h3>
+            <p class="category-desc">International shipping policies, delivery times, and tracking information</p>
+          </div>
+          
+          <div class="category-card" data-category="products">
+            <div class="category-icon">📦</div>
+            <h3 class="category-title">Products & Catalog</h3>
+            <p class="category-desc">Product availability, specifications, and ordering information</p>
+          </div>
+          
+          <div class="category-card" data-category="payment">
+            <div class="category-icon">💳</div>
+            <h3 class="category-title">Payment & Pricing</h3>
+            <p class="category-desc">Payment methods, pricing, currency, and billing information</p>
+          </div>
+          
+          <!-- <div class="category-card" data-category="legal">
+            <div class="category-icon">⚖️</div>
+            <h3 class="category-title">Legal & Compliance</h3>
+            <p class="category-desc">Age verification, customs, regulations, and legal requirements</p>
+          </div> -->
+        </div>
+
+        <!-- FAQ Items -->
+        <div class="faq-container">
+          <!-- Shipping & Delivery -->
+          <div class="faq-item" data-category="shipping">
+            <button class="faq-question">
+              What countries do you ship to?
+            </button>
+            <div class="faq-answer">
+              <p>We ship to most countries worldwide where tobacco import is legal. However, shipping restrictions may apply to certain regions due to local regulations. Please contact us to confirm if we can ship to your specific location.</p>
+            </div>
+          </div>
+
+          <div class="faq-item" data-category="shipping">
+            <button class="faq-question">
+              How long does international delivery take?
+            </button>
+            <div class="faq-answer">
+              <p>Delivery times vary by destination. Typically, orders are processed within 1-2 business days and delivery takes 5-15 business days depending on your location and selected shipping method. Express shipping options are available for faster delivery.</p>
+            </div>
+          </div>
+
+          <div class="faq-item" data-category="shipping">
+            <button class="faq-question">
+              Do you provide tracking information?
+            </button>
+            <div class="faq-answer">
+              <p>Yes, all orders include tracking information. You'll receive a tracking number via email once your order ships. You can track your package through our website or the carrier's tracking system.</p>
+            </div>
+          </div>
+
+          <!-- Products & Catalog -->
+          <div class="faq-item" data-category="products">
+            <button class="faq-question">
+              What tobacco brands do you carry?
+            </button>
+            <div class="faq-answer">
+              <p>We carry a wide selection of international tobacco brands including premium cigarettes, cigars, and tobacco products from major manufacturers. Our catalog includes both popular and specialty brands from various regions.</p>
+            </div>
+          </div>
+
+          <div class="faq-item" data-category="products">
+            <button class="faq-question">
+              Are products authentic and fresh?
+            </button>
+            <div class="faq-answer">
+              <p>All our products are 100% authentic and sourced directly from authorized distributors. We maintain proper storage conditions to ensure freshness and quality. Products are stored in climate-controlled facilities.</p>
+            </div>
+          </div>
+
+          <div class="faq-item" data-category="products">
+            <button class="faq-question">
+              Can I request specific products not in your catalog?
+            </button>
+            <div class="faq-answer">
+              <p>Yes, we can often source specific products upon request. Please contact our customer service team with details about the products you're looking for, and we'll do our best to accommodate your needs.</p>
+            </div>
+          </div>
+
+          <!-- Payment & Pricing -->
+          <div class="faq-item" data-category="payment">
+            <button class="faq-question">
+              What payment methods do you accept?
+            </button>
+            <div class="faq-answer">
+              <p>We accept major credit cards (Visa, MasterCard, American Express), PayPal, bank transfers, and cryptocurrency payments. All transactions are processed securely through encrypted payment gateways.</p>
+            </div>
+          </div>
+
+          <div class="faq-item" data-category="payment">
+            <button class="faq-question">
+              Do prices include taxes and duties?
+            </button>
+            <div class="faq-answer">
+              <p>Our listed prices do not include local taxes, duties, or customs fees that may apply in your country. These additional charges are the responsibility of the customer and will be collected by customs authorities upon delivery.</p>
+            </div>
+          </div>
+
+          <div class="faq-item" data-category="payment">
+            <button class="faq-question">
+              What currency are prices displayed in?
+            </button>
+            <div class="faq-answer">
+              <p>All prices are displayed in USD (US Dollars). However, your bank or payment provider may convert the amount to your local currency at their current exchange rate when processing the payment.</p>
+            </div>
+          </div>
+
+          <!-- Legal & Compliance -->
+          <div class="faq-item" data-category="legal">
+            <button class="faq-question">
+              What is the minimum age requirement?
+            </button>
+            <div class="faq-answer">
+              <p>You must be at least 21 years old (or the legal smoking age in your jurisdiction, whichever is higher) to purchase tobacco products. Age verification is required for all orders and will be checked upon delivery.</p>
+            </div>
+          </div>
+
+          <div class="faq-item" data-category="legal">
+            <button class="faq-question">
+              How do you handle customs and import regulations?
+            </button>
+            <div class="faq-answer">
+              <p>We work with experienced logistics partners to ensure compliance with international shipping regulations. All necessary customs documentation is provided, but customers are responsible for understanding and complying with their local import laws.</p>
+            </div>
+          </div>
+
+          <div class="faq-item" data-category="legal">
+            <button class="faq-question">
+              What if my order is seized by customs?
+            </button>
+            <div class="faq-answer">
+              <p>In the rare event that an order is seized due to local regulations, we will work with you to resolve the issue. Depending on the circumstances, we may offer to reship the order or provide store credit for future purchases.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+      <div class="container">
+        <h2 class="contact-title">Still Have Questions?</h2>
+        <p class="contact-desc">
+          Our customer support team is here to help you with any additional questions
+        </p>
+        
+        <div class="contact-info">
+          <div class="contact-item">
+            <h4>📧 Email Support</h4>
+            <p>support@falconcartons.com</p>
+            <p>Response within 24 hours</p>
+          </div>
+          
+          <div class="contact-item">
+            <h4>💬 Live Chat</h4>
+            <p>Available 24/7</p>
+            <p>Instant assistance</p>
+          </div>
+          
+          <div class="contact-item">
+            <h4>📞 Phone Support</h4>
+            <p>+1 (555) 123-4567</p>
+            <p>Mon-Fri 9AM-6PM EST</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // FAQ Accordion functionality
+    document.querySelectorAll('.faq-question').forEach(question => {
+      question.addEventListener('click', () => {
+        const answer = question.nextElementSibling;
+        const isOpen = answer.classList.contains('show');
+        
+        // Close all other answers
+        document.querySelectorAll('.faq-answer').forEach(ans => {
+          ans.classList.remove('show');
+        });
+        document.querySelectorAll('.faq-question').forEach(q => {
+          q.classList.remove('active');
+        });
+        
+        // Toggle current answer
+        if (!isOpen) {
+          answer.classList.add('show');
+          question.classList.add('active');
+        }
+      });
+    });
+
+    // Category filtering
+    document.querySelectorAll('.category-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const category = card.dataset.category;
+        const faqItems = document.querySelectorAll('.faq-item');
+        
+        // Remove active class from all cards
+        document.querySelectorAll('.category-card').forEach(c => {
+          c.style.opacity = '0.6';
+        });
+        
+        // Highlight selected card
+        card.style.opacity = '1';
+        
+        // Show only relevant FAQ items
+        faqItems.forEach(item => {
+          if (item.dataset.category === category || category === 'all') {
+            item.style.display = 'block';
+            setTimeout(() => {
+              item.classList.add('animate');
+            }, 100);
+          } else {
+            item.style.display = 'none';
+            item.classList.remove('animate');
+          }
+        });
+      });
+    });
+
+    // Scroll animations
+    function handleScrollAnimation() {
+      const elements = document.querySelectorAll('.section-title, .section-subtitle, .category-card, .faq-item');
+      
+      elements.forEach((element, index) => {
+        const elementTop = element.offsetTop;
+        const elementHeight = element.offsetHeight;
+        const windowHeight = window.innerHeight;
+        const scrollTop = window.pageYOffset;
+        
+        if (scrollTop + windowHeight > elementTop + elementHeight * 0.3) {
+          setTimeout(() => {
+            element.classList.add('animate');
+          }, index * 100);
+        }
+      });
+    }
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      handleScrollAnimation();
+      
+      // Show all items initially
+      document.querySelectorAll('.category-card').forEach(card => {
+        card.style.opacity = '1';
+      });
+    });
+    
+    window.addEventListener('scroll', handleScrollAnimation);
+  </script>
+</body>
+</html>
