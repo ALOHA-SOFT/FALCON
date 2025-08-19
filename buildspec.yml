@@ -1,0 +1,60 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+    commands:
+      - echo "Installing dependencies..."
+      - echo "Installing Gradle..."
+      - yum install -y wget unzip
+      - cd /tmp
+      - wget https://services.gradle.org/distributions/gradle-8.3-bin.zip
+      - unzip gradle-8.3-bin.zip
+      - mv gradle-8.3 /opt/gradle
+      - ln -s /opt/gradle/bin/gradle /usr/local/bin/gradle
+      - gradle --version
+      - cd $CODEBUILD_SRC_DIR
+      
+  pre_build:
+    commands:
+      - echo "Pre-build phase started on `date`"
+      - echo "Current root directory contents:"
+      - ls -la
+      - echo "Checking shop directory..."
+      - ls -la shop/
+      - echo "Checking if gradlew exists..."
+      - ls -la shop/gradlew || echo "gradlew not found, will use system gradle"
+      - echo "Gradle installation check..."
+      - gradle --version
+      - echo "Checking Java version..."
+      - java -version
+      
+  build:
+    commands:
+      - echo "Build phase started on `date`"
+      - echo "Starting gradle war build from shop directory..."
+      - echo "Current working directory:"
+      - pwd
+      - echo "Running gradle from shop directory..."
+      - (cd shop && gradle clean build war -x test)
+      - echo "Gradle war build finished successfully!"
+      
+  post_build:
+    commands:
+      - echo "Post-build phase started on `date`"
+      - echo "Listing build artifacts..."
+      - ls -la shop/build/libs/
+      - echo "Build completed on `date`"
+
+artifacts:
+  files:
+    - shop/build/libs/*.war
+    - shop/appspec.yml
+    - shop/scripts/**/*
+  name: falcon-shop-$(date +%Y-%m-%d-%H-%M-%S)
+  
+cache:
+  paths:
+    - '/root/.gradle/caches/**/*'
+    - '/root/.gradle/wrapper/**/*'

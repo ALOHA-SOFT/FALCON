@@ -1,0 +1,12 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "codestar-connections:UseConnection"
+      ],
+      "Resource": "arn:aws:codestar-connections:eu-west-2:516723930299:connection/3ea1d474-5870-441c-be09-df6033c08cea"
+    }
+  ]
+}
