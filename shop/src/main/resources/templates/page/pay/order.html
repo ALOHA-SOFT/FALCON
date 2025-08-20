@@ -67,7 +67,7 @@
                         <div class="fs-6">
                           <span class="badge bg-secondary" th:text="${addr.postcode}">Postal Code</span>
                           <span th:text="${addr.address} + ' ' + ${addr.addressDetail}" class="span-address" th:classappend="${addr.isMain} ? 'main' : ''">Address</span> <br>
-                          <span th:text="${addr.addressDong} + ' ' + ${addr.addressDetail}">Address</span>
+                          <!-- <span th:text="${addr.addressDong} + ' ' + ${addr.addressDetail}">Address</span> -->
                           <div class="text-muted small" th:if="${addr.deliveryRequest}" th:text="'Delivery Note: ' + ${addr.deliveryRequest}">Delivery Note</div>
                         </div>
                       </label>
