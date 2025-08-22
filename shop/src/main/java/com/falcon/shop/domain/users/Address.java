@@ -22,11 +22,10 @@ public class Address extends Base {
   private Long userNo;
   private String tel;
   private String recipient;
-  private String country; // 국가/지역
-  private String postcode; // 우편번호
-  private String address;
-  private String addressDetail;
-  private String city; // 도시
+  private String address;     // 주소
+  private String city;        // 도시
+  private String postcode;    // 우편번호
+  private String country;     // 국가
   private Boolean isMain;
   private String deliveryRequest;
   private String deliveryMethod;

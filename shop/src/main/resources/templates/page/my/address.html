@@ -36,10 +36,10 @@
                 <div class="text-muted small">
                   <span th:text="${address.address} + ' ' + ${address.addressDetail}">Address</span>
                 </div>
-                <div class="text-muted small">
+                <!-- <div class="text-muted small">
                   <span th:text="${address.addressDong} + ' ' + ${address.addressDetail}">Address</span>
-                </div>
-                <div class="text-muted small" th:if="${address.deliveryRequest}" th:text="'Request: ' + ${address.deliveryRequest}">Request</div>
+                </div> -->
+                <!-- <div class="text-muted small" th:if="${address.deliveryRequest}" th:text="'Request: ' + ${address.deliveryRequest}">Request</div> -->
               </div>
               <div>
                 <button class="btn btn-outline-secondary btn-sm me-1" id="btn-update">Edit</button>
@@ -74,62 +74,21 @@
             </div>
             <div class="mb-2">
               <label class="form-label">Address</label>
-              <div class="input-group">
-                <input type="text" id="postcode" class="form-control" name="postcode" placeholder="Postcode" readonly>
-                <button type="button" class="btn btn-outline-secondary" onclick="execDaumPostcode()">Find Address</button>
-              </div>
-              <input type="text" class="form-control mt-2" name="address" id="address" placeholder="Street Address" readonly required>
-              <input type="text" class="form-control mt-2" name="addressDong" id="addressDong" placeholder="District Address" readonly>
-            </div>
-            <!-- Daum Postcode CDN -->
-            <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-            <script>
-              function execDaumPostcode() {
-                new daum.Postcode({
-                  oncomplete: function(data) {
-                    document.getElementById('postcode').value = data.zonecode;
-                    document.getElementById('address').value = data.roadAddress;
-                    document.getElementById('addressDong').value = data.jibunAddress;
-                  }
-                }).open();
-              }
-            </script>
-            <div class="mb-2">
-              <label class="form-label">Detailed Address</label>
-              <input type="text" class="form-control" name="addressDetail" id="addressDetail" placeholder="Detailed address (apartment, unit number, etc.)" required>
+              <input type="text" class="form-control mt-2" name="address" id="address" placeholder="Address" required>
             </div>
             <div class="mb-2">
-              <label class="form-label">Delivery Request</label>
-                <select id="deliveryRequestSelect" class="form-select mt-2">
-                  <option value="">Please select delivery request</option>
-                  <option value="Please leave at the door if absent">Please leave at the door if absent</option>
-                  <option value="Please leave with security">Please leave with security</option>
-                  <option value="Please put in parcel locker">Please put in parcel locker</option>
-                  <option value="Please do not ring the bell">Please do not ring the bell</option>
-                  <option value="Please contact before delivery">Please contact before delivery</option>
-                  <option value="custom">Custom input</option>
-                </select>
-                <input type="text" class="form-control d-none" name="deliveryRequest" id="deliveryRequest" placeholder="Delivery request (optional)" readonly>
-                <script>
-                document.getElementById('deliveryRequestSelect').addEventListener('change', function() {
-                  const selectedValue = this.value;
-                  const deliveryRequestInput = document.getElementById('deliveryRequest');
-                  
-                  if (selectedValue === 'custom') {
-                    deliveryRequestInput.removeAttribute('readonly');
-                    deliveryRequestInput.classList.remove('d-none');
-                    deliveryRequestInput.value = '';
-                    deliveryRequestInput.focus();
-                  } else if (selectedValue === '') {
-                    deliveryRequestInput.value = '';
-                    deliveryRequestInput.classList.add('d-none');
-                  } else {
-                    deliveryRequestInput.value = selectedValue;
-                    deliveryRequestInput.classList.add('d-none');
-                    
-                  }
-                });
-              </script>
+              <label class="form-label">City</label>
+              <input type="text" class="form-control" name="city" id="orderCity" placeholder="City Name">
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Post code</label>
+              <input type="text" class="form-control" name="postcode" id="postcode" placeholder="Postal Code">
+            </div>
+            <div class="mb-5">
+              <label class="form-label">Country/Region</label>
+              <select class="form-select" name="country" id="orderCountry">
+                <option value="United Kingdom" selected>United Kingdom</option>
+              </select>
             </div>
             <div class="form-check mb-2">
               <input class="form-check-input" type="checkbox" id="isMain" name="isMain">
@@ -174,9 +133,6 @@
         tel: formData.get('tel') || '',
         postcode: formData.get('postcode') || '',
         address: formData.get('address') || '',
-        addressDong: formData.get('addressDong') || '',
-        addressDetail: formData.get('addressDetail') || '',
-        deliveryRequest: formData.get('deliveryRequest') || '',
         isMain: formData.get('isMain') === 'on',
       };
       if (formData.get('id')) {
@@ -212,24 +168,9 @@
         document.querySelector('#tel').value = address.tel || '';
         document.querySelector('#postcode').value = address.postcode || '';
         document.querySelector('#address').value = address.address || '';
-        document.querySelector('#addressDong').value = address.addressDong || '';
-        document.querySelector('#addressDetail').value = address.addressDetail || '';
-        document.querySelector('#deliveryRequest').value = address.deliveryRequest || '';
-        document.querySelector('#deliveryRequestSelect').value = address.deliveryRequest || '';
         // deliveryRequest 값이 select 옵션에 없으면 직접 입력 필드로 설정
         const deliveryRequestSelect = document.querySelector('#deliveryRequestSelect');
         const deliveryRequestInput = document.querySelector('#deliveryRequest');
-        const selectOptions = Array.from(deliveryRequestSelect.options).map(option => option.value);
-
-        if (address.deliveryRequest && !selectOptions.includes(address.deliveryRequest)) {
-          deliveryRequestSelect.value = 'custom';
-          deliveryRequestInput.classList.remove('d-none');
-          deliveryRequestInput.removeAttribute('readonly');
-        } else if (address.deliveryRequest) {
-          deliveryRequestInput.classList.add('d-none');
-        } else {
-          deliveryRequestInput.classList.add('d-none');
-        }
         document.querySelector('#isMain').checked = address.isMain === true;
         
         // 모달 오픈

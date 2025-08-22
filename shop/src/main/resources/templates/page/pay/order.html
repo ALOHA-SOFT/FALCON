@@ -18,7 +18,10 @@
           <div class="card-header">Customer Details</div>
           <div class="card-body row g-3">
             <div class="col-12">
-              <label for="buyerEmail" class="form-label">Email</label>
+              <label for="buyerEmail" class="form-label">
+                <span>Email</span>
+
+              </label>
               <input type="email" class="form-control" id="buyerEmail" name="buyerEmail" th:value="${user.email}" required>
             </div>
             <div class="col-6">
@@ -63,11 +66,8 @@
                             <span class="ms-2 badge bg-primary" th:if="${addr.isMain}">Default Address</span>
                           </div>
                         </div>
-                        <!-- <div th:text="${addr.postcode} + ' ' + ${addr.address} + ' ' + ${addr.addressDong} + ' ' + ${addr.addressDetail}">주소</div> -->
                         <div class="fs-6">
                           <span class="badge bg-secondary" th:text="${addr.postcode}">Postal Code</span>
-                          <span th:text="${addr.address} + ' ' + ${addr.addressDetail}" class="span-address" th:classappend="${addr.isMain} ? 'main' : ''">Address</span> <br>
-                          <!-- <span th:text="${addr.addressDong} + ' ' + ${addr.addressDetail}">Address</span> -->
                           <div class="text-muted small" th:if="${addr.deliveryRequest}" th:text="'Delivery Note: ' + ${addr.deliveryRequest}">Delivery Note</div>
                         </div>
                       </label>
@@ -99,43 +99,29 @@
                         <label class="form-label">Phone</label>
                         <input type="tel" class="form-control" name="tel" id="orderTel" required>
                       </div>
-                      <div class="mb-2">
-                        <label class="form-label">Country/Region</label>
-                        <select class="form-select" name="country" id="orderCountry">
-                          <option value="">Please select country/region</option>
-                          <option value="KR">South Korea</option>
-                          <option value="US">United States</option>
-                          <option value="JP">Japan</option>
-                          <option value="CN">China</option>
-                          <option value="GB">United Kingdom</option>
-                          <option value="DE">Germany</option>
-                          <option value="FR">France</option>
-                          <option value="CA">Canada</option>
-                          <option value="AU">Australia</option>
-                        </select>
-                      </div>
+                      
                       <div class="mb-2">
                         <label class="form-label">Address</label>
-                        <div class="input-group">
+                        <!-- <div class="input-group">
                         <input type="text" id="orderPostcode" class="form-control" name="postcode" placeholder="Postal Code" readonly>
                         <button type="button" class="btn btn-outline-secondary" onclick="execOrderDaumPostcode()">Find Address</button>
-                        </div>
-                        <input type="text" class="form-control mt-2" name="address" id="orderAddress" placeholder="Street Address" readonly required>
-                        <input type="text" class="form-control mt-2" name="addressDong" id="orderAddressDong" placeholder="District Address" readonly>
+                        </div> -->
+                        <input type="text" class="form-control mt-2" name="address" id="orderAddress" placeholder="Address" required>
+                        <!-- <input type="text" class="form-control mt-2" name="addressDong" id="orderAddressDong" placeholder="District Address" readonly> -->
                       </div>
                       <div class="mb-2">
                         <label class="form-label">City</label>
                         <input type="text" class="form-control" name="city" id="orderCity" placeholder="City Name">
                       </div>
                       <div class="mb-2">
-                        <label class="form-label">Zip/Postal code</label>
+                        <label class="form-label">Post code</label>
                         <input type="text" class="form-control" name="postcode" id="orderPostcodeField" placeholder="Postal Code">
                       </div>
-                      <div class="mb-2">
+                      <!-- <div class="mb-2">
                         <label class="form-label">Detailed Address</label>
                         <input type="text" class="form-control" name="addressDetail" id="orderAddressDetail" placeholder="Detailed Address (Apartment, Unit No., etc.)" required>
-                      </div>
-                      <div class="mb-2">
+                      </div> -->
+                      <!-- <div class="mb-2">
                         <label class="form-label">Delivery Note</label>
                         <select id="orderDeliveryRequestSelect" class="form-select mt-2">
                         <option value="">Please select delivery instructions</option>
@@ -147,10 +133,16 @@
                         <option value="custom">Custom Input</option>
                         </select>
                         <input type="text" class="form-control d-none" name="deliveryRequest" id="orderDeliveryRequest" placeholder="Delivery Instructions (Optional)" readonly>
-                      </div>
+                      </div> -->
                       <div class="form-check mb-2">
                         <input class="form-check-input" type="checkbox" id="orderIsMain" name="isMain">
                         <label class="form-check-label" for="orderIsMain">Set as default address</label>
+                      </div>
+                      <div class="mb-5">
+                        <label class="form-label">Country/Region</label>
+                        <select class="form-select" name="country" id="orderCountry">
+                          <option value="United Kingdom" selected>United Kingdom</option>
+                        </select>
                       </div>
                       <button type="submit" class="btn btn-primary w-100">Save</button>
                       </form>
@@ -159,33 +151,33 @@
                   </div>
                 </div>
                 <!-- Daum Postcode CDN -->
-                <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+                <!-- <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script> -->
                 <script>
-                  function execOrderDaumPostcode() {
-                    new daum.Postcode({
-                    oncomplete: function(data) {
-                      document.getElementById('orderPostcode').value = data.zonecode;
-                      document.getElementById('orderAddress').value = data.roadAddress;
-                      document.getElementById('orderAddressDong').value = data.jibunAddress;
-                    }
-                    }).open();
-                  }
-                  document.getElementById('orderDeliveryRequestSelect').addEventListener('change', function() {
-                    const selectedValue = this.value;
-                    const deliveryRequestInput = document.getElementById('orderDeliveryRequest');
-                    if (selectedValue === 'custom') {
-                    deliveryRequestInput.removeAttribute('readonly');
-                    deliveryRequestInput.classList.remove('d-none');
-                    deliveryRequestInput.value = '';
-                    deliveryRequestInput.focus();
-                    } else if (selectedValue === '') {
-                    deliveryRequestInput.value = '';
-                    deliveryRequestInput.classList.add('d-none');
-                    } else {
-                    deliveryRequestInput.value = selectedValue;
-                    deliveryRequestInput.classList.add('d-none');
-                    }
-                  });
+                  // function execOrderDaumPostcode() {
+                  //   new daum.Postcode({
+                  //   oncomplete: function(data) {
+                  //     document.getElementById('orderPostcode').value = data.zonecode;
+                  //     document.getElementById('orderAddress').value = data.roadAddress;
+                  //     document.getElementById('orderAddressDong').value = data.jibunAddress;
+                  //   }
+                  //   }).open();
+                  // }
+                  // document.getElementById('orderDeliveryRequestSelect').addEventListener('change', function() {
+                  //   const selectedValue = this.value;
+                  //   const deliveryRequestInput = document.getElementById('orderDeliveryRequest');
+                  //   if (selectedValue === 'custom') {
+                  //   deliveryRequestInput.removeAttribute('readonly');
+                  //   deliveryRequestInput.classList.remove('d-none');
+                  //   deliveryRequestInput.value = '';
+                  //   deliveryRequestInput.focus();
+                  //   } else if (selectedValue === '') {
+                  //   deliveryRequestInput.value = '';
+                  //   deliveryRequestInput.classList.add('d-none');
+                  //   } else {
+                  //   deliveryRequestInput.value = selectedValue;
+                  //   deliveryRequestInput.classList.add('d-none');
+                  //   }
+                  // });
                   document.getElementById('order-address-form').addEventListener('submit', async function(e) {
                     e.preventDefault();
                     const formData = new FormData(this);
