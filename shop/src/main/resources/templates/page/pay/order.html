@@ -318,10 +318,11 @@
           <div class="col-md-4"><strong>Shipping Fee</strong></div>
           <div id="shipping-price" class="col-md-8 text-end" th:text="${'£' + #numbers.formatInteger(order.shipPrice, 0, 'COMMA')}">£0</div>
         </div>
-        <div class="row mb-2">
+        <!-- 주문에서는 상태를 표시하지 않음 : 어차피 결제대기 상태임 -->
+        <!-- <div class="row mb-2">
           <div class="col-md-4"><strong>Status</strong></div>
           <div class="col-md-8 text-end" th:text="${order.status}">Pending Payment</div>
-        </div>
+        </div> -->
         <div class="row mb-2 text-danger">
           <div class="col-md-4"><strong>Total Amount</strong></div>
           <div id="total-price" th:data="${order.totalPrice}" class="col-md-8 text-end" th:text="${'£' + #numbers.formatInteger(order.totalPrice + order.shipPrice, 0, 'COMMA')}">£0</div>
