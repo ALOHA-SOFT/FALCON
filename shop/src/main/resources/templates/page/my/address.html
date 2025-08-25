@@ -34,12 +34,8 @@
                   <span class="badge bg-secondary" th:text="${address.postcode}">Postcode</span>
                 </div>
                 <div class="text-muted small">
-                  <span th:text="${address.address} + ' ' + ${address.addressDetail}">Address</span>
+                  <span th:text="${address.address}">Address</span>
                 </div>
-                <!-- <div class="text-muted small">
-                  <span th:text="${address.addressDong} + ' ' + ${address.addressDetail}">Address</span>
-                </div> -->
-                <!-- <div class="text-muted small" th:if="${address.deliveryRequest}" th:text="'Request: ' + ${address.deliveryRequest}">Request</div> -->
               </div>
               <div>
                 <button class="btn btn-outline-secondary btn-sm me-1" id="btn-update">Edit</button>
@@ -131,8 +127,10 @@
         userNo: formData.get('userNo') || '',
         recipient: formData.get('recipient') || '',
         tel: formData.get('tel') || '',
-        postcode: formData.get('postcode') || '',
         address: formData.get('address') || '',
+        city: formData.get('city') || '',
+        postcode: formData.get('postcode') || '',
+        country: formData.get('country') || '',
         isMain: formData.get('isMain') === 'on',
       };
       if (formData.get('id')) {
@@ -145,14 +143,15 @@
           type: isEdit ? 'PUT' : 'POST',
           data: addressData
         });
-        await $toast({
+        await $toast_({
           title: isEdit ? 'Shipping address has been updated.' : 'Shipping address has been registered.',
           icon: 'success'
+        }).then(() => {
+          // 모달 닫기
+          const modal = bootstrap.Modal.getInstance(document.getElementById('addShipmentModal'));
+          modal.hide();
+          location.reload();
         });
-        // 모달 닫기
-        const modal = bootstrap.Modal.getInstance(document.getElementById('addShipmentModal'));
-        modal.hide();
-        location.reload();
       } catch (error) {
         $alert('Error', isEdit ? 'Failed to update shipping address.' : 'Failed to register shipping address.', 'error');
       }
@@ -195,8 +194,9 @@
             url: '/api/users/address/' + address.id,
             type: 'DELETE',
           });
-          await $toast({ title: 'Shipping address has been deleted.', icon: 'success' });
-          location.reload();
+          await $toast_({ title: 'Shipping address has been deleted.', icon: 'success' }).then(() => {
+            location.reload();
+          });
         } catch (error) {
           $alert('Error', 'Failed to delete shipping address.', 'error');
         }

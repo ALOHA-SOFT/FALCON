@@ -98,6 +98,7 @@ public class UserApi {
   
   @PutMapping(path = "/user", consumes = "multipart/form-data")
   public ResponseEntity<?> updateMultiPartForm(Users user) {
+      log.error("Error occurred while updating user: {}", user);
       try {
           return new ResponseEntity<>(userService.updateById(user), HttpStatus.OK);
       } catch (Exception e) {

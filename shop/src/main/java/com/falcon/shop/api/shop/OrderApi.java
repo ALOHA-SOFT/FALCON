@@ -168,7 +168,7 @@ public class OrderApi {
           boolean emailSent = false;
           try {
               emailSent = emailService.sendPaymentEmail(
-                  orderId,
+                  order.getCode(),
                   paymentMethod,
                   order.getGuestEmail(),
                   order.getGuestFirstName() + " " + order.getGuestLastName()

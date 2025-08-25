@@ -5,30 +5,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>유효하지 않은 주문</title>
+  <title>Invalid Order</title>
 </head>
 <body layout:fragment="content">
   <div class="container my-5 text-center">
     <div class="alert alert-danger py-5">
-      <h2 class="mb-4">유효하지 않은 주문입니다</h2>
-      <p class="mb-4">요청하신 주문 정보를 찾을 수 없거나 처리할 수 없습니다.<br>다시 시도해주시기 바랍니다.</p>
+      <h2 class="mb-4">Invalid Order</h2>
+      <p class="mb-4">The requested order information cannot be found or processed.<br>Please try again.</p>
       <div class="mb-4">
-        <strong>가능한 원인:</strong>
+        <strong>Possible causes:</strong>
         <ul class="list-unstyled mt-2">
-          <li>• 주문 정보가 잘못되었습니다</li>
-          <li>• 세션이 만료되었습니다</li>
-          <li>• 이미 처리된 주문입니다</li>
-          <li>• 시스템 오류가 발생했습니다</li>
+          <li>• Order information is incorrect</li>
+          <li>• Session has expired</li>
+          <li>• Order has already been processed</li>
+          <li>• A system error has occurred</li>
         </ul>
       </div>
-      <a href="/" class="btn btn-primary">메인으로</a>
-      <a href="/my/orders" class="btn btn-outline-secondary ms-2">주문내역 보기</a>
+      <a href="/" class="btn btn-primary">Go to Home</a>
+      <a href="/my/orders" class="btn btn-outline-secondary ms-2">View Order History</a>
     </div>
     <div class="alert alert-warning mb-4">
-      <h5><i class="material-icons-two-tone">help</i> 문제가 지속될 경우</h5>
-      <p class="mb-1">동일한 문제가 계속 발생하신다면 고객센터로 문의해주세요.</p>
+      <h5><i class="material-icons-two-tone">help</i> If the problem persists</h5>
+      <p class="mb-1">If you continue to experience the same issue, please contact customer service.</p>
       <p class="mb-0">
-        <strong>고객센터:</strong> 
+        <strong>Customer Service:</strong> 
         <a href="mailto:info@falconcartons.com" class="text-decoration-none">info@falconcartons.com</a>
       </p>
     </div>

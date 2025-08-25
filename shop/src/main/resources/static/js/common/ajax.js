@@ -19,7 +19,7 @@ async function $ajax( obj ) {
             url: obj.url,
             type: obj.type,
             data: data,
-            contentType: obj.data instanceof FormData ? false : 'application/json; charset=utf-8',
+            contentType: obj.contentType || (obj.data instanceof FormData ? false : 'application/json; charset=utf-8'),
             processData: obj.data instanceof FormData ? false : true,                                    // 데이터를 쿼리 문자열로 변환하지 않음
             // dataType: 'json'              // 서버의 응답 데이터 타입 (단순 SUCCESS, FAIL 문자열일 경우 생략)
         });

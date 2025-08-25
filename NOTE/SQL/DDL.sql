@@ -1,4 +1,4 @@
--- Active: 1750388006843@@falcon-db.cr8aiiek0cvi.eu-west-2.rds.amazonaws.com@3306@falcon
+-- Active: 1750388006843@@localhost@3306@falcon
 
 CREATE DATABASE IF NOT EXISTS `falcon` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `falcon`;

@@ -44,7 +44,7 @@
                 <div class="col-md-6">
                   <div class="mb-3">
                     <label for="categoryNo" class="form-label">카테고리 <span class="text-danger">*</span></label>
-                    <select class="form-select" id="categoryNo" name="categoryNo" required>
+                    <select class="form-select" id="categoryNo" name="categoryNo">
                       <option value="">카테고리 선택</option>
                       <option th:each="category : ${categories}" 
                               th:value="${category.no}" 

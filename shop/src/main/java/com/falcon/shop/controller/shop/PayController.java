@@ -21,6 +21,7 @@ import com.falcon.shop.domain.users.Users;
 import com.falcon.shop.service.shop.OrderService;
 import com.falcon.shop.service.shop.PaymentService;
 import com.falcon.shop.service.users.AddressService;
+import com.falcon.shop.service.users.UserService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,6 +34,7 @@ public class PayController {
     @Autowired private OrderService orderService;
     @Autowired private AddressService addressService;
     @Autowired private PaymentService paymentService;
+    @Autowired private UserService userService;
 
     // 주문서 페이지
     @GetMapping("/order/{id}")
@@ -45,6 +47,7 @@ public class PayController {
 
         // 사용자 정보
         Users user = customUser.getUser();
+        user = userService.selectById(user.getId());
         model.addAttribute("user", user);
 
         // 배송지 정보

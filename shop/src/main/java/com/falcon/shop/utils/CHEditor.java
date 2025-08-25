@@ -1,12 +1,8 @@
 package com.falcon.shop.utils;
 
-
-
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDate;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +22,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.falcon.shop.domain.common.Files;
+import com.falcon.shop.service.file.FileUploadService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -38,66 +36,51 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 public class CHEditor {
 	
-	// 업로드 경로
-	@Value("${upload.path}")	
+	// 업로드 경로 (로컬 환경에서만 사용)
+	@Value("${upload.path:#{null}}")	
 	private String uploadPath;
-	
 	
 	String SAVE_DIR = "/CHEditor";
 	String SAVE_URL = "/CHEditor/attach/";
 	
 	@Autowired
 	private FileUtils fileUtils;
+	
+	@Autowired
+	private FileUploadService fileUploadService;
 
 	@ResponseBody
 	@PostMapping("/upload")
 	public String upload(@RequestParam("file") MultipartFile uFile, HttpServletRequest request, HttpSession session) {
-		int fileSizeLimit = 50 * 1000 * 1000;
-		String encoding = "utf-8";
-		LocalDate now = LocalDate.now();
-
-		
-		log.info("uploadPath : " + uploadPath);
-		String SAVE_PATH = uploadPath + SAVE_DIR;
-		
-		
-		fileUtils.makeFolder(SAVE_PATH);
+		log.info("📤 CHEditor upload request - File: {}, Strategy: {}", 
+				uFile.getOriginalFilename(), fileUploadService.getUploadType());
 
 		try {
-		    long fileSize = 0;
-		    String saveFileName = null;
-		    String saveFullName = null;
-
-		    File file = new File(SAVE_PATH, uFile.getName());
+		    // 새로운 FileUploadService를 사용한 파일 업로드
+		    Files uploadedFile = fileUploadService.uploadFile(uFile, "CHEditor");
 		    
-		    
-		    // 실제 파일 업로드
-		    Files uploadedFile = fileUtils.uploadFile(uFile, SAVE_PATH);
-		    saveFileName = uploadedFile.getFileName();
-		    saveFullName = uploadedFile.getFullName();
-		    
-		    String uploadedPath = uploadedFile.getFullName();
 		    String fileName = uploadedFile.getFileName();
-		    File uploadFile = new File(uploadedPath);
+		    String filePath = uploadedFile.getSubPath();
+		    long fileSize = uploadedFile.getFileSize();
 		    
-		    log.info("uploadedPath : " + uploadedPath);
-		    log.info("fileName : " + fileName);
-		    log.info("uploadFile : " + uploadFile);
+		    // 파일 URL 생성
+		    String fileUrl = fileUploadService.getFileUrl(filePath);
 		    
+		    log.info("✅ CHEditor upload completed - File: {}, Size: {}, URL: {}", 
+		            fileName, fileSize, fileUrl);
 		    
-		    fileSize = uploadedFile.getFileSize();
-		    if (fileSize < 1) {
-		        throw new Exception("-ERR: File Size 0");
-		    }
-
-		    String rData = String.format("{\"fileUrl\":\"%s%s\", \"filePath\":\"%s\", \"fileName\":\"%s\", \"fileSize\":\"%d\"}",
-		    							SAVE_URL, saveFileName, saveFullName, saveFileName, fileSize);
+		    // 응답 JSON 생성
+		    String rData = String.format(
+		        "{\"fileUrl\":\"%s\", \"filePath\":\"%s\", \"fileName\":\"%s\", \"fileSize\":\"%d\"}", 
+		        fileUrl, filePath, fileName, fileSize
+		    );
+		    
 		    return rData;
 
 		} catch(Exception e) {
-		    return e.getMessage();
+		    log.error("❌ CHEditor upload failed: {}", e.getMessage(), e);
+		    return "{\"error\":\"" + e.getMessage() + "\"}";
 		}
-		
 	}
 	
 	
