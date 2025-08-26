@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.falcon.shop.domain.email.Email;
+import com.falcon.shop.domain.shop.Orders;
 import com.falcon.shop.service.BaseService;
 
 /**
@@ -47,7 +48,7 @@ public interface EmailService extends BaseService<Email> {
      * @param recipientName 받는사람 이름
      * @return 발송 성공 여부
      */
-    boolean sendPaymentEmail(String orderCode, String paymentMethod, String recipientEmail, String recipientName);
+    boolean sendPaymentEmail(Orders order, String paymentMethod, String recipientEmail, String recipientName);
     
     /**
      * 임시 비밀번호 이메일 발송

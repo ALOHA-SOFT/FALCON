@@ -168,7 +168,7 @@ public class OrderApi {
           boolean emailSent = false;
           try {
               emailSent = emailService.sendPaymentEmail(
-                  order.getCode(),
+                  order,
                   paymentMethod,
                   order.getGuestEmail(),
                   order.getGuestFirstName() + " " + order.getGuestLastName()
@@ -219,7 +219,7 @@ public class OrderApi {
           boolean emailSent = false;
           try {
               emailSent = emailService.sendPaymentEmail(
-                  orderId,
+                  order,
                   paymentMethod + " (" + coinAmount.toString() + " 코인)",
                   order.getGuestEmail(),
                   order.getGuestFirstName() + " " + order.getGuestLastName()

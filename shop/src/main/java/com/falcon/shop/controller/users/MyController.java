@@ -3,7 +3,9 @@ package com.falcon.shop.controller.users;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.github.pagehelper.PageInfo;
 import com.falcon.shop.domain.common.Pagination;
 import com.falcon.shop.domain.common.QueryParams;
 import com.falcon.shop.domain.shop.Orders;
@@ -22,6 +23,7 @@ import com.falcon.shop.service.shop.OrderService;
 import com.falcon.shop.service.users.AddressService;
 import com.falcon.shop.service.users.CartService;
 import com.falcon.shop.service.users.UserService;
+import com.github.pagehelper.PageInfo;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,6 +44,14 @@ public class MyController {
     return "page/my/my";
   }
 
+  /**
+   * 주문 내역 페이지
+   * @param customUser
+   * @param pagination
+   * @param queryParams
+   * @param model
+   * @return
+   */
   @GetMapping("/orders")
   public String orders(
     @AuthenticationPrincipal CustomUser customUser,
@@ -51,8 +61,10 @@ public class MyController {
   ) {
     // 사용자 번호로 주문 목록 조회
     Long userNo = customUser.getUser().getNo();
+    String userId = customUser.getUser().getId();
     log.info("Fetching orders for userNo: {}", userNo);
     model.addAttribute("userNo", userNo);
+    model.addAttribute("userId", userId);
     PageInfo<Orders> pageInfo = orderService.pageByUserNo(queryParams, userNo);
     model.addAttribute("pageInfo", pageInfo);
     Long total = pageInfo.getTotal();
@@ -73,6 +85,58 @@ public class MyController {
     return "page/my/orders";
   }
 
+
+  /**
+   * 주문 상세 페이지
+   * @param pagination
+   * @param queryParams
+   * @param model
+   * @param id
+   * @return
+   */
+  @GetMapping("/orders/{orderId}/{userId}")
+  public String orders(
+    Pagination pagination,
+    QueryParams queryParams,
+    Model model,
+    @AuthenticationPrincipal CustomUser customUser,
+    @PathVariable("orderId") String orderId,
+    @PathVariable("userId") String userId
+  ) {
+    log.info("orderId : {}", orderId);
+    log.info("userId : {}", userId);
+    log.info("customUser : {}", customUser);
+
+    // 비 로그인 시, 로그인 페이지로 리다이렉트
+    if (customUser == null || customUser.getUser() == null ) {
+      return "redirect:/login?redirect=/my/orders/" + orderId + "/" + userId;
+    }
+
+    // 사용자 ID 불일치 시, 에러 페이지로 리다이렉트
+    if( !customUser.getUser().getId().equals(userId) ) {
+      log.error("로그인한 아이디가 주문과 일치하지 않습니다. 로그인한 아이디: {}, 주문한 아이디: {}", customUser.getUser().getId(), userId);
+      return "redirect:/my/orders";
+    }
+
+    Orders order = orderService.selectById(orderId);
+    if (order == null) {
+      log.warn("Order not found for ID: {}", orderId);
+      model.addAttribute("error", "주문 정보를 찾을 수 없습니다.");
+      return "page/my/error";
+    }
+    model.addAttribute("order", order);
+
+    return "page/my/orders/detail";
+  }
+
+
+  /**
+   * 환불 상세 페이지
+   * @param customUser
+   * @param id
+   * @param model
+   * @return
+   */
   @GetMapping("/cancel/{id}")
   public String cancelCreate(
     @AuthenticationPrincipal CustomUser customUser,
@@ -90,6 +154,15 @@ public class MyController {
     return "page/my/cancel/create";
   }
 
+
+  /**
+   * 환불 신청 페이지
+   * @param customUser
+   * @param pagination
+   * @param queryParams
+   * @param model
+   * @return
+   */
   @GetMapping("/cancel")
   public String cancel(
     @AuthenticationPrincipal CustomUser customUser,
@@ -121,6 +194,15 @@ public class MyController {
     return "page/my/cancel";
   }
 
+
+  /**
+   * 장바구니
+   * @param customUser
+   * @param pagination
+   * @param queryParams
+   * @param model
+   * @return
+   */
   @GetMapping("/carts")
   public String carts(
     @AuthenticationPrincipal CustomUser customUser,
@@ -145,6 +227,12 @@ public class MyController {
     return "page/my/carts";
   }
 
+  /**
+   * 회원 정보 수정
+   * @param customUser
+   * @param model
+   * @return
+   */
   @GetMapping("/edit")
   public String edit(
     @AuthenticationPrincipal CustomUser customUser,
@@ -162,6 +250,13 @@ public class MyController {
     return "page/my/edit";
   }
 
+
+  /**
+   * 회원 탈퇴
+   * @param customUser
+   * @param model
+   * @return
+   */
   @GetMapping("/delete")
   public String delete(
     @AuthenticationPrincipal CustomUser customUser,
@@ -184,8 +279,13 @@ public class MyController {
     return "page/my/delete";
   }
 
-
   
+  /**
+   * 배송지 관리
+   * @param customUser
+   * @param model
+   * @return
+   */
   @GetMapping("/address")
   public String address(
     @AuthenticationPrincipal CustomUser customUser,

@@ -36,11 +36,15 @@
               </th:block>
               
             </div>
-            <div class="row justify-content-between align-items-center">
+            <div class="row justify-content-between align-items-center py-4">
               <div class="col-md-2">
-                <img th:src="${order.orderItems != null && order.orderItems.size() > 0 && order.orderItems[0].product != null && order.orderItems[0].product.thumbImg != null ? order.orderItems[0].product.thumbImg.content : 'https://placehold.co/120x120?text=Image'}" 
-                  th:alt="${order.orderItems != null && order.orderItems.size() > 0 && order.orderItems[0].product != null ? order.orderItems[0].product.name : 'Product Image'}"
-                  width="120" height="120" class="rounded object-fit-contain">
+                <div class="d-flex flex-column align-items-center gap-2 py-4">
+                  <img th:src="${order.orderItems != null && order.orderItems.size() > 0 && order.orderItems[0].product != null && order.orderItems[0].product.thumbImg != null ? order.orderItems[0].product.thumbImg.content : 'https://placehold.co/120x120?text=Image'}" 
+                    th:alt="${order.orderItems != null && order.orderItems.size() > 0 && order.orderItems[0].product != null ? order.orderItems[0].product.name : 'Product Image'}"
+                    width="120" height="120" class="rounded object-fit-contain">
+                  <a th:href="@{/my/orders/{orderId}/{userId}(orderId=${order.id}, userId=${userId})}" class="btn btn-outline-secondary btn-sm">Details</a>
+
+                </div>
               </div>
               <div class="col-md-6">
                 <h6 th:text="${order.title}">Order Title</h6>

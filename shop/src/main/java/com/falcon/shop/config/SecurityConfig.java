@@ -50,6 +50,7 @@ public class SecurityConfig {
                                 .requestMatchers("/static/**").permitAll()              // "/static/**" 경로에 대한 모든 요청을 허용
                                 .requestMatchers("/admin/**").hasRole("ADMIN")      // "/admin/**" 경로에 대한 요청은 ADMIN 권한 필요
                                 .requestMatchers("/users/**").hasRole("USER")      // "/users/**" 경로에 대한 요청은 USER 권한 필요
+                                .requestMatchers("/my/orders/**").permitAll()      // "/users/**" 경로에 대한 요청은 USER 권한 필요
                                 .requestMatchers("/my/**").hasRole("USER")      // "/users/**" 경로에 대한 요청은 USER 권한 필요
                                 .requestMatchers("/**").permitAll()             // 루트 경로에 대한 모든 요청을 허용
                                 .requestMatchers("/api/**").permitAll()

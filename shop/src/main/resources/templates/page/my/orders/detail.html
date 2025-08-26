@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{UI/layouts/user/my_layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Detail - FALCON</title>
+  <style>
+    .order-detail-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .order-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 30px rgba(102, 126, 234, 0.2);
+    }
+    .order-status {
+      display: inline-block;
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .status-pending {
+      background-color: #ffc107;
+      color: #212529;
+    }
+    .status-paid {
+      background-color: #28a745;
+      color: white;
+    }
+    .status-shipped {
+      background-color: #007bff;
+      color: white;
+    }
+    .info-card {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border: 1px solid #e9ecef;
+    }
+    .info-card h5 {
+      color: #495057;
+      margin-bottom: 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #f8f9fa;
+    }
+    .info-row:last-child {
+      border-bottom: none;
+    }
+    .info-label {
+      font-weight: 500;
+      color: #6c757d;
+      min-width: 120px;
+    }
+    .info-value {
+      font-weight: 600;
+      color: #212529;
+    }
+    .product-item {
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      border: 1px solid #e9ecef;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      background: #f8f9fa;
+      transition: all 0.3s ease;
+    }
+    .product-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+    .product-image {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      object-fit: cover;
+      margin-right: 20px;
+      border: 2px solid #dee2e6;
+    }
+    .product-info {
+      flex: 1;
+    }
+    .product-name {
+      font-weight: 600;
+      color: #212529;
+      margin-bottom: 5px;
+    }
+    .product-price {
+      color: #dc3545;
+      font-weight: 600;
+      font-size: 18px;
+    }
+    .product-quantity {
+      color: #6c757d;
+      font-size: 14px;
+    }
+    .price-summary {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+    }
+    .price-total {
+      border-top: 2px solid #dee2e6;
+      padding-top: 15px;
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #dc3545;
+    }
+    .payment-method {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #e7f3ff;
+      color: #0066cc;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .btn-group-custom {
+      display: flex;
+      gap: 10px;
+      margin-top: 30px;
+    }
+    .btn-custom {
+      flex: 1;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .btn-primary-custom {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+    }
+    .btn-primary-custom:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+    }
+    .btn-outline-custom {
+      background: white;
+      color: #6c757d;
+      border: 1px solid #dee2e6;
+    }
+    .btn-outline-custom:hover {
+      background: #f8f9fa;
+      color: #495057;
+    }
+    .shipping-info {
+      background: linear-gradient(135deg, #e8f5e8 0%, #d4f1d4 100%);
+      border-radius: 12px;
+      padding: 20px;
+      border-left: 4px solid #28a745;
+    }
+  </style>
+</head>
+<body layout:fragment="content">
+  <div class="order-detail-container">
+    <!-- Order Header -->
+    <div class="order-header text-center">
+      <h2 class="mb-3">📦 Order Details</h2>
+      <p class="mb-2">Order Number: <strong th:text="${order.code}">20250826_19_2_5</strong></p>
+      <div class="order-status status-pending" th:classappend="${order.status == '결제완료'} ? 'status-paid' : (${order.status == '배송완료'} ? 'status-shipped' : 'status-pending')">
+        <div class="d-flex">
+          <i class="material-icons me-1">pending</i>
+          <th:block th:if="${order.status == '결제완료'}">
+            <span>Payment Complete</span>
+          </th:block>
+          <th:block th:if="${order.status == '결제대기'}">
+            <span>Pending Payment</span>
+          </th:block>
+          <th:block th:if="${order.status == '주문취소'}">
+            <span>Order Cancelled</span>
+          </th:block>
+          <th:block th:if="${order.status == '배송완료'}">
+            <span>Shipped</span>
+          </th:block>
+          <th:block th:if="${order.status != '결제완료' && order.status != '결제대기' && order.status != '주문취소' && order.status != '배송완료'}">
+            <span th:text="${order.status}"></span>
+          </th:block>
+          
+        </div>
+      </div>
+    </div>
+
+    <!-- Customer Information -->
+    <div class="info-card">
+      <h5><i class="material-icons">person</i>Customer Information</h5>
+      <div class="info-row">
+        <span class="info-label">Name</span>
+        <span class="info-value" th:text="${order.guestFirstName + ' ' + order.guestLastName}">David Park</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Email</span>
+        <span class="info-value" th:text="${order.guestEmail}">info@falconcartons.com</span>
+      </div>
+      <div class="info-row" th:if="${order.guestTel}">
+        <span class="info-label">Phone</span>
+        <span class="info-value" th:text="${order.guestTel}">-</span>
+      </div>
+    </div>
+
+    <!-- Payment Information -->
+    <div class="info-card">
+      <h5><i class="material-icons">payment</i>Payment Information</h5>
+      <div class="info-row">
+        <span class="info-label">Payment Method</span>
+        <span class="payment-method">
+          <i class="material-icons">money</i>
+          <span th:text="${order.paymentMethod}">CASH</span>
+        </span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Order Status</span>
+        <span class="info-value">
+          <th:block th:if="${order.status == '결제완료'}">
+            <span>Payment Complete</span>
+          </th:block>
+          <th:block th:if="${order.status == '결제대기'}">
+            <span>Pending Payment</span>
+          </th:block>
+          <th:block th:if="${order.status == '주문취소'}">
+            <span>Order Cancelled</span>
+          </th:block>
+          <th:block th:if="${order.status == '배송완료'}">
+            <span>Shipped</span>
+          </th:block>
+          <th:block th:if="${order.status != '결제완료' && order.status != '결제대기' && order.status != '주문취소' && order.status != '배송완료'}">
+            <span th:text="${order.status}"></span>
+          </th:block>
+        </span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Total Items</span>
+        <span class="info-value" th:text="${order.totalItemCount + ' items'}">1 items</span>
+      </div>
+    </div>
+
+    <!-- Order Items -->
+    <div class="info-card">
+      <h5><i class="material-icons">shopping_cart</i>Order Items</h5>
+      <div th:each="item : ${order.orderItems}" class="product-item">
+        <img th:src="${item.product.thumbImg?.content}" 
+             th:alt="${item.product.name}"
+             class="product-image" 
+             onerror="this.src='https://via.placeholder.com/80x80?text=No+Image'">
+        <div class="product-info">
+          <div class="product-name" th:text="${item.product.name}">샘플상품19</div>
+          <div class="product-quantity" th:text="'Quantity: ' + ${item.quantity}">Quantity: 1</div>
+          <div class="mt-1">
+            <small class="text-muted" th:text="${item.product.summary}">상품19 요약</small>
+          </div>
+        </div>
+        <div class="text-end">
+          <div class="product-price" th:text="'£' + ${#numbers.formatInteger(item.price, 3, 'COMMA')}">£11,500</div>
+          <small class="text-muted">per item</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shipping Information -->
+    <div class="info-card" th:if="${order.orderItems[0]?.product?.shipMsg}">
+      <h5><i class="material-icons">local_shipping</i>Shipping Information</h5>
+      <div class="shipping-info">
+        <div class="info-row">
+          <span class="info-label">Shipping Fee</span>
+          <span class="info-value" th:text="'£' + ${#numbers.formatInteger(order.shipPrice, 3, 'COMMA')}">£2,500</span>
+        </div>
+        <!-- <div class="info-row">
+          <span class="info-label">Shipping Message</span>
+          <span class="info-value" th:text="${order.orderItems[0]?.product?.shipMsg}">빠른 배송</span>
+        </div> -->
+      </div>
+    </div>
+
+    <!-- Price Summary -->
+    <div class="info-card">
+      <h5><i class="material-icons">receipt</i>Order Summary</h5>
+      <div class="price-summary">
+        <div class="price-row">
+          <span>Subtotal</span>
+          <span th:text="'£' + ${#numbers.formatInteger(order.totalPrice - order.shipPrice, 3, 'COMMA')}">£11,500</span>
+        </div>
+        <div class="price-row">
+          <span>Shipping Fee</span>
+          <span th:text="'£' + ${#numbers.formatInteger(order.shipPrice, 3, 'COMMA')}">£2,500</span>
+        </div>
+        <div class="price-row price-total">
+          <span>Total Amount</span>
+          <span th:text="'£' + ${#numbers.formatInteger(order.totalPrice, 3, 'COMMA')}">£14,000</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="btn-group-custom">
+      <a href="/my/orders" class="btn-custom btn-outline-custom d-flex align-items-center justify-content-center">
+        <i class="material-icons me-1">arrow_back</i>
+        <span class="fw-bold">Back to Orders</span>
+      </a>
+      <a th:if="${order.status == '결제대기'}" 
+         th:href="@{'/pay/order/' + ${order.id}}" 
+         class="btn-custom btn-primary-custom d-flex align-items-center justify-content-center">
+        <i class="material-icons me-1">payment</i>
+        <span class="fw-bold">Proceed Payment</span>
+      </a>
+      <a th:unless="${order.status == '결제대기'}" 
+         href="#" 
+         class="btn-custom btn-primary-custom d-flex align-items-center justify-content-center"
+         onclick="window.print()">
+        <i class="material-icons me-1">print</i>
+        <span class="fw-bold">Print Order</span>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

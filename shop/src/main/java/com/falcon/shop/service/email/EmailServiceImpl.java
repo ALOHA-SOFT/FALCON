@@ -13,7 +13,10 @@ import org.springframework.stereotype.Service;
 
 import com.falcon.shop.domain.email.Email;
 import com.falcon.shop.domain.email.EmailTemplate;
+import com.falcon.shop.domain.shop.Orders;
+import com.falcon.shop.domain.users.Users;
 import com.falcon.shop.mapper.email.EmailMapper;
+import com.falcon.shop.mapper.users.UserMapper;
 import com.falcon.shop.service.BaseServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +30,9 @@ public class EmailServiceImpl extends BaseServiceImpl<Email, EmailMapper> implem
     
     @Autowired
     private EmailTemplateService emailTemplateService;
+
+    @Autowired
+    private UserMapper userMapper;
     
     // 이메일 설정
     @Value("${spring.mail.username}")
@@ -34,6 +40,10 @@ public class EmailServiceImpl extends BaseServiceImpl<Email, EmailMapper> implem
 
     @Value("${email.from.name}")
     private String SENDER_NAME;
+
+    @Value("${host}")
+    private String host;
+
     
     @Override
     public boolean sendEmail(Email email) {
@@ -155,15 +165,22 @@ public class EmailServiceImpl extends BaseServiceImpl<Email, EmailMapper> implem
     }
     
     @Override
-    public boolean sendPaymentEmail(String orderCode, String paymentMethod, String recipientEmail, String recipientName) {
+    public boolean sendPaymentEmail(Orders order, String paymentMethod, String recipientEmail, String recipientName) {
+
+        Users user = userMapper.selectById(order.getUserNo());
+        String userId = user.getId();
+
         Map<String, Object> variables = Map.of(
-            "orderCode", orderCode,
+            "host", host,
+            "orderCode", order.getCode(),
+            "orderId", order.getId(),
+            "userId", userId,
             "customerName", recipientName,
             "paymentMethod", paymentMethod,
             "companyName", "Falcon Cartons"
         );
         
-        return sendEmailWithTemplate("PAYMENT_GUIDE", recipientEmail, recipientName, variables, orderCode);
+        return sendEmailWithTemplate("PAYMENT_GUIDE", recipientEmail, recipientName, variables, order.getCode());
     }
     
     @Override
