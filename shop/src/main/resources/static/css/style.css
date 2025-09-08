@@ -466,7 +466,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .brand-img {
-    max-width: 200px;
+    max-width: 120px;
     max-height: 100%;
     object-fit: contain;
     transition: opacity 0.3s ease;
