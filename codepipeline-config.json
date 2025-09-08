@@ -20,7 +20,7 @@
             },
             "configuration": {
               "Owner": "ALOHA-SOFT",
-              "Repo": "FALCON",
+              "Repo": "Falcon Cartons",
               "Branch": "main",
               "OAuthToken": "{{resolve:secretsmanager:github-token:SecretString:token}}"
             },

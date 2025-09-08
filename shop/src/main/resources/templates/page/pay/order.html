@@ -257,7 +257,7 @@
                           <strong>Quantity:</strong> <span th:text="${item.quantity}">1</span>
                         </div>
                         <div>
-                          <strong>Price:</strong> <span th:text="${'£' + #numbers.formatInteger(item.price, 0, 'COMMA')}" class="item-price" data-item-id="${item.productNo}">£0</span>
+                          <strong>Price:</strong> <span th:text="${'£ ' + #numbers.formatDecimal(item.price, 1, 'COMMA', 2, 'POINT')}" class="item-price" data-item-id="${item.productNo}">£0</span>
                         </div>
                       </div>
                     </div>
@@ -269,10 +269,10 @@
                           <div class="border rounded p-2 d-flex align-items-center justify-content-between flex-column flex-md-row gap-2">
                             <div>
                               <span class="me-2"><span th:text="${opt.option.name}" class="fw-bold p-2 fs-5">Option Name</span></span>
-                              <span class="me-2">Price: <span th:text="${'£' + #numbers.formatInteger(opt.price, 0, 'COMMA')}">£0</span></span>
+                              <span class="me-2">Price: <span th:text="${'£ ' + #numbers.formatDecimal(opt.price, 1, 'COMMA', 2, 'POINT')}">£0</span></span>
                               <span class="me-2">Quantity: <span class="opt-qty-view" th:text="${opt.quantity}" th:data-id="${opt.id}">1</span></span>
                               <span class="fw-bold text-primary">
-                                <span class="opt-total-view" th:text="${'£' + #numbers.formatInteger(opt.price * opt.quantity, 0, 'COMMA')}" th:data-id="${opt.id}">£0</span>
+                                <span class="opt-total-view" th:text="${'£ ' + #numbers.formatDecimal(opt.price * opt.quantity, 1, 'COMMA', 2, 'POINT')}" th:data-id="${opt.id}">£0</span>
                               </span>
                             </div>
                             <div class="d-flex align-items-center">
@@ -302,13 +302,13 @@
           <div class="col-md-4"><strong>Order Number</strong></div>
           <div class="col-md-8 text-end" th:text="${order.code}">ORDER_CODE</div>
         </div>
-        <div class="row mb-2">
+        <!-- <div class="row mb-2">
           <div class="col-md-4"><strong>Customer</strong></div>
           <div class="col-md-8 text-end" th:text="${order.userNo}">Customer Number</div>
-        </div>
+        </div> -->
         <div class="row mb-2">
           <div class="col-md-4"><strong>Shipping Fee</strong></div>
-          <div id="shipping-price" class="col-md-8 text-end" th:text="${'£' + #numbers.formatInteger(order.shipPrice, 0, 'COMMA')}">£0</div>
+          <div id="shipping-price" class="col-md-8 text-end" th:text="${'£ ' + #numbers.formatDecimal(order.shipPrice, 1, 'COMMA', 2, 'POINT')}">£0</div>
         </div>
         <!-- 주문에서는 상태를 표시하지 않음 : 어차피 결제대기 상태임 -->
         <!-- <div class="row mb-2">
@@ -317,7 +317,7 @@
         </div> -->
         <div class="row mb-2 text-danger">
           <div class="col-md-4"><strong>Total Amount</strong></div>
-          <div id="total-price" th:data="${order.totalPrice}" class="col-md-8 text-end" th:text="${'£' + #numbers.formatInteger(order.totalPrice + order.shipPrice, 0, 'COMMA')}">£0</div>
+          <div id="total-price" th:data="${order.totalPrice}" class="col-md-8 text-end" th:text="${'£ ' + #numbers.formatDecimal(order.totalPrice + order.shipPrice, 1, 'COMMA', 2, 'POINT')}">£0</div>
         </div>
       </div>
     </div>
@@ -328,13 +328,13 @@
         <!-- 결제 방식 선택 카드 버튼 -->
         <div class="row g-3 mb-4">
           <div class="col-md-6">
-            <div class="payment-card" id="cash-card" data-payment="cash">
+            <div class="payment-card" id="cash-card" data-payment="transfer">
               <div class="payment-card-body">
                 <div class="payment-icon">
                   <i class="material-icons">credit_card</i>
                 </div>
                 <div class="payment-info">
-                  <h5 class="payment-title">Cash Payment</h5>
+                  <h5 class="payment-title">Transfer Payment</h5>
                   <p class="payment-desc">Payment information sent via email</p>
                 </div>
                 <div class="payment-check">
@@ -368,7 +368,7 @@
             <div class="alert alert-info d-flex align-items-center">
               <i class="material-icons me-2">email</i>
               <div>
-                <strong>Cash Payment Guide</strong><br>
+                <strong>Payment Guide</strong><br>
                 <small>Payment information and instructions will be sent to your email after order completion.</small>
               </div>
             </div>
@@ -391,10 +391,10 @@
                   <option value="">Please select a currency</option>
                   <option value="btc">Bitcoin (BTC)</option>
                   <option value="eth">Ethereum (ETH)</option>
-                  <option value="usdt">Tether (USDT)</option>
-                  <option value="usdc">USD Coin (USDC)</option>
-                  <option value="ltc">Litecoin (LTC)</option>
-                  <option value="bch">Bitcoin Cash (BCH)</option>
+                  <!-- <option value="usdt">Tether (USDT)</option> -->
+                  <!-- <option value="usdc">USD Coin (USDC)</option> -->
+                  <!-- <option value="ltc">Litecoin (LTC)</option> -->
+                  <!-- <option value="bch">Bitcoin Cash (BCH)</option> -->
                 </select>
               </div>
               <div class="col-md-6">
@@ -542,7 +542,7 @@
       // 화면에 표시
       const totalPriceText = document.getElementById('total-price');
       if(totalPriceText) {
-        totalPriceText.innerText = '£' + total.toLocaleString();
+        totalPriceText.innerText = '£ ' + total.toLocaleString();
         totalPriceText.setAttribute('data', total);
       }
       
@@ -584,7 +584,7 @@
         });
       });
 
-      // 기본적으로 Cash Payment 선택
+      // 기본적으로 Transfer Payment 선택
       document.getElementById('cash-card').classList.add('selected');
 
       // 초기 결제 금액 설정
@@ -648,7 +648,7 @@
       let buyerPhone = document.getElementById('buyerPhone').value;
       buyerPhone = buyerPhone.replace(/[^\d]/g, '');
       
-      if (!buyerFirstName || !buyerLastName || !buyerEmail || !buyerPhone) {
+      if (!buyerFirstName || !buyerLastName || !buyerEmail ) {
         $alert('Input Error', 'Please fill in all customer details.', 'warning');
         return;
       }
@@ -662,7 +662,7 @@
       const paymentMethod = selectedCard.getAttribute('data-payment').toUpperCase();
 
       // 결제 방식별 처리
-      if (paymentMethod === 'CASH') {
+      if (paymentMethod === 'TRANSFER') {
         // 현금 결제 처리
         processCashPayment();
       } else if (paymentMethod === 'COIN') {
@@ -680,7 +680,7 @@
       const addressNo = document.querySelector('input[name="addressNo"]:checked') ? document.querySelector('input[name="addressNo"]:checked').value : null;
 
       $confirm(
-        'Cash Payment Confirmation', 
+        'Transfer Payment Confirmation', 
         'Do you want to complete the order with cash payment?\nPayment information will be sent to your email after order completion.', 
         'question',
         'Pay',
@@ -709,7 +709,7 @@
             type: 'POST',
             data: { 
               orderId: orderId,
-              paymentMethod: 'CASH',
+              paymentMethod: 'Transfer',
               buyerFirstName: buyerFirstName,
               buyerLastName: buyerLastName,
               buyerEmail: buyerEmail,
@@ -888,7 +888,7 @@
             // 수량*가격 합계 갱신
             const price = parseInt(input.closest('.border').querySelector('.me-2:nth-child(2) span').innerText.replace(/[^\d]/g, ''));
             input.closest('.border').querySelector('.opt-qty-view').innerText = qty;
-            input.closest('.border').querySelector('.opt-total-view').innerText = '£' + (price * qty).toLocaleString();
+            input.closest('.border').querySelector('.opt-total-view').innerText = '£ ' + (price * qty).toLocaleString();
             
             // 총 결제금액 업데이트
             const total = updateTotalPrice();
@@ -930,7 +930,7 @@
             // 수량*가격 합계 갱신
             const price = parseInt(input.closest('.border').querySelector('.me-2:nth-child(2) span').innerText.replace(/[^\d]/g, ''));
             input.closest('.border').querySelector('.opt-qty-view').innerText = qty;
-            input.closest('.border').querySelector('.opt-total-view').innerText = '£' + (price * qty).toLocaleString();
+            input.closest('.border').querySelector('.opt-total-view').innerText = '£ ' + (price * qty).toLocaleString();
             
             // 총 결제금액 업데이트
             const total = updateTotalPrice();

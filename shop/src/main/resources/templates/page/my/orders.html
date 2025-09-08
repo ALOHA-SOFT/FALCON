@@ -6,7 +6,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Order History - FALCON</title>
+  <title>Order History - Falcon Cartons</title>
 </head>
 <body layout:fragment="content">
 
@@ -52,18 +52,18 @@
                 <p class="text-muted mb-1"> 
                   <th:block th:each="item, itemStat : ${order.orderItems}">
                     <th:block th:each="option, optionStat : ${item.orderItemOptions}">
-                      <span th:text="${option.option.name} + ': ' + ${#numbers.formatInteger(option.option.price * option.quantity, 0, 'COMMA')}"></span>
-                      <span th:text="|(${#numbers.formatInteger(option.option.price, 0, 'COMMA')}x${#numbers.formatInteger(option.quantity, 0, 'COMMA')})|">Option Name (2 pcs)</span>
+                      <span th:text="${option.option.name} + ': ' + ${#numbers.formatDecimal(option.option.price * option.quantity, 1, 'COMMA', 2, 'POINT')}"></span>
+                      <span th:text="|(£${#numbers.formatDecimal(option.option.price, 1, 'COMMA', 2, 'POINT')}x${#numbers.formatInteger(option.quantity, 0, 'COMMA')})|">Option Name (2 pcs)</span>
                       <span th:if="!${optionStat.last}">, </span>
                     </th:block>
                     <span th:if="!${itemStat.last}"> | </span>
                   </th:block>
                 </p>
-                <p class="text-muted mb-1" th:text="'Shipping: ₩' + ${#numbers.formatInteger(order.shipPrice, 3, 'COMMA')}">Shipping: ₩3,000</p>
+                <p class="text-muted mb-1" th:text="'Shipping: £' + ${#numbers.formatDecimal(order.shipPrice, 1, 'COMMA', 2, 'POINT')}">Shipping: £3,000</p>
                 <p class="text-muted mb-1" th:text="'Quantity: ' + ${order.orderItems.size()} + ' items'">Quantity: 1 items</p>
               </div>
               <div class="col-md-2">
-                <p class="fw-bold" th:text="'₩' + ${order.totalPrice != null ? #numbers.formatInteger(order.totalPrice, 3, 'COMMA') : '0'}">₩20,000</p>
+                <p class="fw-bold" th:text="'£ ' + ${order.totalPrice != null ? #numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 2, 'POINT') : '0.00'}">£20,000</p>
                 <th:block th:if="${order.status == '결제대기'}">
                   <a th:href="@{/pay/order/{id}(id=${order.id})}" class="btn btn-primary btn-sm mt-2">Pay Now</a>
                 </th:block>

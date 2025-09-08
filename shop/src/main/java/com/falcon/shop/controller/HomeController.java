@@ -130,10 +130,10 @@ public class HomeController {
    * 고객안내
    * @return
    */
-  @GetMapping("/info")
-  public String info() {
-      return "page/info";
-  }
+  // @GetMapping("/info")
+  // public String info() {
+  //     return "page/info";
+  // }
   
   
   /**

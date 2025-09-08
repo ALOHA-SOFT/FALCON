@@ -3,7 +3,7 @@
   "description": "Falcon Shop Spring Boot application build project",
   "source": {
     "type": "GITHUB",
-    "location": "https://github.com/ALOHA-SOFT/FALCON.git",
+    "location": "https://github.com/ALOHA-SOFT/Falcon Cartons.git",
     "buildspec": "buildspec.yml"
   },
   "artifacts": {

@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cancel/Return - FALCON</title>
+  <title>Cancel/Return - Falcon Cartons</title>
 </head>
 
 <body layout:fragment="content">
@@ -47,7 +47,7 @@
                 <p class="text-muted mb-1" th:text="'Cancel Type: ' + ${cancel.type}">Cancel Type: Order cancellation</p>
               </div>
               <div class="col-md-2">
-                <p class="fw-bold" th:text="'₩' + ${#numbers.formatInteger(cancel.order.totalPrice, 3, 'COMMA')}">₩25,000</p>
+                <p class="fw-bold" th:text="'£ ' + ${#numbers.formatDecimal(cancel.order.totalPrice, 1, 'COMMA', 2, 'POINT')}">£25,000</p>
               </div>
             </div>
             <div class="text-end mt-2">

@@ -6,7 +6,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FALCON</title>
+  <title>Falcon Cartons</title>
 </head>
 <body layout:fragment="content">
 
@@ -114,7 +114,7 @@
                 
                 <!-- 가격 -->
                 <div style="font-family: 'Helvetica Neue'; font-size: 20px; font-weight: 700; line-height: 1.5; color: #21257E;">
-                  <th:block th:text="${product.price == null ? '' : '£' + #numbers.formatInteger(product.price, 0, 'COMMA')}"></th:block>
+                  <th:block th:text="${product.price == null ? '' : '£ ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}"></th:block>
                 </div>
                 
                 <!-- Quantity 섹션 -->
@@ -430,7 +430,7 @@
             </a>
             <div class="card-body text-center">
           <h5 class="card-title" th:text="${ product.name }">상품명 1</h5>
-          <p class="card-text" th:text="${ #numbers.formatInteger(product.price, 0, 'COMMA') + ' 원' }">₩10,000</p>
+          <p class="card-text" th:text="${ product.price != null ? '£ ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT') : '' }">£10,000</p>
             </div>
             <div class="card-footer bg-transparent">
           <div class="d-flex justify-content-end align-items-center">
@@ -591,7 +591,7 @@
       });
       
       cartItemsDiv.innerHTML = itemsHtml;
-      cartTotal.textContent = '£' + totalAmount.toLocaleString();
+      cartTotal.textContent = '£ ' + totalAmount.toLocaleString();
       cartSummary.style.display = 'block';
     }
     

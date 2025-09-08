@@ -6,7 +6,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FALCON - Frequently Asked Questions</title>
+  <title>Falcon Cartons - Frequently Asked Questions</title>
   
   <style>
     .faq-page {
@@ -117,7 +117,7 @@
     
     .faq-categories {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 30px;
       margin-bottom: 80px;
     }
@@ -333,7 +333,7 @@
     <!-- Hero Section -->
     <section class="hero-section">
       <div class="hero-content">
-        <div class="hero-image">FAQ Icon</div>
+        <!-- <div class="hero-image">FAQ Icon</div> -->
         <h1 class="hero-title">Frequently Asked Questions</h1>
         <p class="hero-subtitle">
           Find answers to common questions about our international tobacco distribution services
@@ -366,11 +366,12 @@
             <p class="category-desc">Payment methods, pricing, currency, and billing information</p>
           </div>
           
-          <!-- <div class="category-card" data-category="legal">
-            <div class="category-icon">⚖️</div>
-            <h3 class="category-title">Legal & Compliance</h3>
-            <p class="category-desc">Age verification, customs, regulations, and legal requirements</p>
-          </div> -->
+          <div class="category-card" data-category="other">
+            <div class="category-icon">📋</div>
+            <h3 class="category-title">Other</h3>
+            <p class="category-desc">Miscellaneous questions and information</p>
+          </div>
+          
         </div>
 
         <!-- FAQ Items -->
@@ -381,16 +382,16 @@
               What countries do you ship to?
             </button>
             <div class="faq-answer">
-              <p>We ship to most countries worldwide where tobacco import is legal. However, shipping restrictions may apply to certain regions due to local regulations. Please contact us to confirm if we can ship to your specific location.</p>
+              <p>We currently only ship to the UK.</p>
             </div>
           </div>
 
           <div class="faq-item" data-category="shipping">
             <button class="faq-question">
-              How long does international delivery take?
+              How long does delivery take?
             </button>
             <div class="faq-answer">
-              <p>Delivery times vary by destination. Typically, orders are processed within 1-2 business days and delivery takes 5-15 business days depending on your location and selected shipping method. Express shipping options are available for faster delivery.</p>
+              <p>Delivery will take between 2 and 10 working days, depending on product availability and team work schedule.</p>
             </div>
           </div>
 
@@ -399,7 +400,7 @@
               Do you provide tracking information?
             </button>
             <div class="faq-answer">
-              <p>Yes, all orders include tracking information. You'll receive a tracking number via email once your order ships. You can track your package through our website or the carrier's tracking system.</p>
+              <p>Yes, all orders include tracking information. You'll receive a tracking number via email once your order ships. You can track your package through the courier's tracking system.</p>
             </div>
           </div>
 
@@ -409,7 +410,7 @@
               What tobacco brands do you carry?
             </button>
             <div class="faq-answer">
-              <p>We carry a wide selection of international tobacco brands including premium cigarettes, cigars, and tobacco products from major manufacturers. Our catalog includes both popular and specialty brands from various regions.</p>
+              <p>Please refer to our products page.</p>
             </div>
           </div>
 
@@ -422,70 +423,91 @@
             </div>
           </div>
 
-          <div class="faq-item" data-category="products">
-            <button class="faq-question">
-              Can I request specific products not in your catalog?
-            </button>
-            <div class="faq-answer">
-              <p>Yes, we can often source specific products upon request. Please contact our customer service team with details about the products you're looking for, and we'll do our best to accommodate your needs.</p>
-            </div>
-          </div>
-
           <!-- Payment & Pricing -->
           <div class="faq-item" data-category="payment">
             <button class="faq-question">
               What payment methods do you accept?
             </button>
             <div class="faq-answer">
-              <p>We accept major credit cards (Visa, MasterCard, American Express), PayPal, bank transfers, and cryptocurrency payments. All transactions are processed securely through encrypted payment gateways.</p>
+              <p>We currently only accept Wise transfers and cryptocurrency payments. All transactions are processed securely through encrypted payment gateways.</p>
             </div>
           </div>
 
           <div class="faq-item" data-category="payment">
-            <button class="faq-question">
-              Do prices include taxes and duties?
-            </button>
-            <div class="faq-answer">
-              <p>Our listed prices do not include local taxes, duties, or customs fees that may apply in your country. These additional charges are the responsibility of the customer and will be collected by customs authorities upon delivery.</p>
-            </div>
-          </div>
-
-          <div class="faq-item" data-category="payment">
-            <button class="faq-question">
-              What currency are prices displayed in?
-            </button>
-            <div class="faq-answer">
-              <p>All prices are displayed in USD (US Dollars). However, your bank or payment provider may convert the amount to your local currency at their current exchange rate when processing the payment.</p>
-            </div>
-          </div>
-
-          <!-- Legal & Compliance -->
-          <div class="faq-item" data-category="legal">
             <button class="faq-question">
               What is the minimum age requirement?
             </button>
             <div class="faq-answer">
-              <p>You must be at least 21 years old (or the legal smoking age in your jurisdiction, whichever is higher) to purchase tobacco products. Age verification is required for all orders and will be checked upon delivery.</p>
+              <p>You must be at least 18 years old to use our services.</p>
             </div>
           </div>
 
-          <div class="faq-item" data-category="legal">
+          <div class="faq-item" data-category="payment">
             <button class="faq-question">
-              How do you handle customs and import regulations?
+              What if my order is seized by Customs?
             </button>
             <div class="faq-answer">
-              <p>We work with experienced logistics partners to ensure compliance with international shipping regulations. All necessary customs documentation is provided, but customers are responsible for understanding and complying with their local import laws.</p>
+              <p>In the rare event that an order is seized due to local regulations, we would offer to reship the order, free of charge.</p>
             </div>
           </div>
 
-          <div class="faq-item" data-category="legal">
+         
+
+          <!-- Others -->
+            <div class="faq-item" data-category="other">
             <button class="faq-question">
-              What if my order is seized by customs?
+              I received the tracking number, but there is no update.
             </button>
             <div class="faq-answer">
-              <p>In the rare event that an order is seized due to local regulations, we will work with you to resolve the issue. Depending on the circumstances, we may offer to reship the order or provide store credit for future purchases.</p>
+              <p>We often have tracking labels on us in the warehouse, and we are able to provide the tracking number before we dispatch. Please wait at least a day for updates to start showing on couriers' tracking systems.</p>
             </div>
-          </div>
+            </div>
+
+            <div class="faq-item" data-category="other">
+            <button class="faq-question">
+              Tracking confirms delivery completion, but I have not received the order
+            </button>
+            <div class="faq-answer">
+              <p>If tracking information shows a package was delivered according to the courier company, we must deem it as a successful delivery as we can only go by what we can see on couriers' tracking systems and thus will not be able to replace the order free of charge.</p>
+            </div>
+            </div>
+
+            <div class="faq-item" data-category="other">
+            <button class="faq-question">
+              Tracking shows it has been received at the post office weeks ago, but the order still has not arrived
+            </button>
+            <div class="faq-answer">
+              <p>Unfortunately, courier companies make mistakes from time to time and packages get lost during transit. If the tracking information confirms that the package was received at the post office, but there has not been any movement for 10 working days (15 working days for Northern Ireland), we will reship the order free of charge.</p>
+            </div>
+            </div>
+
+            <div class="faq-item" data-category="other">
+            <button class="faq-question">
+              How does "Guaranteed Delivery" work?
+            </button>
+            <div class="faq-answer">
+              <p>We will guarantee that your order is delivered* or we will give a full refund.<br>* Courier companies' tracking systems showing shipment as "delivered" will be deemed as a successful delivery.</p>
+            </div>
+            </div>
+
+            <div class="faq-item" data-category="other">
+            <button class="faq-question">
+              I missed delivery on multiple occasions
+            </button>
+            <div class="faq-answer">
+              <p>Courier companies will try to deliver your order 2 or 3 times until they are stored at their hubs for 14 days before they are returned to the sender. You must collect your package from the courier company before they attempt to return the package to the sender. We do not accept returns for security reasons, so the courier companies' attempt to return packages will not be successful and therefore, we cannot take responsibility for the package going missing during this process or the return being unsuccessful. Please check your tracking information and "missed parcel" slips if the order is taking longer than usual to arrive to avoid these situations.</p>
+            </div>
+            </div>
+
+            <div class="faq-item" data-category="other">
+            <button class="faq-question">
+              I have used the wrong address. What do I do?
+            </button>
+            <div class="faq-answer">
+              <p>Please contact us ASAP via email (info@falconcartons.com) stating your order number, name and correct address. If we have already dispatched your order before the email, we will not be able to offer refunds, so please double check your details before you complete your purchase.</p>
+            </div>
+            </div>
+
         </div>
       </div>
     </section>
@@ -501,21 +523,10 @@
         <div class="contact-info">
           <div class="contact-item">
             <h4>📧 Email Support</h4>
-            <p>support@falconcartons.com</p>
+            <p>info@falconcartons.com</p>
             <p>Response within 24 hours</p>
           </div>
           
-          <div class="contact-item">
-            <h4>💬 Live Chat</h4>
-            <p>Available 24/7</p>
-            <p>Instant assistance</p>
-          </div>
-          
-          <div class="contact-item">
-            <h4>📞 Phone Support</h4>
-            <p>+1 (555) 123-4567</p>
-            <p>Mon-Fri 9AM-6PM EST</p>
-          </div>
         </div>
       </div>
     </section>

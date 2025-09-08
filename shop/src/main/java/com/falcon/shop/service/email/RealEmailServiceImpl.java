@@ -24,7 +24,7 @@ public class RealEmailServiceImpl implements RealEmailService {
     @Value("${spring.mail.username:noreply@bunsoomarket.com}")
     private String fromAddress;
 
-    @Value("${email.from.name:FALCON}")
+    @Value("${email.from.name:Falcon Cartons}")
     private String fromName;
 
     @Autowired
@@ -35,7 +35,7 @@ public class RealEmailServiceImpl implements RealEmailService {
         log.info("## 임시 비밀번호 이메일 발송 ##");
         log.info("수신자: {}, 사용자명: {}", to, username);
 
-        String subject = "[FALCON] 임시 비밀번호 발송";
+        String subject = "[Falcon Cartons] 임시 비밀번호 발송";
         String htmlContent = createTempPasswordHtml(username, tempPassword);
 
         return sendHtmlEmail(to, subject, htmlContent);
@@ -259,7 +259,7 @@ public class RealEmailServiceImpl implements RealEmailService {
             <body>
                 <div class="container">
                     <div class="header">
-                        <h1>🔐 FALCON</h1>
+                        <h1>🔐 Falcon Cartons</h1>
                         <p>임시 비밀번호 발송</p>
                     </div>
                     
@@ -293,7 +293,7 @@ public class RealEmailServiceImpl implements RealEmailService {
                         <p>본 메일은 발신전용 메일입니다.</p>
                         <p>문의사항이 있으시면 고객센터로 연락해주세요.</p>
                         <p style="margin-top: 15px;">
-                            <strong>FALCON</strong><br>
+                            <strong>Falcon Cartons</strong><br>
                             이메일: support@bunsoomarket.com<br>
                             전화: 02-1234-5678
                         </p>

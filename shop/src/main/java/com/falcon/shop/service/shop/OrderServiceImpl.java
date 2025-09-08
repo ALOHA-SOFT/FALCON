@@ -18,7 +18,6 @@ import com.falcon.shop.domain.shop.OrderItemOption;
 import com.falcon.shop.domain.shop.Orders;
 import com.falcon.shop.domain.system.Seq;
 import com.falcon.shop.domain.system.SeqGroups;
-import com.falcon.shop.domain.users.Address;
 import com.falcon.shop.mapper.products.ProductMapper;
 import com.falcon.shop.mapper.shop.OrderItemMapper;
 import com.falcon.shop.mapper.shop.OrderItemOptionMapper;
@@ -75,7 +74,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Orders, OrderMapper> imple
             log.error("주문 항목이 제공되지 않았습니다.");
             throw new IllegalArgumentException("주문 항목이 필요합니다.");
         }
-        Long totalPrice = 0L;
+        Double totalPrice = 0D;
         Long totalQuantity = 0L;
         for (OrderItem item : orderItems) {
             if (item.getPrice() == null || item.getQuantity() == null) {
@@ -93,7 +92,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Orders, OrderMapper> imple
         orderMapper.insert(order);
 
         // 배송비 설정
-        Long totalShipPrice = 0L;
+        Double totalShipPrice = 0D;
         for (OrderItem item : orderItems) {
             // - 배송비 추가: item 의 productNo 의 Product의 배송비 최댓값을 order 의 배송비로 설정
             if (item.getProductNo() == null) {
@@ -106,11 +105,11 @@ public class OrderServiceImpl extends BaseServiceImpl<Orders, OrderMapper> imple
             queryWrapper.eq("no", item.getProductNo());
             Products product = productMapper.selectOne(queryWrapper);
             log.info("제품 정보: {}", product);
-            Long shipPrice = product != null ? product.getShipPrice() : null;
+            Double shipPrice = product != null ? product.getShipPrice() : null;
             if (shipPrice == null) {
                 log.error("제품의 배송비를 찾을 수 없습니다: 제품 번호 {}", item.getProductNo());
                 // 배송비 0 으로 설정
-                shipPrice = 0L;
+                shipPrice = 0D;
                 // throw new RuntimeException("제품의 배송비를 찾을 수 없습니다.");
             }
             totalShipPrice = Math.max(totalShipPrice, shipPrice);

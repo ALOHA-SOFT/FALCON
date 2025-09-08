@@ -225,7 +225,7 @@
         
         <!-- 가격 -->
         <div class="product-price">
-          <th:block th:text="${product.price == null ? '' : '£' + #numbers.formatInteger(product.price, 0, 'COMMA')}">£52.30</th:block>
+          <th:block th:text="${product.price == null ? '' : '£ ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}">£52.30</th:block>
         </div>
         
         <!-- Quantity 섹션 -->
@@ -451,7 +451,7 @@
       });
       
       cartItemsDiv.innerHTML = itemsHtml;
-      cartTotal.textContent = '£' + totalAmount.toLocaleString();
+      cartTotal.textContent = '£ ' + totalAmount.toLocaleString();
       cartSummary.style.display = 'block';
     }
     

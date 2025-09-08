@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Order Detail - FALCON</title>
+  <title>Order Detail - Falcon Cartons</title>
   <style>
     .order-detail-container {
       max-width: 900px;
@@ -238,7 +238,7 @@
         <span class="info-label">Payment Method</span>
         <span class="payment-method">
           <i class="material-icons">money</i>
-          <span th:text="${order.paymentMethod}">CASH</span>
+          <span th:text="${order.paymentMethod}">TRANSFER</span>
         </span>
       </div>
       <div class="info-row">
@@ -283,7 +283,7 @@
           </div>
         </div>
         <div class="text-end">
-          <div class="product-price" th:text="'£' + ${#numbers.formatInteger(item.price, 3, 'COMMA')}">£11,500</div>
+            <div class="product-price" th:text="'£ ' + ${#numbers.formatDecimal(item.price, 1, 'COMMA', 2, 'POINT')}">£11,500</div>
           <small class="text-muted">per item</small>
         </div>
       </div>
@@ -295,7 +295,7 @@
       <div class="shipping-info">
         <div class="info-row">
           <span class="info-label">Shipping Fee</span>
-          <span class="info-value" th:text="'£' + ${#numbers.formatInteger(order.shipPrice, 3, 'COMMA')}">£2,500</span>
+            <span class="info-value" th:text="'£ ' + ${#numbers.formatDecimal(order.shipPrice, 1, 'COMMA', 2, 'POINT')}">£2,500</span>
         </div>
         <!-- <div class="info-row">
           <span class="info-label">Shipping Message</span>
@@ -310,15 +310,15 @@
       <div class="price-summary">
         <div class="price-row">
           <span>Subtotal</span>
-          <span th:text="'£' + ${#numbers.formatInteger(order.totalPrice - order.shipPrice, 3, 'COMMA')}">£11,500</span>
+            <span th:text="'£ ' + ${#numbers.formatDecimal(order.totalPrice - order.shipPrice, 1, 'COMMA', 2, 'POINT')}">£11,500</span>
         </div>
         <div class="price-row">
           <span>Shipping Fee</span>
-          <span th:text="'£' + ${#numbers.formatInteger(order.shipPrice, 3, 'COMMA')}">£2,500</span>
+            <span th:text="'£ ' + ${#numbers.formatDecimal(order.shipPrice, 1, 'COMMA', 2, 'POINT')}">£2,500</span>
         </div>
         <div class="price-row price-total">
           <span>Total Amount</span>
-          <span th:text="'£' + ${#numbers.formatInteger(order.totalPrice, 3, 'COMMA')}">£14,000</span>
+          <span th:text="'£ ' + ${#numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 2, 'POINT')}">£14,000</span>
         </div>
       </div>
     </div>

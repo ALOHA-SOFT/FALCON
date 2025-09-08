@@ -112,7 +112,8 @@
                 </td>
                 <td>
                   <!-- 할인가 필드가 없으므로 기본 가격만 표시 -->
-                  <div class="fw-bold" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'"></div>
+                  <!-- <div class="fw-bold" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'"></div> -->
+                  <div class="fw-bold" th:text="'£ ' + ${#numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}"></div>
                 </td>
                 <td>
                   <span th:class="${product.stock <= 0} ? 'badge bg-danger' : (${product.stock <= 10} ? 'badge bg-warning' : 'badge bg-success')" th:text="${product.stock}"></span>

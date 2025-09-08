@@ -34,7 +34,7 @@ public class OrderItem extends Base {
   private Long productNo;
   private Long orderNo;
   private Long quantity;
-  private Long price;
+  private Double price;
 
   @TableField
   private Products product;

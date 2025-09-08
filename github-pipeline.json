@@ -20,7 +20,7 @@
             },
             "configuration": {
               "ConnectionArn": "arn:aws:codestar-connections:eu-west-2:516723930299:connection/3ea1d474-5870-441c-be09-df6033c08cea",
-              "FullRepositoryId": "ALOHA-SOFT/FALCON",
+              "FullRepositoryId": "ALOHA-SOFT/Falcon Cartons",
               "BranchName": "main"
             },
             "outputArtifacts": [

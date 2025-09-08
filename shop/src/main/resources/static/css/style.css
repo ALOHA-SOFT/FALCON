@@ -1,4 +1,4 @@
-/* FALCON Shopping Mall - UK Theme */
+/* Falcon Cartons Shopping Mall - UK Theme */
 :root {
   --falcon-primary: #212529;
   --falcon-secondary: #666666;
@@ -122,12 +122,12 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Service Features */
 .service-features {
-  padding: 100px 0;
+  padding: 50px 0 25px;
   background: var(--falcon-light);
 }
 
 .service-title {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 400;
   color: var(--falcon-secondary);
   letter-spacing: 0.2em;
@@ -150,7 +150,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Brand Logos */
 .brand-section {
-  padding: 50px 0;
+  padding: 25px 0;
   background: var(--falcon-light);
 }
 

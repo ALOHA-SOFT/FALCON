@@ -29,8 +29,8 @@ public class Products extends Base {
   private Long categoryNo;            // 카테고리 번호 (FK)
   private Long categoryLargeNo;       // 대분류 번호 (FK)
   private Long optionGroupNo;         // 옵션그룹 번호 (FK, nullable)
-  private Long price;                 // 가격
-  private Long shipPrice;             // 배송비
+  private Double price;                 // 가격
+  private Double shipPrice;             // 배송비
   private String shipMsg;             // 배송안내
   private String summary;             // 상품정보 요약
   private String content;             // 상품상세

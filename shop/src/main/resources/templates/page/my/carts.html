@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shopping Cart - FALCON</title>
+  <title>Shopping Cart - Falcon Cartons</title>
   <style>
     .cart-container {
       max-width: 1080px;
@@ -415,7 +415,7 @@
             <!-- 상품 정보 -->
             <div class="cart-details">
               <h3 class="cart-product-name" th:text="${cart.product != null ? cart.product.name : 'Product Name'}">King Blue</h3>
-              <div class="cart-product-price" th:text="${cart.product != null and cart.product.price != null ? '£' + #numbers.formatDecimal(cart.product.price, 0, 2) : '£0.00'}">£52.30</div>
+              <div class="cart-product-price" th:text="${cart.product != null and cart.product.price != null ? '£ ' + #numbers.formatDecimal(cart.product.price, 0, 2) : '£0.00'}">£52.30</div>
             </div>
             
             <!-- 수량 조절 및 액션 -->
@@ -436,7 +436,7 @@
               
               <!-- 총 가격 -->
               <div class="cart-total-price">
-                <span class="price" th:text="${cart.product != null and cart.product.price != null ? '£' + #numbers.formatDecimal(cart.product.price * cart.quantity, 0, 2) : '£0.00'}">£156.90</span>
+                <span class="price" th:text="${cart.product != null and cart.product.price != null ? '£ ' + #numbers.formatDecimal(cart.product.price * cart.quantity, 0, 2) : '£0.00'}">£156.90</span>
               </div>
               
             </div>
@@ -546,7 +546,7 @@ SHIPPING & HANDLING FEES
         const cartId = card.dataset.cartId;
         const productName = card.querySelector('.cart-product-name').textContent;
         const priceText = card.querySelector('.cart-product-price').textContent;
-        const price = parseFloat(priceText.replace('£', '').replace(',', ''));
+        const price = parseFloat(priceText.replace('£ ', '').replace(',', ''));
         const quantity = parseInt(card.querySelector('.quantity-input').value);
         
         return {
@@ -580,9 +580,9 @@ SHIPPING & HANDLING FEES
           
           // 가격 계산 및 업데이트
           const priceText = cartCard.querySelector('.cart-product-price').textContent;
-          const unitPrice = parseFloat(priceText.replace('£', '').replace(',', ''));
+          const unitPrice = parseFloat(priceText.replace('£ ', '').replace(',', ''));
           const newTotal = unitPrice * newQuantity;
-          totalPriceElement.textContent = '£' + newTotal.toFixed(2);
+          totalPriceElement.textContent = '£ ' + newTotal.toFixed(2);
           
           // 장바구니 데이터 업데이트
           loadCartData();
@@ -697,9 +697,9 @@ SHIPPING & HANDLING FEES
       const finalTotalElement = document.getElementById('final-total');
       
       if (itemCountElement) itemCountElement.textContent = itemCount;
-      if (subtotalElement) subtotalElement.textContent = '£' + subtotal.toFixed(2);
-      if (shippingFeeElement) shippingFeeElement.textContent = '£' + shippingFee.toFixed(2);
-      if (finalTotalElement) finalTotalElement.textContent = '£' + finalTotal.toFixed(2);
+      if (subtotalElement) subtotalElement.textContent = '£ ' + subtotal.toFixed(2);
+      if (shippingFeeElement) shippingFeeElement.textContent = '£ ' + shippingFee.toFixed(2);
+      if (finalTotalElement) finalTotalElement.textContent = '£ ' + finalTotal.toFixed(2);
     }
   </script>
 

@@ -71,7 +71,7 @@ public class CryptoPaymentApi {
             paymentData.put("price_currency", request.get("price_currency"));
             paymentData.put("pay_currency", request.get("pay_currency"));
             paymentData.put("order_id", request.get("orderId"));
-            paymentData.put("order_description", "FALCON Shop Order #" + request.get("orderId"));
+            paymentData.put("order_description", "Falcon Cartons Shop Order #" + request.get("orderId"));
             
             // 콜백 URL 설정
             paymentData.put("ipn_callback_url", "http://localhost:8080/api/payment/crypto/callback");

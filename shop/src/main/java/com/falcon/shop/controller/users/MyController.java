@@ -3,9 +3,7 @@ package com.falcon.shop.controller.users;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -170,28 +168,31 @@ public class MyController {
     QueryParams queryParams,
     Model model
   ) {
-    // 사용자 번호로 취소 목록 조회
-    Long userNo = customUser.getUser().getNo();
-    log.info("Fetching cancellations for userNo: {}", userNo);
-    model.addAttribute("userNo", userNo);
-    PageInfo<?> pageInfo = cancellationService.page(queryParams, userNo);
-    model.addAttribute("pageInfo", pageInfo);
-    Long total = pageInfo.getTotal();
-    pagination.setPage(queryParams.getPage());
-    pagination.setSize(queryParams.getSize());
-    pagination.setTotal(total);
-    model.addAttribute("pagination", pagination);
-    model.addAttribute("cancellationList", pageInfo.getList());
-    log.info("################################ LIST {}", pageInfo.getList());
-    // Uri 빌더
-    String pageUri = UriComponentsBuilder.fromPath("/my/cancel")
-                                        // Pagination
-                                         .queryParam("size", pagination.getSize())
-                                          .build()
-                                          .toUriString();
-    model.addAttribute("pageUri", pageUri);
+
+    return "redirect:/my";
+    // FIX : 보류
+    // // 사용자 번호로 취소 목록 조회
+    // Long userNo = customUser.getUser().getNo();
+    // log.info("Fetching cancellations for userNo: {}", userNo);
+    // model.addAttribute("userNo", userNo);
+    // PageInfo<?> pageInfo = cancellationService.page(queryParams, userNo);
+    // model.addAttribute("pageInfo", pageInfo);
+    // Long total = pageInfo.getTotal();
+    // pagination.setPage(queryParams.getPage());
+    // pagination.setSize(queryParams.getSize());
+    // pagination.setTotal(total);
+    // model.addAttribute("pagination", pagination);
+    // model.addAttribute("cancellationList", pageInfo.getList());
+    // log.info("################################ LIST {}", pageInfo.getList());
+    // // Uri 빌더
+    // String pageUri = UriComponentsBuilder.fromPath("/my/cancel")
+    //                                     // Pagination
+    //                                      .queryParam("size", pagination.getSize())
+    //                                       .build()
+    //                                       .toUriString();
+    // model.addAttribute("pageUri", pageUri);
     
-    return "page/my/cancel";
+    // return "page/my/cancel";
   }
 
 

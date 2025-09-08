@@ -30,7 +30,7 @@ public class Carts extends Base {
   private Long userNo;
   private Long productNo;
   private Long quantity;
-  private Long totalPrice;
+  private Double totalPrice;
   private String options; 
   /* options - JSON
     [

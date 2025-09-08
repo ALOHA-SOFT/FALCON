@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FALCON - Premium Cigarettes UK</title>
+  <title>Falcon Cartons - Premium Cigarettes UK</title>
   <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&display=swap" rel="stylesheet">
   <!-- Masonry Library -->
   <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
@@ -54,7 +54,8 @@
                 <h3 class="product-title" th:text="${product.name}">KING BLUE KING BLUE KING BLUE</h3>
                 <p class="product-price" 
                    th:if="${!product.isSoldOut}"
-                   th:text="${product.price != null ? '£' + #numbers.formatInteger(product.price, 0, 'COMMA') : product.priceInfo}">£52.30</p>
+                   th:text="${product.price != null ? '£ ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT') : product.priceInfo}"
+                   >£52.30</p>
                 <p class="product-price out-of-stock" 
                    th:if="${product.isSoldOut}"
                    th:text="'OUT OF STOCK'">OUT OF STOCK</p>

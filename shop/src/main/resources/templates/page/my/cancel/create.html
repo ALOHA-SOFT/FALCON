@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cancel/Return - FALCON</title>
+  <title>Cancel/Return - Falcon Cartons</title>
 </head>
 
 <body layout:fragment="content">
@@ -28,21 +28,23 @@
             <th:block th:each="item, itemStat : ${order.orderItems}">
               <th:block th:each="option, optionStat : ${item.orderItemOptions}">
                 <span
-                  th:text="${option.option.name} + ': ' + ${#numbers.formatInteger(option.option.price * option.quantity, 0, 'COMMA')}"></span>
+                  th:text="${option.option.name} + ': ' + ${#numbers.formatDecimal(option.option.price * option.quantity, 1, 'COMMA', 2, 'POINT')}"></span>
                 <span
-                  th:text="|(${#numbers.formatInteger(option.option.price, 0, 'COMMA')}x${#numbers.formatInteger(option.quantity, 0, 'COMMA')})|">Option Name
-                  (2)</span>
+                  th:text="|(£ ${#numbers.formatDecimal(option.option.price, 1, 'COMMA', 2, 'POINT')}x${#numbers.formatInteger(option.quantity, 0, 'COMMA')})|"></span>
+                  Option Name (2)</span>
                 <span th:if="!${optionStat.last}">, </span>
               </th:block>
               <span th:if="!${itemStat.last}"> | </span>
             </th:block>
           </p>
           <p class="text-muted mb-1"
-            th:text="'Shipping: ₩' + ${#numbers.formatInteger(order.shipPrice, 3, 'COMMA')}">Shipping: ₩3,000</p>
+            th:text="'Shipping: £ ' + ${#numbers.formatDecimal(order.shipPrice, 1, 'COMMA', 2, 'POINT')}"></p>
+            Shipping: £3,000
+          </p>
           <p class="text-muted mb-1" th:text="'Quantity: ' + ${order.orderItems.size()} + ' items'">Quantity: 1 item</p>
         </div>
         <div class="col-md-4">
-          <p class="fw-bold fs-5" th:text="'₩' + ${#numbers.formatInteger(order.totalPrice, 3, 'COMMA')}">₩20,000</p>
+          <p class="fw-bold fs-5" th:text="'£ ' + ${#numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 2, 'POINT')}">£20,000</p>
         </div>
       </div>
     </div>
