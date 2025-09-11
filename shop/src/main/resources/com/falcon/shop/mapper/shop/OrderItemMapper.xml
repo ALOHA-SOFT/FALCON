@@ -14,7 +14,7 @@
         <result property="quantity" column="quantity"/>
         <result property="price" column="price"/>
         <association property="product" javaType="Products" column="product_no" select="selectProduct"/>
-        <collection property="orderItemOptions" ofType="OrderItemOption" column="no" select="listByOrderItem" />
+        <collection property="orderItemOptions" ofType="OrderItemOption" column="no" select="listByOrderItem"/>
     </resultMap>
 
     <!-- 주문 번호로 주문 항목 조회 -->

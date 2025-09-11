@@ -317,7 +317,7 @@
         </div> -->
         <div class="row mb-2 text-danger">
           <div class="col-md-4"><strong>Total Amount</strong></div>
-          <div id="total-price" th:data="${order.totalPrice}" class="col-md-8 text-end" th:text="${'£ ' + #numbers.formatDecimal(order.totalPrice + order.shipPrice, 1, 'COMMA', 2, 'POINT')}">£0</div>
+          <div id="total-price" th:data="${order.totalPrice}" class="col-md-8 text-end" th:text="${'£ ' + #numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 2, 'POINT')}">£0</div>
         </div>
       </div>
     </div>
@@ -551,15 +551,15 @@
     
     // 페이지 로드 시 총 결제금액 계산 및 결제 카드 초기화
     document.addEventListener('DOMContentLoaded', function() {
-      const total = updateTotalPrice();
-      
-      // 서버에 총 결제금액 동기화
-      const orderId = "[[${order.id}]]" || 0;
-      $ajax({
-        url: '/api/shop/order',
-        type: 'PUT',
-        data: { id: orderId, totalPrice: total }
-      });
+      // TODO : 필요없는 중복된 로직 검토 후 제거
+      // // 서버에 총 결제금액 동기화
+      // const total = updateTotalPrice();
+      // const orderId = "[[${order.id}]]" || 0;
+      // $ajax({
+      //   url: '/api/shop/order',
+      //   type: 'PUT',
+      //   data: { id: orderId, totalPrice: total }
+      // });
 
       // 결제 카드 클릭 이벤트
       document.querySelectorAll('.payment-card').forEach(function(card) {

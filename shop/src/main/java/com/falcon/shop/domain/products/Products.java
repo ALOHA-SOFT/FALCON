@@ -1,5 +1,6 @@
 package com.falcon.shop.domain.products;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.ibatis.type.Alias;
@@ -29,8 +30,8 @@ public class Products extends Base {
   private Long categoryNo;            // 카테고리 번호 (FK)
   private Long categoryLargeNo;       // 대분류 번호 (FK)
   private Long optionGroupNo;         // 옵션그룹 번호 (FK, nullable)
-  private Double price;                 // 가격
-  private Double shipPrice;             // 배송비
+  private BigDecimal price;                 // 가격
+  private BigDecimal shipPrice;             // 배송비
   private String shipMsg;             // 배송안내
   private String summary;             // 상품정보 요약
   private String content;             // 상품상세

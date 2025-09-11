@@ -20,5 +20,8 @@ public interface OrderService extends BaseService<Orders> {
     // 주문 조회 - ID
     public Orders selectById(String id);
 
+    // 주문처리
+    public boolean processOrder(Orders order);
+
     
 }

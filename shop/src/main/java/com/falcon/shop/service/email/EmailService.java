@@ -97,4 +97,14 @@ public interface EmailService extends BaseService<Email> {
      * @return 이메일 목록
      */
     List<Email> getEmailsBySendType(String sendType);
+
+    /**
+     * 결제 완료 이메일 발송
+     * @param orderCode 주문코드
+     * @param paymentMethod 결제방식
+     * @param recipientEmail 받는사람 이메일
+     * @param recipientName 받는사람 이름
+     * @return 발송 성공 여부
+     */
+    boolean sendPaymentCompleteEmail(Orders order, String paymentMethod, String recipientEmail, String recipientName);
 }

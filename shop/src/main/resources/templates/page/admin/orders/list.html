@@ -94,6 +94,8 @@
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="#" onclick="updateSelectedStatus('결제대기')">결제대기</a></li>
                     <li><a class="dropdown-item" href="#" onclick="updateSelectedStatus('결제완료')">결제완료</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="updateSelectedStatus('배송준비중')">배송준비중</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="updateSelectedStatus('배송시작')">배송시작</a></li>
                     <li><a class="dropdown-item" href="#" onclick="updateSelectedStatus('배송중')">배송중</a></li>
                     <li><a class="dropdown-item" href="#" onclick="updateSelectedStatus('배송완료')">배송완료</a></li>
                     <li><a class="dropdown-item" href="#" onclick="updateSelectedStatus('주문취소')">주문취소</a></li>
@@ -129,21 +131,25 @@
                 <td>
                   <div class="form-check">
                     <input class="form-check-input order-checkbox" type="checkbox" 
-                           th:value="${order.id}" th:id="'check-' + ${order.id}">
+                           th:value="${order.id}" th:id="'check-' + ${order.id}" th:data-shipment-id="${order.shipment != null ? order.shipment.id : ''}">
                   </div>
                 </td>
                 <td th:text="${iterStat.count}">1</td>
-                <td th:text="${order.code}">20250101_001_001_001</td>
+                <td>
+                  <a th:href="@{/admin/orders/{id}/process(id=${order.id})}" th:text="${order.code}"></a>
+                </td>
                 <td th:text="${order.title}">상품1 외 5건</td>
                 <td th:text="${#numbers.formatInteger(order.totalPrice, 0, 'COMMA')}">50,000</td>
                 <td th:text="${order.totalQuantity}">3</td>
                 <td>
-                    <span class="badge p-3 fs-5 bg-warning" th:if="${order.status == '결제대기'}">결제대기</span>
-                    <span class="badge p-3 fs-5 bg-success" th:if="${order.status == '결제완료'}">결제완료</span>
-                    <span class="badge p-3 fs-5 bg-info" th:if="${order.status == '배송중'}">배송중</span>
-                    <span class="badge p-3 fs-5 bg-primary" th:if="${order.status == '배송완료'}">배송완료</span>
-                    <span class="badge p-3 fs-5 bg-danger" th:if="${order.status == '주문취소'}">주문취소</span>
-                    <span class="badge p-3 fs-5 bg-secondary" th:if="${order.status == '환불완료'}">환불완료</span>
+                    <span class="badge p-2 fs-6 bg-warning" th:if="${order.status == '결제대기'}">결제대기</span>
+                    <span class="badge p-2 fs-6 bg-success" th:if="${order.status == '결제완료'}">결제완료</span>
+                    <span class="badge p-2 fs-6 bg-info" th:if="${order.status == '배송준비중'}">배송준비중</span>
+                    <span class="badge p-2 fs-6 bg-info" th:if="${order.status == '배송시작'}">배송시작</span>
+                    <span class="badge p-2 fs-6 bg-info" th:if="${order.status == '배송중'}">배송중</span>
+                    <span class="badge p-2 fs-6 bg-primary" th:if="${order.status == '배송완료'}">배송완료</span>
+                    <span class="badge p-2 fs-6 bg-danger" th:if="${order.status == '주문취소'}">주문취소</span>
+                    <span class="badge p-2 fs-6 bg-secondary" th:if="${order.status == '환불완료'}">환불완료</span>
                 </td>
                 <td th:text="${#dates.format(order.createdAt, 'yyyy-MM-dd HH:mm')}">2024-01-01 10:00</td>
                 <td>
@@ -338,10 +344,21 @@
 
       // 순차적으로 상태 변경 요청
       const updatePromises = orderIds.map(orderId => {
+
+        const order = {
+          id: orderId,
+          status: status,
+          shipment: {
+            id: document.querySelector(`#check-${orderId}`).getAttribute('data-shipment-id'),
+            status: status
+          }
+        };
+
         return $ajax({
-          url: '/api/shop/order',
-          type: 'PUT',
-          data: { id: orderId, status: status }
+          // url: '/api/shop/order',
+          url: '/api/shop/order/process',
+          type: 'POST',
+          data: order
         }).then(() => {
           successCount++;
         }).catch(() => {
@@ -422,6 +439,16 @@
     // 전역 함수 등록 (onclick에서 사용하기 위해)
     window.deleteOrder = deleteOrder;
     window.updateSelectedStatus = updateSelectedStatus;
+
+
+
+
+
+
+
+
+
+
   </script>
 
 </body>

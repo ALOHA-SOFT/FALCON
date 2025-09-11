@@ -196,6 +196,7 @@ CREATE TABLE `orders` (
   `id` varchar(64) NOT NULL COMMENT 'UK',
   `user_no` bigint NOT NULL COMMENT 'FK',
   `address_no` bigint NULL COMMENT 'FK',
+  `shipment_no` bigint NULL COMMENT 'FK',
   `code` varchar(200) DEFAULT NULL COMMENT '주문코드 (20250101_상품번호_유저번호_당일시퀀스)',
   `title` text NOT NULL COMMENT '주문제목 (상품1 외 5건)',
   `guest_tel` varchar(100) DEFAULT NULL COMMENT '비회원 전화번호',
@@ -207,7 +208,7 @@ CREATE TABLE `orders` (
   `total_item_count` bigint DEFAULT NULL COMMENT '총 항목수',
   `ship_price` DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT '배송비',
   `payment_method` enum('CASH','COIN','CARD','TRANSFER') DEFAULT 'CARD' COMMENT '결제방식 (현금, 코인, 카드, 계좌이체)',
-  `status` enum('결제대기','결제완료','배송중','배송완료','주문취소','환불완료') DEFAULT '결제대기' COMMENT '상태 (''결제대기'',''결제완료'',''배송중'',''배송완료'',''주문취소'',''환불완료'')',
+  `status` enum('결제대기','결제완료','배송준비중','배송시작','배송중','배송완료','주문취소','환불완료') DEFAULT '결제대기' COMMENT '상태 (''결제대기'',''결제완료'',''배송준비중'',''배송시작'',''배송중'',''배송완료'',''주문취소'',''환불완료'')',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '등록일자',
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일자',
   PRIMARY KEY (`no`),
@@ -215,7 +216,8 @@ CREATE TABLE `orders` (
   KEY `user_no` (`user_no`),
   KEY `address_no` (`address_no`),
   CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_no`) REFERENCES `users` (`no`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`address_no`) REFERENCES `address` (`no`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`address_no`) REFERENCES `address` (`no`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `orders_ibfk_3` FOREIGN KEY (`shipment_no`) REFERENCES `shipments` (`no`) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 DROP TABLE IF EXISTS `order_item`;

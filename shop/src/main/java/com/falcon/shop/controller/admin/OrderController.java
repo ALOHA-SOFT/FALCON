@@ -199,4 +199,26 @@ public class OrderController {
         }
         return "redirect:/admin/orders";
     }
+
+    // 주문 처리 화면
+    @GetMapping("/{id}/process")
+    public String processOrder(@PathVariable("id") String id, Model model) {
+        Orders order = orderService.selectById(id);
+        if (order == null) {
+            log.error("Order with id {} not found", id);
+            return "redirect:/admin/orders";
+        }
+        log.info("### 주문 상품 목록 ");
+        log.info("👩‍💼 : {}", order.getOrderItems());
+        log.info("############################################");
+        log.info("### 주문자 정보 ");
+        log.info("👩‍💼 : {}", order.getUser());
+        log.info("############################################");
+        log.info("### 배송 정보 ");
+        log.info("🚚 : {}", order.getShipment());
+        log.info("############################################");
+        model.addAttribute("order", order);
+        return "page/admin/orders/process";
+    }
+
 }

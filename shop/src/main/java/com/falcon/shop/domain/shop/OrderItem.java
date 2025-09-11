@@ -1,5 +1,6 @@
 package com.falcon.shop.domain.shop;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.ibatis.type.Alias;
@@ -34,7 +35,7 @@ public class OrderItem extends Base {
   private Long productNo;
   private Long orderNo;
   private Long quantity;
-  private Double price;
+  private BigDecimal price;
 
   @TableField
   private Products product;

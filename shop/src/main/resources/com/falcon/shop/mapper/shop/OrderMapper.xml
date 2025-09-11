@@ -10,6 +10,7 @@
         <result property="id" column="id"/>
         <result property="userNo" column="user_no"/>
         <result property="addressNo" column="address_no"/>
+        <result property="shipmentNo" column="shipment_no"/>
         <result property="code" column="code"/>
         <result property="title" column="title"/>
         <result property="guestTel" column="guest_tel"/>
@@ -17,7 +18,9 @@
         <result property="totalQuantity" column="total_quantity"/>
         <result property="totalItemCount" column="total_item_count"/>
         <result property="status" column="status"/>
-        <collection property="orderItems" ofType="OrderItem" column="no" select="listByOrder"></collection>
+        <association property="user" column="user_no" javaType="Users" select="selectUser"/>
+        <association property="shipment" column="shipment_no" javaType="Shipments" select="selectShipment"/>
+        <collection property="orderItems" column="no" ofType="OrderItem" select="listByOrder"/>
     </resultMap>
 
     <select id="listWithParams" resultMap="OrderMap">
@@ -75,6 +78,21 @@
         SELECT *
         FROM orders
         WHERE id = #{id}
+    </select>
+
+
+    <!-- 사용자 정보 with 주문정보 -->
+    <select id="selectUser" resultType="Users">
+        SELECT *
+        FROM users
+        WHERE no = #{userNo}
+    </select>
+
+    <!-- 배송 정보 with 주문정보 -->
+    <select id="selectShipment" resultType="Shipments">
+        SELECT *
+        FROM shipments
+        WHERE no = #{shipment_no}
     </select>
 
     

@@ -1,5 +1,6 @@
 package com.falcon.shop.service.users;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -74,7 +75,7 @@ public class CartServiceImpl extends BaseServiceImpl<Carts, CartMapper> implemen
                 .totalQuantity(realCart.getQuantity())
                 .totalItemCount(1L) // 단일 상품이므로 1
                 .status("결제대기")
-                .shipPrice(realCart.getProduct().getShipPrice() != null ? realCart.getProduct().getShipPrice() : 0L)
+                .shipPrice(realCart.getProduct().getShipPrice() != null ? realCart.getProduct().getShipPrice() : BigDecimal.ZERO)
                 .build();
             List<CartItemOption> cartItemOptions = realCart.getCartItemOptions();
 
@@ -85,7 +86,7 @@ public class CartServiceImpl extends BaseServiceImpl<Carts, CartMapper> implemen
                 OrderItem orderItem = OrderItem.builder()
                                                 .productNo(realCart.getProductNo())
                                                 .quantity(realCart.getQuantity())
-                                                .price(realCart.getTotalPrice()== null ? 0L : realCart.getTotalPrice())
+                                                .price(realCart.getTotalPrice()== null ? BigDecimal.ZERO : realCart.getTotalPrice())
                                                 .build();
                 
                 // CartItemOption을 OrderItemOption으로 변환
@@ -173,7 +174,7 @@ public class CartServiceImpl extends BaseServiceImpl<Carts, CartMapper> implemen
             OrderItem orderItem = OrderItem.builder()
                 .productNo(cart.getProductNo())
                 .quantity(cart.getQuantity())
-                .price(cart.getTotalPrice() != null ? cart.getTotalPrice() : 0L)
+                .price(cart.getTotalPrice() != null ? cart.getTotalPrice() : BigDecimal.ZERO)
                 .build();
             
             // CartItemOption을 OrderItemOption으로 변환

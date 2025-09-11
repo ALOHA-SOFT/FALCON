@@ -1,5 +1,6 @@
 package com.falcon.shop.domain.users;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.ibatis.type.Alias;
@@ -30,7 +31,7 @@ public class Carts extends Base {
   private Long userNo;
   private Long productNo;
   private Long quantity;
-  private Double totalPrice;
+  private BigDecimal totalPrice;
   private String options; 
   /* options - JSON
     [

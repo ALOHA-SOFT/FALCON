@@ -256,42 +256,99 @@
             type: 'GET',
             data: {}
         }).then(function(template) {
-            const previewContent = document.getElementById('previewContent');
+            // 팝업창으로 이메일 템플릿 미리보기
+            const popupWindow = window.open('', 'emailPreview', 'width=800,height=600,scrollbars=yes,resizable=yes');
             
             let content = `
-                <div class="mb-3">
-                    <strong>템플릿명:</strong> ${template.name}
-                </div>
-                <div class="mb-3">
-                    <strong>타입:</strong> <span class="badge bg-info">${template.type}</span>
-                </div>
-                <div class="mb-3">
-                    <strong>제목:</strong> ${template.subject}
-                </div>
-                <div class="mb-3">
-                    <strong>내용:</strong>
-                    <div class="border p-3 mt-2">
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>이메일 템플릿 미리보기 - ${template.name}</title>
+                    <style>
+                        body { 
+                            font-family: Arial, sans-serif; 
+                            margin: 20px; 
+                            background-color: #f8f9fa;
+                        }
+                        .template-info {
+                            background: white;
+                            padding: 20px;
+                            border-radius: 8px;
+                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                            margin-bottom: 20px;
+                        }
+                        .template-content {
+                            background: white;
+                            border-radius: 8px;
+                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                        }
+                        .badge {
+                            background-color: #17a2b8;
+                            color: white;
+                            padding: 4px 8px;
+                            border-radius: 4px;
+                            font-size: 12px;
+                        }
+                        .btn-close {
+                            position: fixed;
+                            top: 10px;
+                            right: 10px;
+                            background: #dc3545;
+                            color: white;
+                            border: none;
+                            padding: 8px 12px;
+                            border-radius: 4px;
+                            cursor: pointer;
+                        }
+                        .btn-close:hover {
+                            background: #c82333;
+                        }
+                        pre {
+                            white-space: pre-wrap;
+                            background: #f8f9fa;
+                            padding: 15px;
+                            border-radius: 4px;
+                            border: 1px solid #dee2e6;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <button class="btn-close" onclick="window.close()">✕ 닫기</button>
+                    
+                    <div class="template-info">
+                        <h2>📧 ${template.name}</h2>
+                        <div style="margin: 10px 0;">
+                            <strong>타입:</strong> <span class="badge">${template.type}</span>
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <strong>제목:</strong> ${template.subject}
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <strong>사용 가능한 변수:</strong> 
+                            <code>${template.variables || '없음'}</code>
+                        </div>
+                    </div>
+                    
+                    <div class="template-content">
             `;
             
             if (template.isHtml) {
-                content += template.content;
+                content += `${template.content}`;
             } else {
-                content += `<pre style="white-space: pre-wrap;">${template.content}</pre>`;
+                content += `<pre>${template.content}</pre>`;
             }
             
             content += `
                     </div>
-                </div>
-                <div class="mb-3">
-                    <strong>사용 가능한 변수:</strong> 
-                    <code>${template.variables || '없음'}</code>
-                </div>
+                </body>
+                </html>
             `;
             
-            previewContent.innerHTML = content;
+            popupWindow.document.write(content);
+            popupWindow.document.close();
+            popupWindow.focus();
             
-            const modal = new bootstrap.Modal(document.getElementById('previewModal'));
-            modal.show();
         }).catch(function() {
             $alert('오류', '템플릿을 불러오는데 실패했습니다.', 'error');
         });

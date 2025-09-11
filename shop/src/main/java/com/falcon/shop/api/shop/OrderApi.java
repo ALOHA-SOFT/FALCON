@@ -16,9 +16,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.falcon.shop.domain.shop.Orders;
+import com.falcon.shop.domain.shop.Shipments;
+import com.falcon.shop.domain.users.Address;
 import com.falcon.shop.domain.users.Users;
 import com.falcon.shop.service.email.EmailService;
 import com.falcon.shop.service.shop.OrderService;
+import com.falcon.shop.service.shop.ShipmentService;
+import com.falcon.shop.service.users.AddressService;
 import com.falcon.shop.service.users.UserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +35,8 @@ public class OrderApi {
   @Autowired private OrderService orderService;
   @Autowired private EmailService emailService;
   @Autowired private UserService userService;
+  @Autowired private AddressService addressService;
+  @Autowired private ShipmentService shipmentService;
   
   @GetMapping()
   public ResponseEntity<?> getAll(
@@ -152,10 +158,47 @@ public class OrderApi {
           }
 
           // 주소 번호
-          String addressNo = request.get("addressNo");
-          if (addressNo != null) {
-              order.setAddressNo(Long.valueOf(addressNo));
-          }
+          Long addressNo = null;
+          try {
+              addressNo = Long.valueOf( request.get("addressNo") );
+              if (addressNo != null) {
+                  order.setAddressNo(addressNo);
+                  // 주소 정보
+                  Address address = addressService.select(addressNo);
+                  // 배송 정보 업데이트
+                  if (address != null) {
+                      if (order.getShipment() == null) {
+                          order.setShipment( new Shipments() );
+                      }
+                      Shipments shipment = order.getShipment();
+                      shipment.setUserNo(userNo);
+                      shipment.setRecipient( address.getRecipient() );
+                      shipment.setTel( address.getTel() );
+                      shipment.setAddress( address.getAddress() );
+                      shipment.setCity( address.getCity() );
+                      shipment.setPostcode( address.getPostcode() );
+                      shipment.setCountry( address.getCountry() );
+                      
+                      
+                      // 배송 정보 등록
+                      boolean result = shipmentService.insert(shipment);
+                      // 배송 번호를 주문 정보로 업데이트
+                      if (result) {
+                        log.info("배송 번호 : {} ", shipment.getNo());
+                        order.setShipmentNo( shipment.getNo() );
+                      } else {
+                          log.warn("배송 정보 등록에 실패했습니다: 주문번호 {}", orderId);
+                      }
+                  } else {
+                      log.warn("주소 정보를 찾을 수 없습니다: {}", addressNo);
+                  }
+
+              }
+            } catch (Exception e) {
+              log.error("주소 정보 조회 중 오류 발생: {}", e.getMessage());
+            }
+
+
 
           // 주문 사용자 정보 업데이트
           order.setGuestEmail(request.get("buyerEmail"));
@@ -241,5 +284,13 @@ public class OrderApi {
           return new ResponseEntity<>("PAYMENT_FAILED", HttpStatus.INTERNAL_SERVER_ERROR);
       }
   }
+
+  @PostMapping("/process")
+  public ResponseEntity<String> orderProcess(@RequestBody Orders order) {
+      log.info("주문 처리 요청 받음 - order={}", order);
+      orderService.processOrder(order);
+      return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
+  }
+  
 
 }

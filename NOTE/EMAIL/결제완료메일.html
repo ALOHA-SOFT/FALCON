@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html style="margin: 0 !important; padding: 0 !important;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0 !important; padding: 0 !important; background-color: #f4f4f4 !important; font-family: Arial, sans-serif !important;">
+
+<!-- 메인 컨테이너 - 패딩 제거를 위해 직접 시작 -->
+<table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 50px 0 !important; padding: 0 !important; background-color: #f4f4f4 !important; font-family: Arial, sans-serif !important;">
+  <tr>
+    <td align="center" style="margin: 0 !important; padding: 0 !important; background-color: #f4f4f4 !important;">
+      
+      <!-- 실제 이메일 내용 - 600px 너비로 중앙 정렬 -->
+      <table cellpadding="0" cellspacing="0" border="0" width="600" style="margin: 0 auto !important; padding: 0 !important; background-color: #ffffff !important; border: 1px solid #ddd;">
+        
+        <!-- 헤더 -->
+        <tr>
+          <td style="background-color: #2269f5 !important; padding: 30px !important; text-align: center !important; margin: 0 !important;">
+            <h1 style="color: #ffffff !important; margin: 0 !important; font-size: 28px !important; font-weight: bold !important;">{{companyName}}</h1>
+            <p style="color: #ffffff !important; margin: 10px 0 0 0 !important; font-size: 16px !important;">Payment Completed Successfully</p>
+          </td>
+        </tr>
+        
+        <!-- 메인 콘텐츠 -->
+        <tr>
+          <td style="padding: 30px !important; background-color: #f9f9f9 !important; margin: 0 !important;">
+            <p style="margin: 0 0 20px 0 !important; font-size: 16px !important; color: #333 !important;">
+              Hello <strong>{{customerName}}</strong>!
+            </p>
+            
+            <p style="margin: 0 0 30px 0 !important; font-size: 14px !important; color: #666 !important; line-height: 1.6 !important;">
+              Your payment has been successfully completed. We will begin processing your order.
+            </p>
+            
+            <!-- 결제 정보 박스 -->
+            <div style="background-color: #ffffff !important; border: 1px solid #2269f5 !important; border-left: 4px solid #2269f5 !important; margin: 20px 0 !important; padding: 20px !important;">
+              <h3 style="margin: 0 0 15px 0 !important; color: #2269f5 !important; font-size: 18px !important;">💳 Payment Information</h3>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Order No.:</strong> {{orderCode}}
+              </p>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Payment Method:</strong> {{paymentMethod}}
+              </p>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Payment Amount:</strong> {{totalAmount}}
+              </p>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Payment Date:</strong> {{paymentDate}}
+              </p>
+            </div>
+            
+            <!-- 주문 상태 안내 박스 -->
+            <div style="background-color: #e8f4fd !important; border: 1px solid #2269f5 !important; margin: 20px 0 !important; padding: 20px !important;">
+              <h4 style="margin: 0 0 10px 0 !important; color: #1a5bb8 !important; font-size: 16px !important;">📦 Next Steps</h4>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important; line-height: 1.6 !important;">
+                • Order confirmation and product preparation is in progress<br>
+                • We will send you a shipping notification email once your order is ready for dispatch<br>
+                • Please feel free to contact us if you have any questions
+              </p>
+            </div>
+            
+            <!-- 감사 메시지 -->
+            <div style="background-color: #fff9e6 !important; border: 1px solid #f39c12 !important; margin: 20px 0 !important; padding: 20px !important; text-align: center !important;">
+              <h4 style="margin: 0 0 10px 0 !important; color: #d68910 !important; font-size: 16px !important;">🙏 Thank You!</h4>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important; line-height: 1.6 !important;">
+                Thank you for choosing {{companyName}}.<br>
+                We are committed to providing you with the best service.
+              </p>
+            </div>
+          </td>
+        </tr>
+        
+        <!-- Footer -->
+        <tr>
+          <td style="padding: 20px !important; text-align: center !important; background-color: #e9e9f9 !important; margin: 0 !important;">
+            <img src="https://falconcartons.com/img/logo.png" alt="{{companyName}}" style="max-width: 150px !important; height: 140px !important; margin-bottom: 10px !important;">
+            <p style="margin: 0 0 5px 0 !important; font-size: 16px !important; font-weight: bold !important;">{{companyName}}</p>
+            <p style="margin: 0 !important; font-size: 14px !important;">info@falconcartons.com</p>
+          </td>
+        </tr>
+        
+      </table>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>

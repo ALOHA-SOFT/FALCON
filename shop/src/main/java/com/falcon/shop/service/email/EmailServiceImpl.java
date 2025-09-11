@@ -53,10 +53,10 @@ public class EmailServiceImpl extends BaseServiceImpl<Email, EmailMapper> implem
             email.setSendAt(new Date());
             
             // 데이터베이스에 저장
-            if( email.getId() == null) {
+            // if( email.getId() == null) {
                 log.info("이메일 저장: {} -> {}", SENDER_EMAIL, email.getRecipientEmail());
                 save(email);
-            }
+            // }
 
             if (email.getIsHtml()) {
                 // HTML 이메일 발송 (네이버 호환성 개선)
@@ -94,12 +94,15 @@ public class EmailServiceImpl extends BaseServiceImpl<Email, EmailMapper> implem
                 mailSender.send(message);
             }
             
-            // 발송 성공 시 상태 업데이트
             email.setSendStatus("SENT");
+            log.info("이메일 발송 성공: {} -> {}", SENDER_EMAIL, email.getRecipientEmail());
+            log.info("email : {}", email);
+            log.info("email - id : {}", email.getId());
+
+            // 발송 성공 시 상태 업데이트
             boolean statusUpdateResult = updateById(email);
             if (!statusUpdateResult) {
                 log.error("이메일 발송 상태 업데이트 실패: {} -> {}", SENDER_EMAIL, email.getRecipientEmail());
-                return false;
             }
 
             log.info("이메일 발송 성공: {} -> {}", SENDER_EMAIL, email.getRecipientEmail());
@@ -388,5 +391,26 @@ public class EmailServiceImpl extends BaseServiceImpl<Email, EmailMapper> implem
         naverSafeContent = naverSafeContent.replaceAll("<style[^>]*>.*?</style>", "");
         
         return naverSafeContent;
+    }
+
+    @Override
+    public boolean sendPaymentCompleteEmail(Orders order, String paymentMethod, String recipientEmail, String recipientName) {
+
+        Users user = userMapper.selectById(order.getUserNo());
+        String userId = user.getId();
+
+        Map<String, Object> variables = Map.of(
+            "host", host,
+            "orderCode", order.getCode(),
+            "orderId", order.getId(),
+            "userId", userId,
+            "customerName", recipientName,
+            "paymentMethod", paymentMethod,
+            "companyName", "Falcon Cartons",
+            "totalAmount", order.getTotalPrice(),
+            "paymentDate", new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date())
+        );
+
+        return sendEmailWithTemplate("PAYMENT_COMPLETE", recipientEmail, recipientName, variables, order.getCode());
     }
 }

@@ -446,6 +446,49 @@
         document.getElementById('content').setAttribute('placeholder', '텍스트 형식으로 템플릿을 작성하세요...');
       }
     });
+
+    // 모달 닫기 이벤트 핸들러 추가 (Bootstrap 버전 호환성을 위해)
+    document.addEventListener('DOMContentLoaded', function() {
+      // 모든 data-dismiss="modal" 버튼에 클릭 이벤트 추가
+      document.querySelectorAll('[data-dismiss="modal"]').forEach(function(button) {
+        button.addEventListener('click', function() {
+          const modal = button.closest('.modal');
+          if (modal) {
+            // Bootstrap 5
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+              const bsModal = bootstrap.Modal.getInstance(modal);
+              if (bsModal) {
+                bsModal.hide();
+              }
+            }
+            // Bootstrap 4 (jQuery)
+            else if (typeof $ !== 'undefined' && $.fn.modal) {
+              $(modal).modal('hide');
+            }
+          }
+        });
+      });
+
+      // X 버튼 클릭 이벤트
+      document.querySelectorAll('.modal .close').forEach(function(closeBtn) {
+        closeBtn.addEventListener('click', function() {
+          const modal = closeBtn.closest('.modal');
+          if (modal) {
+            // Bootstrap 5
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+              const bsModal = bootstrap.Modal.getInstance(modal);
+              if (bsModal) {
+                bsModal.hide();
+              }
+            }
+            // Bootstrap 4 (jQuery)
+            else if (typeof $ !== 'undefined' && $.fn.modal) {
+              $(modal).modal('hide');
+            }
+          }
+        });
+      });
+    });
   </script>
 </body>
 </html>

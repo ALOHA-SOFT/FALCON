@@ -194,25 +194,320 @@
       <div class="order-status status-pending" th:classappend="${order.status == '결제완료'} ? 'status-paid' : (${order.status == '배송완료'} ? 'status-shipped' : 'status-pending')">
         <div class="d-flex">
           <i class="material-icons me-1">pending</i>
-          <th:block th:if="${order.status == '결제완료'}">
-            <span>Payment Complete</span>
-          </th:block>
-          <th:block th:if="${order.status == '결제대기'}">
+            <th:block th:if="${order.status == '결제대기'}">
             <span>Pending Payment</span>
-          </th:block>
-          <th:block th:if="${order.status == '주문취소'}">
+            </th:block>
+            <th:block th:if="${order.status == '결제완료'}">
+            <span>Payment Complete</span>
+            </th:block>
+            <th:block th:if="${order.status == '배송준비중'}">
+            <span>Preparing Shipment</span>
+            </th:block>
+            <th:block th:if="${order.status == '배송시작'}">
+            <span>Dispatched</span>
+            </th:block>
+            <th:block th:if="${order.status == '배송중'}">
+            <span>In Transit</span>
+            </th:block>
+            <th:block th:if="${order.status == '배송완료'}">
+            <span>Delivered</span>
+            </th:block>
+            <th:block th:if="${order.status == '주문취소'}">
             <span>Order Cancelled</span>
-          </th:block>
-          <th:block th:if="${order.status == '배송완료'}">
-            <span>Shipped</span>
-          </th:block>
-          <th:block th:if="${order.status != '결제완료' && order.status != '결제대기' && order.status != '주문취소' && order.status != '배송완료'}">
-            <span th:text="${order.status}"></span>
-          </th:block>
+            </th:block>
+            <th:block th:if="${order.status == '환불완료'}">
+            <span>Refund Complete</span>
+            </th:block>
+            <!-- <th:block th:if="${order.status != '결제대기' && order.status != '결제완료' && order.status != '배송준비중' && order.status != '배송시작' && order.status != '배송중' && order.status != '배송완료' && order.status != '주문취소' && order.status != '환불완료'}">
+              <span th:text="${order.status}"></span>
+            </th:block> -->
           
         </div>
       </div>
     </div>
+
+    <!-- 배송상태 -->
+    <!-- Shipping Progress -->
+    <div class="info-card" th:if="${order.shipment == null || ( order.shipment.status == '주문취소' || !#strings.contains(order.status, '배송') ) }">
+      <h5><i class="material-icons">local_shipping</i>Shipping Progress</h5>
+      <div class="shipping-progress">
+      <div class="progress-container">
+        <div class="progress-step" >
+        <div class="step-circle">
+          <i class="material-icons">inventory</i>
+        </div>
+        <div class="step-label">Preparing</div>
+        </div>
+        
+        <div class="progress-line" ></div>
+        
+        <div class="progress-step" >
+        <div class="step-circle">
+          <i class="material-icons">departure_board</i>
+        </div>
+        <div class="step-label">Dispatched</div>
+        </div>
+        
+        <div class="progress-line" ></div>
+        
+        <div class="progress-step" >
+        <div class="step-circle">
+          <i class="material-icons">local_shipping</i>
+        </div>
+        <div class="step-label">In Transit</div>
+        </div>
+        
+        <div class="progress-line" ></div>
+        
+        <div class="progress-step" >
+        <div class="step-circle">
+          <i class="material-icons">done</i>
+        </div>
+        <div class="step-label">Delivered</div>
+        </div>
+      </div>
+      
+      <div class="current-status" th:if="${order.shipment.status != '주문취소' && #strings.contains(order.status, '배송')}">
+        <div class="status-badge">
+        <i class="material-icons">info</i>
+        <span>Current Status: </span>
+        <strong>
+          <th:block th:if="${order.shipment.status == '배송준비중'}">Preparing for Shipment</th:block>
+          <th:block th:if="${order.shipment.status == '배송시작'}">Dispatched</th:block>
+          <th:block th:if="${order.shipment.status == '배송중'}">In Transit</th:block>
+          <th:block th:if="${order.shipment.status == '배송완료'}">Delivered</th:block>
+        </strong>
+        </div>
+      </div>
+      
+      <div class="current-status" th:if="${order.shipment.status == '주문취소' && !#strings.contains(order.status, '배송')}">
+        <th:block th:if="${order.status == '주문취소'}">
+          <div class="status-badge cancelled">
+            <i class="material-icons">cancel</i>
+            <span>Order Status: </span>
+            <strong>Order Cancelled</strong>
+          </div>
+        </th:block>
+        <th:block th:if="${order.status == '환불완료'}">
+          <div class="status-badge ">
+            <i class="material-icons">check</i>
+            <span>Order Status: </span>
+            <strong>Refund Complete</strong>
+          </div>
+        </th:block>
+      </div>
+      </div>
+    </div>
+
+    <div class="info-card" th:if="${order.shipment != null && order.shipment.status != '주문취소' && #strings.contains(order.status, '배송') }">
+      <h5><i class="material-icons">local_shipping</i>Shipping Progress</h5>
+      <div class="shipping-progress">
+      <div class="progress-container">
+        <div class="progress-step" th:classappend="${order.shipment.status == '배송준비중'} ? 'active' : (${order.shipment.status == '배송시작' || order.shipment.status == '배송중' || order.shipment.status == '배송완료'} ? 'completed' : '')">
+        <div class="step-circle">
+          <i class="material-icons">inventory</i>
+        </div>
+        <div class="step-label">Preparing</div>
+        </div>
+        
+        <div class="progress-line" th:classappend="${order.shipment.status == '배송시작' || order.shipment.status == '배송중' || order.shipment.status == '배송완료'} ? 'completed' : ''"></div>
+        
+        <div class="progress-step" th:classappend="${order.shipment.status == '배송시작'} ? 'active' : (${order.shipment.status == '배송중' || order.shipment.status == '배송완료'} ? 'completed' : '')">
+        <div class="step-circle">
+          <i class="material-icons">departure_board</i>
+        </div>
+        <div class="step-label">Dispatched</div>
+        </div>
+        
+        <div class="progress-line" th:classappend="${order.shipment.status == '배송중' || order.shipment.status == '배송완료'} ? 'completed' : ''"></div>
+        
+        <div class="progress-step" th:classappend="${order.shipment.status == '배송중'} ? 'active' : (${order.shipment.status == '배송완료'} ? 'completed' : '')">
+        <div class="step-circle">
+          <i class="material-icons">local_shipping</i>
+        </div>
+        <div class="step-label">In Transit</div>
+        </div>
+        
+        <div class="progress-line" th:classappend="${order.shipment.status == '배송완료'} ? 'completed' : ''"></div>
+        
+        <div class="progress-step" th:classappend="${order.shipment.status == '배송완료'} ? 'active' : ''">
+        <div class="step-circle">
+          <i class="material-icons">done</i>
+        </div>
+        <div class="step-label">Delivered</div>
+        </div>
+      </div>
+      
+      <div class="current-status" th:if="${order.shipment.status != '주문취소' && #strings.contains(order.status, '배송')}">
+        <div class="status-badge">
+        <i class="material-icons">info</i>
+        <span>Current Status: </span>
+        <strong>
+          <th:block th:if="${order.shipment.status == '배송준비중'}">Preparing for Shipment</th:block>
+          <th:block th:if="${order.shipment.status == '배송시작'}">Dispatched</th:block>
+          <th:block th:if="${order.shipment.status == '배송중'}">In Transit</th:block>
+          <th:block th:if="${order.shipment.status == '배송완료'}">Delivered</th:block>
+        </strong>
+        </div>
+      </div>
+      
+      <div class="current-status" th:if="${order.shipment.status == '주문취소' && !#strings.contains(order.status, '배송')}">
+        <th:block th:if="${order.status == '주문취소'}">
+          <div class="status-badge cancelled">
+            <i class="material-icons">cancel</i>
+            <span>Order Status: </span>
+            <strong>Order Cancelled</strong>
+          </div>
+        </th:block>
+        <th:block th:if="${order.status == '환불완료'}">
+          <div class="status-badge ">
+            <i class="material-icons">check</i>
+            <span>Order Status: </span>
+            <strong>Refund Complete</strong>
+          </div>
+        </th:block>
+      </div>
+      </div>
+    </div>
+
+    <style>
+    .shipping-progress {
+      padding: 20px;
+    }
+
+    .progress-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .progress-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 2;
+      position: relative;
+    }
+
+    .step-circle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #e9ecef;
+      color: #6c757d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid #e9ecef;
+      transition: all 0.3s ease;
+      margin-bottom: 10px;
+    }
+
+    .progress-step.completed .step-circle {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      color: white;
+      border-color: #28a745;
+    }
+
+    .progress-step.active .step-circle {
+      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+      color: white;
+      border-color: #007bff;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+      box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+      }
+      70% {
+      box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+      }
+      100% {
+      box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+      }
+    }
+
+    .step-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #6c757d;
+      text-align: center;
+      min-width: 80px;
+    }
+
+    .progress-step.completed .step-label {
+      color: #28a745;
+    }
+
+    .progress-step.active .step-label {
+      color: #007bff;
+    }
+
+    .progress-line {
+      flex: 1;
+      height: 4px;
+      background: #e9ecef;
+      margin: 0 10px;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .progress-line.completed {
+      background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+    }
+
+    .current-status {
+      text-align: center;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+      color: #1976d2;
+      padding: 12px 20px;
+      border-radius: 25px;
+      font-size: 16px;
+      border: 1px solid #2196f3;
+    }
+
+    .status-badge.cancelled {
+      background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+      color: #d32f2f;
+      border-color: #f44336;
+    }
+
+    .status-badge i {
+      font-size: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .progress-container {
+      flex-direction: column;
+      gap: 20px;
+      }
+      
+      .progress-line {
+      width: 4px;
+      height: 30px;
+      margin: 0;
+      }
+      
+      .step-circle {
+      width: 50px;
+      height: 50px;
+      }
+      
+      .step-label {
+      font-size: 12px;
+      min-width: 60px;
+      }
+    }
+    </style>
 
     <!-- Customer Information -->
     <div class="info-card">

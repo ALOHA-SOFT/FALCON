@@ -13,7 +13,7 @@
 
 <body layout:fragment="content">
   <!-- Shipping Information Section -->
-  <section class="shipping-info-section py-5">
+  <section class="shipping-info-section py-2">
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-md-4">
@@ -33,9 +33,9 @@
   </section>
 
   <!-- Products Grid Section -->
-  <section class="products-grid-section py-5">
+  <section class="products-grid-section py-3">
     <div class="container px-0">
-      <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-2" id="products-masonry">
+      <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3" id="products-masonry">
         <!-- Product Cards -->
         <th:block th:each="product, iterStat : ${pageInfo.list}">
           <div class="col">
@@ -123,7 +123,7 @@
     
     .product-image-box {
       width: 100%;
-      height: 250px;
+      height: 200px;
       background-color: rgba(204, 204, 204, 0.1);
       display: flex;
       justify-content: center;
@@ -188,19 +188,19 @@
 
     @media (min-width: 768px) {
       .product-image-box {
-        height: 280px;
+        height: 200px;
       }
     }
 
     @media (min-width: 992px) {
       .product-image-box {
-        height: 250px;
+        height: 220px;
       }
     }
 
     @media (min-width: 1200px) {
       .product-image-box {
-        height: 300px;
+        height: 250px;
       }
     }
   </style>
