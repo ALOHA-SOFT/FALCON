@@ -262,6 +262,19 @@ public class OrderServiceImpl extends BaseServiceImpl<Orders, OrderMapper> imple
         }
         // 주문 상태 확인
         String orderStatus = order.getStatus();
+        String orderStatusForMail = "";                 // 영문 상태
+        switch (orderStatus) {
+            case "결제대기":            orderStatusForMail = "Payment Pending"; break;
+            case "결제완료":            orderStatusForMail = "Payment Completed"; break;
+            case "배송준비중":  orderStatusForMail = "Preparing for Shipment"; break;
+            case "배송시작":  orderStatusForMail = "Dispatched"; break;
+            case "배송중":  orderStatusForMail = "In Transit"; break;
+            case "배송완료":  orderStatusForMail = "Delivered"; break;
+            case "주문취소":  orderStatusForMail = "Order Cancelled"; break;
+            case "환불완료":  orderStatusForMail = "Refund Completed"; break;
+        }
+
+        
         if (orderStatus == null || orderStatus.isEmpty()) {
             log.error("주문 상태가 제공되지 않았습니다.");
             throw new IllegalArgumentException("주문 상태가 필요합니다.");
@@ -291,14 +304,29 @@ public class OrderServiceImpl extends BaseServiceImpl<Orders, OrderMapper> imple
                 String recipientName = orderforMail.getGuestFirstName() + " " + orderforMail.getGuestLastName();
                 emailService.sendPaymentCompleteEmail(orderforMail, paymentMethod, recipientEmail, recipientName);
                 break;
-            case "배송준비중": 
-            case "배송시작": 
-            case "배송중": 
+            case "배송준비중":  
+            case "배송시작":  
+            case "배송중":  
             case "배송완료": 
             case "주문취소": 
+                // 배송상태 업데이트
                 QueryWrapper<Shipments> queryWrapper2 = new QueryWrapper<>();
                 queryWrapper2.eq("id", order.getShipment().getId());
-                shipmentMapper.update(order.getShipment(), queryWrapper2);
+                Shipments shipment = order.getShipment();
+                shipmentMapper.update(shipment, queryWrapper2);
+                // 배송상태 변경 이메일 발송
+                Orders orderforMail2 = orderMapper.selectById(orderId);
+                if (orderforMail2 == null) {
+                    log.error("주문 정보를 찾을 수 없습니다: 주문 ID {}", orderId);
+                    throw new RuntimeException("주문 정보를 찾을 수 없습니다.");
+                }
+                String recipientEmail2 = orderforMail2.getGuestEmail();
+                String recipientName2 = orderforMail2.getGuestFirstName() + " " + orderforMail2.getGuestLastName();
+                String trackingNo = shipment.getTrackingNo();
+                String shipCompany = shipment.getShipCompany();
+                String deliveryMethod = shipment.getDeliveryMethod();
+
+                emailService.sendUpdateShipmentStatus(orderforMail2, orderStatusForMail, trackingNo, shipCompany, deliveryMethod, recipientEmail2, recipientName2);
                 break;
         }
 

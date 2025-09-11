@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html style="margin: 0 !important; padding: 0 !important;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0 !important; padding: 0 !important; background-color: #f4f4f4 !important; font-family: Arial, sans-serif !important;">
+
+<!-- 메인 컨테이너 -->
+<table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 50px 0 !important; padding: 0 !important; background-color: #f4f4f4 !important; font-family: Arial, sans-serif !important;">
+  <tr>
+    <td align="center" style="margin: 0 !important; padding: 0 !important; background-color: #f4f4f4 !important;">
+      
+      <!-- 실제 이메일 내용 - 600px 너비로 중앙 정렬 -->
+      <table cellpadding="0" cellspacing="0" border="0" width="600" style="margin: 0 auto !important; padding: 0 !important; background-color: #ffffff !important; border: 1px solid #ddd;">
+        
+        <!-- 헤더 -->
+        <tr>
+          <td style="background-color: {{statusColor}} !important; padding: 30px !important; text-align: center !important; margin: 0 !important;">
+            <h1 style="color: #ffffff !important; margin: 0 !important; font-size: 28px !important; font-weight: bold !important;">{{companyName}}</h1>
+            <p style="color: #ffffff !important; margin: 10px 0 0 0 !important; font-size: 16px !important;">{{statusTitle}}</p>
+          </td>
+        </tr>
+        
+        <!-- 메인 콘텐츠 -->
+        <tr>
+          <td style="padding: 30px !important; background-color: #f9f9f9 !important; margin: 0 !important;">
+            <p style="margin: 0 0 20px 0 !important; font-size: 16px !important; color: #333 !important;">
+              Hello <strong>{{customerName}}</strong>!
+            </p>
+            
+            <p style="margin: 0 0 30px 0 !important; font-size: 14px !important; color: #666 !important; line-height: 1.6 !important;">
+              {{statusMessage}}
+            </p>
+            
+            <!-- 주문 정보 박스 -->
+            <div style="background-color: #ffffff !important; border: 1px solid {{statusColor}} !important; border-left: 4px solid {{statusColor}} !important; margin: 20px 0 !important; padding: 20px !important;">
+              <h3 style="margin: 0 0 15px 0 !important; color: {{statusColor}} !important; font-size: 18px !important;">{{statusIcon}} Order Information</h3>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Order No.:</strong> {{orderCode}}
+              </p>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Order Date:</strong> {{orderDate}}
+              </p>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Current Status:</strong> <span style="color: {{statusColor}} !important; font-weight: bold !important;">{{orderStatus}}</span>
+              </p>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Updated Date:</strong> {{statusUpdateDate}}
+              </p>
+            </div>
+            
+            <!-- 상태별 상세 정보 박스 -->
+            <div style="background-color: {{statusBgColor}} !important; border: 1px solid {{statusBorderColor}} !important; margin: 20px 0 !important; padding: 20px !important;">
+              <h4 style="margin: 0 0 10px 0 !important; color: {{statusTextColor}} !important; font-size: 16px !important;">{{detailTitle}}</h4>
+              <div style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important; line-height: 1.6 !important;">
+                {{statusDetails}}
+              </div>
+            </div>
+            
+          </td>
+        </tr>
+        
+        <!-- Footer -->
+        <tr>
+          <td style="padding: 20px !important; text-align: center !important; background-color: #e9e9f9 !important; margin: 0 !important;">
+            <img src="https://falconcartons.com/img/logo.png" alt="{{companyName}}" style="max-width: 150px !important; height: 140px !important; margin-bottom: 10px !important;">
+            <p style="margin: 0 0 5px 0 !important; font-size: 16px !important; font-weight: bold !important;">{{companyName}}</p>
+            <p style="margin: 0 !important; font-size: 14px !important;">info@falconcartons.com</p>
+          </td>
+        </tr>
+        
+      </table>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>
+
+<!-- 
+상태별 변수 가이드:
+===================
+
+결제대기 (PAYMENT_PENDING):
+- statusColor: #f39c12
+- statusIcon: ⏳
+- statusTitle: Payment Pending
+- statusMessage: Your order is waiting for payment confirmation.
+- statusBgColor: #fff3cd
+- statusBorderColor: #ffeaa7
+- statusTextColor: #d68910
+- detailTitle: What's Next?
+- statusDetails: • Please complete your payment as soon as possible<br>• Payment methods: Credit Card, Bank Transfer<br>• Order will be automatically cancelled after 7 days without payment
+- shippingDisplay: display: none !important;
+
+결제완료 (PAYMENT_COMPLETED):
+- statusColor: #28a745
+- statusIcon: ✅
+- statusTitle: Payment Completed
+- statusMessage: Your payment has been successfully processed and your order is being prepared.
+- statusBgColor: #d4edda
+- statusBorderColor: #c3e6cb
+- statusTextColor: #155724
+- detailTitle: Processing Your Order
+- statusDetails: • Payment confirmed and processed<br>• Order preparation will begin shortly<br>• You will receive shipping notification once dispatched
+- shippingDisplay: display: none !important;
+
+배송준비중 (PREPARING_SHIPMENT):
+- statusColor: #17a2b8
+- statusIcon: 📦
+- statusTitle: Preparing for Shipment
+- statusMessage: Your order is being carefully prepared for shipment.
+- statusBgColor: #d1ecf1
+- statusBorderColor: #bee5eb
+- statusTextColor: #0c5460
+- detailTitle: Preparation Status
+- statusDetails: • Items are being picked and packed<br>• Quality check in progress<br>• Shipping label will be generated soon
+- shippingDisplay: display: none !important;
+
+배송시작 (SHIPMENT_STARTED):
+- statusColor: #2196f3
+- statusIcon: 🚛
+- statusTitle: Shipment Started
+- statusMessage: Your order has been dispatched and is on its way to you!
+- statusBgColor: #e3f2fd
+- statusBorderColor: #bbdefb
+- statusTextColor: #1565c0
+- detailTitle: In Transit
+- statusDetails: • Package has left our warehouse<br>• Tracking information is now available<br>• Estimated delivery time provided below
+- shippingDisplay: display: block !important;
+
+배송중 (IN_TRANSIT):
+- statusColor: #3f51b5
+- statusIcon: 🚚
+- statusTitle: In Transit
+- statusMessage: Your package is currently in transit to your delivery address.
+- statusBgColor: #e8eaf6
+- statusBorderColor: #c5cae9
+- statusTextColor: #283593
+- detailTitle: Delivery Progress
+- statusDetails: • Package is en route to destination<br>• Track your package using the tracking number below<br>• Please ensure someone is available to receive the package
+- shippingDisplay: display: block !important;
+
+배송완료 (DELIVERED):
+- statusColor: #4caf50
+- statusIcon: 🎉
+- statusTitle: Order Delivered
+- statusMessage: Your order has been successfully delivered! We hope you're satisfied with your purchase.
+- statusBgColor: #e8f5e8
+- statusBorderColor: #c8e6c9
+- statusTextColor: #2e7d32
+- detailTitle: Delivery Completed
+- statusDetails: • Package delivered successfully<br>• Please check your items and contact us if anything is missing<br>• Thank you for your business!
+- shippingDisplay: display: block !important;
+
+주문취소 (ORDER_CANCELLED):
+- statusColor: #dc3545
+- statusIcon: ❌
+- statusTitle: Order Cancelled
+- statusMessage: Your order has been cancelled as requested.
+- statusBgColor: #f8d7da
+- statusBorderColor: #f5c6cb
+- statusTextColor: #721c24
+- detailTitle: Cancellation Details
+- statusDetails: • Order has been successfully cancelled<br>• If payment was made, refund will be processed<br>• Refund may take 3-5 business days to appear in your account
+- shippingDisplay: display: none !important;
+
+환불완료 (REFUND_COMPLETED):
+- statusColor: #6f42c1
+- statusIcon: 💰
+- statusTitle: Refund Completed
+- statusMessage: Your refund has been processed successfully.
+- statusBgColor: #e2e3f3
+- statusBorderColor: #d0d1e3
+- statusTextColor: #493c74
+- detailTitle: Refund Information
+- statusDetails: • Refund has been processed to your original payment method<br>• Amount may take 3-5 business days to appear in your account<br>• Please contact your bank if you don't see the refund after this period
+- shippingDisplay: display: none !important;
+
+공통 사용 변수:
+- companyName: 회사명
+- customerName: 고객명
+- orderCode: 주문번호
+- orderDate: 주문일자
+- orderStatus: 주문상태 (한국어/영어)
+- statusUpdateDate: 상태 업데이트 일시
+-->

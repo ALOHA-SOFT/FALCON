@@ -1,4 +1,4 @@
--- Active: 1751866834049@@falcon-db.cr8aiiek0cvi.eu-west-2.rds.amazonaws.com@3306@falcon
+-- Active: 1750388006843@@localhost@3306@falcon
 -- Delete existing templates
 DELETE FROM email_templates;
 
@@ -314,10 +314,7 @@ INSERT INTO email_templates (
           <td style="padding: 20px !important; text-align: center !important; background-color: #e9e9f9 !important; margin: 0 !important;">
             <img src="https://falconcartons.com/img/logo.png" alt="{{companyName}}" style="max-width: 150px !important; height: 140px !important; margin-bottom: 10px !important;">
             <p style="margin: 0 0 5px 0 !important; font-size: 16px !important; font-weight: bold !important;">{{companyName}}</p>
-            <p style="margin: 0 !important; font-size: 14px !important;">Email: info@falconcartons.com</p>
-            <p style="margin: 5px 0 0 0 !important; font-size: 12px !important; color: #666 !important;">
-              Customer Service: 1588-0000 | Business Hours: 09:00 - 18:00 (Mon-Fri)
-            </p>
+            <p style="margin: 0 !important; font-size: 14px !important;">info@falconcartons.com</p>
           </td>
         </tr>
         
@@ -328,12 +325,221 @@ INSERT INTO email_templates (
 
 </body>
 </html>
-
 ',
     1,
     '["customerName", "orderCode", "paymentMethod", "companyName"]',
     1,
     'Payment Complete Email',
+    'system',
+    'system',
+    NOW(),
+    NOW()
+);
+
+-- 5. 주문상태변경메일
+INSERT INTO email_templates (
+    id, name, type, subject, content, is_html, variables, is_active, description,
+    created_by, updated_by, created_at, updated_at
+) VALUES (
+    UUID(),
+    'Order Status Change Email',
+    'ORDER_STATUS_CHANGE',
+    '[{{companyName}}] Order Status Update (Order No: {{orderCode}})',
+    '<!DOCTYPE html>
+<html style="margin: 0 !important; padding: 0 !important;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0 !important; padding: 0 !important; background-color: #f4f4f4 !important; font-family: Arial, sans-serif !important;">
+
+<!-- 메인 컨테이너 -->
+<table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 50px 0 !important; padding: 0 !important; background-color: #f4f4f4 !important; font-family: Arial, sans-serif !important;">
+  <tr>
+    <td align="center" style="margin: 0 !important; padding: 0 !important; background-color: #f4f4f4 !important;">
+      
+      <!-- 실제 이메일 내용 - 600px 너비로 중앙 정렬 -->
+      <table cellpadding="0" cellspacing="0" border="0" width="600" style="margin: 0 auto !important; padding: 0 !important; background-color: #ffffff !important; border: 1px solid #ddd;">
+        
+        <!-- 헤더 -->
+        <tr>
+          <td style="background-color: {{statusColor}} !important; padding: 30px !important; text-align: center !important; margin: 0 !important;">
+            <h1 style="color: #ffffff !important; margin: 0 !important; font-size: 28px !important; font-weight: bold !important;">{{companyName}}</h1>
+            <p style="color: #ffffff !important; margin: 10px 0 0 0 !important; font-size: 16px !important;">{{statusTitle}}</p>
+          </td>
+        </tr>
+        
+        <!-- 메인 콘텐츠 -->
+        <tr>
+          <td style="padding: 30px !important; background-color: #f9f9f9 !important; margin: 0 !important;">
+            <p style="margin: 0 0 20px 0 !important; font-size: 16px !important; color: #333 !important;">
+              Hello <strong>{{customerName}}</strong>!
+            </p>
+            
+            <p style="margin: 0 0 30px 0 !important; font-size: 14px !important; color: #666 !important; line-height: 1.6 !important;">
+              {{statusMessage}}
+            </p>
+            
+            <!-- 주문 정보 박스 -->
+            <div style="background-color: #ffffff !important; border: 1px solid {{statusColor}} !important; border-left: 4px solid {{statusColor}} !important; margin: 20px 0 !important; padding: 20px !important;">
+              <h3 style="margin: 0 0 15px 0 !important; color: {{statusColor}} !important; font-size: 18px !important;">{{statusIcon}} Order Information</h3>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Order No.:</strong> {{orderCode}}
+              </p>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Order Date:</strong> {{orderDate}}
+              </p>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Current Status:</strong> <span style="color: {{statusColor}} !important; font-weight: bold !important;">{{orderStatus}}</span>
+              </p>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Updated Date:</strong> {{statusUpdateDate}}
+              </p>
+            </div>
+            
+            <!-- 상태별 상세 정보 박스 -->
+            <div style="background-color: {{statusBgColor}} !important; border: 1px solid {{statusBorderColor}} !important; margin: 20px 0 !important; padding: 20px !important;">
+              <h4 style="margin: 0 0 10px 0 !important; color: {{statusTextColor}} !important; font-size: 16px !important;">{{detailTitle}}</h4>
+              <div style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important; line-height: 1.6 !important;">
+                {{statusDetails}}
+              </div>
+            </div>
+            
+          </td>
+        </tr>
+        
+        <!-- Footer -->
+        <tr>
+          <td style="padding: 20px !important; text-align: center !important; background-color: #e9e9f9 !important; margin: 0 !important;">
+            <img src="https://falconcartons.com/img/logo.png" alt="{{companyName}}" style="max-width: 150px !important; height: 140px !important; margin-bottom: 10px !important;">
+            <p style="margin: 0 0 5px 0 !important; font-size: 16px !important; font-weight: bold !important;">{{companyName}}</p>
+            <p style="margin: 0 !important; font-size: 14px !important;">info@falconcartons.com</p>
+          </td>
+        </tr>
+        
+      </table>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>',
+    1,
+    '["customerName", "orderCode", "orderDate", "orderStatus", "statusUpdateDate", "statusColor", "statusIcon", "statusTitle", "statusMessage", "statusBgColor", "statusBorderColor", "statusTextColor", "detailTitle", "statusDetails", "companyName"]',
+    1,
+    'Order status change notification email with dynamic status-based styling',
+    'system',
+    'system',
+    NOW(),
+    NOW()
+);
+
+-- 6. 배송상태변경메일
+INSERT INTO email_templates (
+    id, name, type, subject, content, is_html, variables, is_active, description,
+    created_by, updated_by, created_at, updated_at
+) VALUES (
+    UUID(),
+    'Shipment Status Change Email',
+    'SHIPMENT_STATUS_CHANGE',
+    '[{{companyName}}] Shipment Status Update (Order No: {{orderCode}})',
+    '<!DOCTYPE html>
+<html style="margin: 0 !important; padding: 0 !important;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0 !important; padding: 0 !important; background-color: #f4f4f4 !important; font-family: Arial, sans-serif !important;">
+
+<!-- 메인 컨테이너 -->
+<table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 50px 0 !important; padding: 0 !important; background-color: #f4f4f4 !important; font-family: Arial, sans-serif !important;">
+  <tr>
+    <td align="center" style="margin: 0 !important; padding: 0 !important; background-color: #f4f4f4 !important;">
+      
+      <!-- 실제 이메일 내용 - 600px 너비로 중앙 정렬 -->
+      <table cellpadding="0" cellspacing="0" border="0" width="600" style="margin: 0 auto !important; padding: 0 !important; background-color: #ffffff !important; border: 1px solid #ddd;">
+        
+        <!-- 헤더 -->
+        <tr>
+          <td style="background-color: {{statusColor}} !important; padding: 30px !important; text-align: center !important; margin: 0 !important;">
+            <h1 style="color: #ffffff !important; margin: 0 !important; font-size: 28px !important; font-weight: bold !important;">{{companyName}}</h1>
+            <p style="color: #ffffff !important; margin: 10px 0 0 0 !important; font-size: 16px !important;">{{statusTitle}}</p>
+          </td>
+        </tr>
+        
+        <!-- 메인 콘텐츠 -->
+        <tr>
+          <td style="padding: 30px !important; background-color: #f9f9f9 !important; margin: 0 !important;">
+            <p style="margin: 0 0 20px 0 !important; font-size: 16px !important; color: #333 !important;">
+              Hello <strong>{{customerName}}</strong>!
+            </p>
+            
+            <p style="margin: 0 0 30px 0 !important; font-size: 14px !important; color: #666 !important; line-height: 1.6 !important;">
+              {{statusMessage}}
+            </p>
+            
+            <!-- 주문 정보 박스 -->
+            <div style="background-color: #ffffff !important; border: 1px solid {{statusColor}} !important; border-left: 4px solid {{statusColor}} !important; margin: 20px 0 !important; padding: 20px !important;">
+              <h3 style="margin: 0 0 15px 0 !important; color: {{statusColor}} !important; font-size: 18px !important;">{{statusIcon}} Order Information</h3>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Order No.:</strong> {{orderCode}}
+              </p>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Order Date:</strong> {{orderDate}}
+              </p>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Current Status:</strong> <span style="color: {{statusColor}} !important; font-weight: bold !important;">{{orderStatus}}</span>
+              </p>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Updated Date:</strong> {{statusUpdateDate}}
+              </p>
+            </div>
+            
+            <!-- 상태별 상세 정보 박스 -->
+            <div style="background-color: {{statusBgColor}} !important; border: 1px solid {{statusBorderColor}} !important; margin: 20px 0 !important; padding: 20px !important;">
+              <h4 style="margin: 0 0 10px 0 !important; color: {{statusTextColor}} !important; font-size: 16px !important;">{{detailTitle}}</h4>
+              <div style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important; line-height: 1.6 !important;">
+                {{statusDetails}}
+              </div>
+            </div>
+            
+            <!-- 배송 정보 (배송 관련 상태일 때만 표시) -->
+            <div style="background-color: #e8f4fd !important; border: 1px solid #2196f3 !important; margin: 20px 0 !important; padding: 20px !important; {{shippingDisplay}}">
+              <h4 style="margin: 0 0 10px 0 !important; color: #1976d2 !important; font-size: 16px !important;">🚚 Shipping Information</h4>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Tracking Number:</strong> {{trackingNo}}
+              </p>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Shipping Company:</strong> {{shipCompany}}
+              </p>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Delivery Method:</strong> {{deliveryMethod}}
+              </p>
+            </div>
+            
+          </td>
+        </tr>
+        
+        <!-- Footer -->
+        <tr>
+          <td style="padding: 20px !important; text-align: center !important; background-color: #e9e9f9 !important; margin: 0 !important;">
+            <img src="https://falconcartons.com/img/logo.png" alt="{{companyName}}" style="max-width: 150px !important; height: 140px !important; margin-bottom: 10px !important;">
+            <p style="margin: 0 0 5px 0 !important; font-size: 16px !important; font-weight: bold !important;">{{companyName}}</p>
+            <p style="margin: 0 !important; font-size: 14px !important;">info@falconcartons.com</p>
+          </td>
+        </tr>
+        
+      </table>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>',
+    1,
+    '["customerName", "orderCode", "orderDate", "orderStatus", "statusUpdateDate", "statusColor", "statusIcon", "statusTitle", "statusMessage", "statusBgColor", "statusBorderColor", "statusTextColor", "detailTitle", "statusDetails", "shippingDisplay", "trackingNumber", "shippingCompany", "estimatedDelivery", "companyName"]',
+    1,
+    'Shipment status change notification email with tracking information',
     'system',
     'system',
     NOW(),

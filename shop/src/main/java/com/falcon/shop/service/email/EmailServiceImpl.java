@@ -413,4 +413,216 @@ public class EmailServiceImpl extends BaseServiceImpl<Email, EmailMapper> implem
 
         return sendEmailWithTemplate("PAYMENT_COMPLETE", recipientEmail, recipientName, variables, order.getCode());
     }
+    
+    @Override
+    public boolean sendUpdateOrderStatus(Orders order, String orderStatus, String recipientEmail, String recipientName) {
+        Users user = userMapper.selectById(order.getUserNo());
+        String userId = user.getId();
+
+        // 상태별 변수 설정
+        Map<String, Object> statusVariables = getOrderStatusVariables(orderStatus);
+        
+        Map<String, Object> variables = new java.util.HashMap<>();
+        variables.put("host", host);
+        variables.put("orderCode", order.getCode());
+        variables.put("orderId", order.getId());
+        variables.put("userId", userId);
+        variables.put("customerName", recipientName);
+        variables.put("companyName", "Falcon Cartons");
+        variables.put("orderDate", new java.text.SimpleDateFormat("dd/MM/yyyy").format(order.getCreatedAt()));
+        variables.put("orderStatus", orderStatus);
+        variables.put("statusUpdateDate", new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
+        
+        // 상태별 변수 추가
+        variables.putAll(statusVariables);
+        
+        return sendEmailWithTemplate("ORDER_STATUS_CHANGE", recipientEmail, recipientName, variables, order.getCode());
+    }
+    
+    @Override
+    public boolean sendUpdateShipmentStatus(Orders order, String shippingStatus, 
+                                          String trackingNo, String shipCompany, String deliveryMethod,
+                                          String recipientEmail, String recipientName) {
+        Users user = userMapper.selectById(order.getUserNo());
+        String userId = user.getId();
+
+        // 상태별 변수 설정
+        Map<String, Object> statusVariables = getShippingStatusVariables(order.getStatus());
+        
+        Map<String, Object> variables = new java.util.HashMap<>();
+        variables.put("host", host);
+        variables.put("orderCode", order.getCode());
+        variables.put("orderId", order.getId());
+        variables.put("userId", userId);
+        variables.put("customerName", recipientName);
+        variables.put("companyName", "Falcon Cartons");
+        variables.put("orderDate", new java.text.SimpleDateFormat("dd/MM/yyyy").format(order.getCreatedAt()));
+        variables.put("orderStatus", shippingStatus);
+        variables.put("statusUpdateDate", new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
+        variables.put("trackingNo", trackingNo != null ? trackingNo : "");
+        variables.put("shipCompany", shipCompany != null ? shipCompany : "");
+        variables.put("deliveryMethod", deliveryMethod != null ? deliveryMethod : "");
+
+        // 상태별 변수 추가
+        variables.putAll(statusVariables);
+        
+        return sendEmailWithTemplate("SHIPMENT_STATUS_CHANGE", recipientEmail, recipientName, variables, order.getCode());
+    }
+    
+    /**
+     * 주문 상태별 변수 설정
+     */
+    private Map<String, Object> getOrderStatusVariables(String orderStatus) {
+        Map<String, Object> variables = new java.util.HashMap<>();
+        
+        switch (orderStatus) {
+            case "PAYMENT_PENDING":
+            case "결제대기":
+                variables.put("statusColor", "#f39c12");
+                variables.put("statusIcon", "⏳");
+                variables.put("statusTitle", "Payment Pending");
+                variables.put("statusMessage", "Your order is waiting for payment confirmation.");
+                variables.put("statusBgColor", "#fff3cd");
+                variables.put("statusBorderColor", "#ffeaa7");
+                variables.put("statusTextColor", "#d68910");
+                variables.put("detailTitle", "What's Next?");
+                variables.put("statusDetails", "• Please complete your payment as soon as possible<br>• Payment methods: Credit Card, Bank Transfer<br>• Order will be automatically cancelled after 7 days without payment");
+                break;
+                
+            case "PAYMENT_COMPLETED":
+            case "결제완료":
+                variables.put("statusColor", "#28a745");
+                variables.put("statusIcon", "✅");
+                variables.put("statusTitle", "Payment Completed");
+                variables.put("statusMessage", "Your payment has been successfully processed and your order is being prepared.");
+                variables.put("statusBgColor", "#d4edda");
+                variables.put("statusBorderColor", "#c3e6cb");
+                variables.put("statusTextColor", "#155724");
+                variables.put("detailTitle", "Processing Your Order");
+                variables.put("statusDetails", "• Payment confirmed and processed<br>• Order preparation will begin shortly<br>• You will receive shipping notification once dispatched");
+                break;
+                
+            case "ORDER_CANCELLED":
+            case "주문취소":
+                variables.put("statusColor", "#dc3545");
+                variables.put("statusIcon", "❌");
+                variables.put("statusTitle", "Order Cancelled");
+                variables.put("statusMessage", "Your order has been cancelled as requested.");
+                variables.put("statusBgColor", "#f8d7da");
+                variables.put("statusBorderColor", "#f5c6cb");
+                variables.put("statusTextColor", "#721c24");
+                variables.put("detailTitle", "Cancellation Details");
+                variables.put("statusDetails", "• Order has been successfully cancelled<br>• If payment was made, refund will be processed<br>• Refund may take 3-5 business days to appear in your account");
+                break;
+                
+            case "REFUND_COMPLETED":
+            case "환불완료":
+                variables.put("statusColor", "#6f42c1");
+                variables.put("statusIcon", "💰");
+                variables.put("statusTitle", "Refund Completed");
+                variables.put("statusMessage", "Your refund has been processed successfully.");
+                variables.put("statusBgColor", "#e2e3f3");
+                variables.put("statusBorderColor", "#d0d1e3");
+                variables.put("statusTextColor", "#493c74");
+                variables.put("detailTitle", "Refund Information");
+                variables.put("statusDetails", "• Refund has been processed to your original payment method<br>• Amount may take 3-5 business days to appear in your account<br>• Please contact your bank if you don't see the refund after this period");
+                break;
+                
+            default:
+                // 기본값
+                variables.put("statusColor", "#6c757d");
+                variables.put("statusIcon", "📋");
+                variables.put("statusTitle", "Order Status Updated");
+                variables.put("statusMessage", "Your order status has been updated.");
+                variables.put("statusBgColor", "#f8f9fa");
+                variables.put("statusBorderColor", "#dee2e6");
+                variables.put("statusTextColor", "#495057");
+                variables.put("detailTitle", "Status Information");
+                variables.put("statusDetails", "• Your order status has been updated<br>• Please contact customer service for more details");
+                break;
+        }
+        
+        return variables;
+    }
+    
+    /**
+     * 배송 상태별 변수 설정
+     */
+    private Map<String, Object> getShippingStatusVariables(String shippingStatus) {
+        Map<String, Object> variables = new java.util.HashMap<>();
+        
+        switch (shippingStatus) {
+            case "PREPARING_SHIPMENT":
+            case "배송준비중":
+                variables.put("statusColor", "#61acfc");
+                variables.put("statusIcon", "📦");
+                variables.put("statusTitle", "Preparing for Shipment");
+                variables.put("statusMessage", "Your order is being carefully prepared for shipment.");
+                variables.put("statusBgColor", "#d1ecf1");
+                variables.put("statusBorderColor", "#bee5eb");
+                variables.put("statusTextColor", "#0c5460");
+                variables.put("detailTitle", "Preparation Status");
+                variables.put("statusDetails", "• Items are being picked and packed<br>• Quality check in progress<br>• Shipping label will be generated soon");
+                variables.put("shippingDisplay", "display: none !important;");
+                break;
+                
+            case "SHIPMENT_STARTED":
+            case "배송시작":
+                variables.put("statusColor", "#61acfc");
+                variables.put("statusIcon", "🚛");
+                variables.put("statusTitle", "Shipment Started");
+                variables.put("statusMessage", "Your order has been dispatched and is on its way to you!");
+                variables.put("statusBgColor", "#e3f2fd");
+                variables.put("statusBorderColor", "#bbdefb");
+                variables.put("statusTextColor", "#1565c0");
+                variables.put("detailTitle", "In Transit");
+                variables.put("statusDetails", "• Package has left our warehouse<br>• Tracking information is now available<br>• Estimated delivery time provided below");
+                variables.put("shippingDisplay", "display: block !important;");
+                break;
+                
+            case "IN_TRANSIT":
+            case "배송중":
+                variables.put("statusColor", "#61acfc");
+                variables.put("statusIcon", "🚚");
+                variables.put("statusTitle", "In Transit");
+                variables.put("statusMessage", "Your package is currently in transit to your delivery address.");
+                variables.put("statusBgColor", "#e8eaf6");
+                variables.put("statusBorderColor", "#c5cae9");
+                variables.put("statusTextColor", "#283593");
+                variables.put("detailTitle", "Delivery Progress");
+                variables.put("statusDetails", "• Package is en route to destination<br>• Track your package using the tracking number below<br>• Please ensure someone is available to receive the package");
+                variables.put("shippingDisplay", "display: block !important;");
+                break;
+                
+            case "DELIVERED":
+            case "배송완료":
+                variables.put("statusColor", "#4caf50");
+                variables.put("statusIcon", "🎉");
+                variables.put("statusTitle", "Order Delivered");
+                variables.put("statusMessage", "Your order has been successfully delivered! We hope you're satisfied with your purchase.");
+                variables.put("statusBgColor", "#e8f5e8");
+                variables.put("statusBorderColor", "#c8e6c9");
+                variables.put("statusTextColor", "#2e7d32");
+                variables.put("detailTitle", "Delivery Completed");
+                variables.put("statusDetails", "• Package delivered successfully<br>• Please check your items and contact us if anything is missing<br>• Thank you for your business!");
+                variables.put("shippingDisplay", "display: block !important;");
+                break;
+                
+            default:
+                // 기본값
+                variables.put("statusColor", "#6c757d");
+                variables.put("statusIcon", "📦");
+                variables.put("statusTitle", "Shipment Status Updated");
+                variables.put("statusMessage", "Your shipment status has been updated.");
+                variables.put("statusBgColor", "#f8f9fa");
+                variables.put("statusBorderColor", "#dee2e6");
+                variables.put("statusTextColor", "#495057");
+                variables.put("detailTitle", "Status Information");
+                variables.put("statusDetails", "• Your shipment status has been updated<br>• Please contact customer service for more details");
+                variables.put("shippingDisplay", "display: none !important;");
+                break;
+        }
+        
+        return variables;
+    }
 }

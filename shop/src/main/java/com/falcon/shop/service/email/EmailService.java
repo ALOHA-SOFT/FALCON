@@ -107,4 +107,29 @@ public interface EmailService extends BaseService<Email> {
      * @return 발송 성공 여부
      */
     boolean sendPaymentCompleteEmail(Orders order, String paymentMethod, String recipientEmail, String recipientName);
+    
+    /**
+     * 주문 상태 변경 이메일 발송
+     * @param order 주문 정보
+     * @param orderStatus 주문 상태
+     * @param recipientEmail 받는사람 이메일
+     * @param recipientName 받는사람 이름
+     * @return 발송 성공 여부
+     */
+    boolean sendUpdateOrderStatus(Orders order, String orderStatus, String recipientEmail, String recipientName);
+    
+    /**
+     * 배송 상태 변경 이메일 발송
+     * @param order 주문 정보
+     * @param shippingStatus 배송 상태
+     * @param trackingNo 운송장번호
+     * @param shipCompany 택배회사
+     * @param deliveryMethod 배송방법
+     * @param recipientEmail 받는사람 이메일
+     * @param recipientName 받는사람 이름
+     * @return 발송 성공 여부
+     */
+    boolean sendUpdateShipmentStatus(Orders order, String shippingStatus, 
+                                    String trackingNo, String shipCompany, String deliveryMethod,
+                                    String recipientEmail, String recipientName);
 }

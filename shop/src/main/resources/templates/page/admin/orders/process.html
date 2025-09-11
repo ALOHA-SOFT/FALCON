@@ -372,6 +372,21 @@
                 'question', '확인', '취소')
       .then((result) => {
         if (result.isConfirmed) {
+
+          const loadingTimer = setTimeout(() => {
+            Swal.fire({
+              title: 'Updating order status and Sending email...',
+              text: 'Please wait...',
+              allowOutsideClick: false,
+              didOpen: () => {
+                Swal.showLoading()
+              },
+              onBeforeOpen: () => {
+                Swal.showLoading()
+              }
+            });
+          }, 500);
+
           // 주문 상태 변경
           const order = {
             id: "[[${order.id}]]",
@@ -387,9 +402,12 @@
             type: 'POST',
             data: order
           }).then(response => {
+            clearTimeout(loadingTimer);
+            Swal.close();
             if (response === 'SUCCESS') {
-              $alert('알림', '주문 상태가 "' + status + '"(으)로 변경되었습니다.', 'success');
-              location.reload();
+              $alert_('알림', '주문 상태가 "' + status + '"(으)로 변경되었습니다.', 'success').then(() => {
+                location.reload();
+              });
             } else {
               $alert('오류', '주문 상태 변경에 실패했습니다. 관리자에게 문의하세요.', 'error');
             }
