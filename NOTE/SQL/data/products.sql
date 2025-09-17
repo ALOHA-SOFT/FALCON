@@ -1,3 +1,4 @@
+-- Active: 1757907901171@@falcon-db.cr8aiiek0cvi.eu-west-2.rds.amazonaws.com@3306@falcon
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- 샘플 데이터

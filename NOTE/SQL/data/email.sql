@@ -1,4 +1,4 @@
--- Active: 1750388006843@@localhost@3306@falcon
+-- Active: 1757907901171@@falcon-db.cr8aiiek0cvi.eu-west-2.rds.amazonaws.com@3306@falcon
 -- Delete existing templates
 DELETE FROM email_templates;
 
