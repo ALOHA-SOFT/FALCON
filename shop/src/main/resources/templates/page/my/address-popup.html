@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{UI/layouts/user/my_layout}">
+      layout:decorate="~{UI/layouts/user/popup_layout}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,8 +10,8 @@
 <body layout:fragment="content">
   <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">Shipping Address Management</h5>
-      <button class="btn btn-primary btn-sm btn-create" data-bs-toggle="modal" data-bs-target="#addShipmentModal">+ Add New Address</button>
+      <h5 class="mb-0">Address</h5>
+      <button class="btn btn-primary btn-sm btn-create" data-bs-toggle="modal" data-bs-target="#addShipmentModal">+ Add</button>
     </div>
     <div class="card-body">
       <!-- 배송지 목록 -->
@@ -54,7 +54,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="addShipmentModalLabel">Add Shipping Address</h5>
+          <h5 class="modal-title" id="addShipmentModalLabel">Add Address</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">

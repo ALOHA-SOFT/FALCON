@@ -37,7 +37,7 @@ public class OrderItem extends Base {
   private Long quantity;
   private BigDecimal price;
 
-  @TableField
+  @TableField(exist = false)
   private Products product;
   
   @TableField(exist = false)

@@ -14,4 +14,7 @@ public interface OrderItemMapper extends BaseMapper<OrderItem> {
     // 주문 번호로 주문 항목 조회
     List<OrderItem> getOrderItemsByOrderNo(@Param("orderNo") Long orderNo);
 
+    // 주문 항목 목록
+    List<OrderItem> selectListByOrderNo(@Param("orderNo") Long orderNo);
+
 }

@@ -20,7 +20,7 @@ import lombok.ToString;
 @Alias("Address")
 public class Address extends Base {
   private Long userNo;
-  private String tel;
+  // private String tel;
   private String recipient;
   private String address;     // 주소
   private String city;        // 도시

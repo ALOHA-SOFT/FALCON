@@ -170,14 +170,13 @@ public class UserServiceImpl extends BaseServiceImpl<Users, UserMapper> implemen
     }
 
     @Override
-    public Users findByNameAndEmail(String name, String email) {
+    public Users findByEmail(String email) {
         log.info("## 아이디 찾기 ##");
-        log.info("name={}, email={}", name, email);
+        log.info("email={}", email);
         
         try {
             QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("name", name)
-                       .eq("email", email)
+            queryWrapper.eq("email", email)
                        .eq("enabled", true); // 활성화된 계정만 조회
             
             Users user = mapper.selectOne(queryWrapper);

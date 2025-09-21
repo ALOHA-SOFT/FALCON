@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.falcon.shop.domain.email.EmailTemplate;
 import com.falcon.shop.service.email.EmailService;
 import com.falcon.shop.service.email.EmailTemplateService;
-import com.falcon.shop.service.email.RealEmailService;
 
 import lombok.extern.slf4j.Slf4j;
 

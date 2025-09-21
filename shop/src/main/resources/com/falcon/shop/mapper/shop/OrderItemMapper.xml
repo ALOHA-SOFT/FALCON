@@ -17,6 +17,13 @@
         <collection property="orderItemOptions" ofType="OrderItemOption" column="no" select="listByOrderItem"/>
     </resultMap>
 
+    <!-- 주문 항목 목록 -->
+    <select id="selectListByOrderNo" resultMap="OrderItemMap">
+        SELECT * FROM order_item
+        WHERE order_no = #{orderNo}
+        ORDER BY no ASC
+    </select>
+
     <!-- 주문 번호로 주문 항목 조회 -->
     <select id="getOrderItemsByOrderNo" resultType="OrderItem">
         SELECT * FROM order_item 

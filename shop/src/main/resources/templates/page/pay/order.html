@@ -15,26 +15,28 @@
       <div class="col-12 col-md-6">
         <!-- 주문자 정보 -->
         <div class="card mb-4">
-          <div class="card-header">Customer Details</div>
-          <div class="card-body row g-3">
-            <div class="col-12">
-              <label for="buyerEmail" class="form-label">
-                <span>Email</span>
-
-              </label>
-              <input type="email" class="form-control" id="buyerEmail" name="buyerEmail" th:value="${user.email}" required>
+          <div class="card-header" style="height: 40px;">
+            <div class="col-12 d-flex justify-content-between align-items-center">
+              <span>Customer Details</span>
             </div>
-            <div class="col-6">
-              <label for="buyerFirstName" class="form-label">First Name</label>
-              <input type="text" class="form-control" id="buyerFirstName" name="buyerFirstName" th:value="${user.firstName}" required>
-            </div>
-            <div class="col-6">
-              <label for="buyerLastName" class="form-label">Last Name</label>
-              <input type="text" class="form-control" id="buyerLastName" name="buyerLastName" th:value="${user.lastName}" required>
-            </div>
-            <div class="col-12">
-              <label for="buyerPhone" class="form-label">Phone</label>
-              <input type="tel" class="form-control" id="buyerPhone" name="buyerPhone" th:value="${user.tel}" required>
+          </div>
+          <div class="card-body" style="min-height: 250px; overflow-y: auto;">
+            <div class="row g-3">
+              <div class="col-12">
+                <label for="buyerEmail" class="form-label">
+                  <span>Email</span>
+  
+                </label>
+                <input type="email" class="form-control" id="buyerEmail" name="buyerEmail" th:value="${user.email}" required>
+              </div>
+              <div class="col-6">
+                <label for="buyerFirstName" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="buyerFirstName" name="buyerFirstName" th:value="${user.firstName}" required>
+              </div>
+              <div class="col-6">
+                <label for="buyerLastName" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="buyerLastName" name="buyerLastName" th:value="${user.lastName}" required>
+              </div>
             </div>
           </div>
         </div>
@@ -43,13 +45,16 @@
       <div class="col-12 col-md-6">
         <!-- 배송지 정보 -->
         <div class="card mb-4">
-          <div class="card-header">
+          <div class="card-header py-1">
             <div class="col-12 d-flex justify-content-between align-items-center">
               <span>Delivery Details</span>
-              <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAddressModal">+ Add New Address</button>
+              <div>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAddressModal">+ Add Address</button>
+                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#updateAddressModal">Update Address</button>
+              </div>
             </div>
           </div>
-          <div class="card-body" style="height: 338px; overflow-y: auto;">
+          <div class="card-body" style="min-height: 250px; overflow-y: auto;">
             <div class="mb-3">
               <div class="row g-2" th:if="${addressList != null}">
                 <div class="col-12" th:each="addr : ${addressList}">
@@ -60,7 +65,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                           <div>
                             <strong th:text="${addr.recipient}">Recipient</strong>
-                            <span class="ms-2" th:text="${addr.tel}">Phone</span>
+                            <!-- <span class="ms-2" th:text="${addr.tel}">Phone</span> -->
                           </div>
                           <div>
                             <span class="ms-2 badge bg-primary" th:if="${addr.isMain}">Default Address</span>
@@ -68,19 +73,23 @@
                         </div>
                         <div class="fs-6">
                           <span class="badge bg-secondary" th:text="${addr.postcode}">Postal Code</span>
-                          <div class="text-muted small" th:if="${addr.deliveryRequest}" th:text="'Delivery Note: ' + ${addr.deliveryRequest}">Delivery Note</div>
+                        </div>
+                        <div class="fs-6">
+                          <span th:text="${addr.city}">City</span>
+                          <span th:text="${addr.address}">Address</span>
                         </div>
                       </label>
                     </div>
                   </div>
                 </div>
+                <div class="col-12 text-center"></div>
               </div>
                 <div th:if="${addressList == null or #lists.isEmpty(addressList)}" class="text-muted text-center py-4">
                   <i class="material-icons" style="font-size: 36px; color: #ccc;">local_shipping</i>
                   <p class="mt-2 mb-2">No delivery address registered.</p>
-                  <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAddressModal">+ Add New Address</button>
+                  <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAddressModal">+ Add Address</button>
                 </div>
-                <!-- 배송지 추가/수정 모달 -->
+                <!-- 배송지 추가 모달 -->
                 <div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressModalLabel" aria-hidden="true">
                   <div class="modal-dialog">
                     <div class="modal-content">
@@ -90,109 +99,106 @@
                     </div>
                     <div class="modal-body">
                       <form id="order-address-form">
-                      <input type="hidden" name="userNo" th:value="${user.no}">
-                      <div class="mb-2">
-                        <label class="form-label">Recipient</label>
-                        <input type="text" class="form-control" name="recipient" id="orderRecipient" required>
-                      </div>
-                      <div class="mb-2">
-                        <label class="form-label">Phone</label>
-                        <input type="tel" class="form-control" name="tel" id="orderTel" required>
-                      </div>
-                      
-                      <div class="mb-2">
-                        <label class="form-label">Address</label>
-                        <!-- <div class="input-group">
-                        <input type="text" id="orderPostcode" class="form-control" name="postcode" placeholder="Postal Code" readonly>
-                        <button type="button" class="btn btn-outline-secondary" onclick="execOrderDaumPostcode()">Find Address</button>
+                        <input type="hidden" name="userNo" th:value="${user.no}">
+                        <div class="mb-2">
+                          <label class="form-label">Recipient</label>
+                          <input type="text" class="form-control" name="recipient" id="orderRecipient" required>
+                        </div>
+                        <!-- <div class="mb-2">
+                          <label class="form-label">Phone</label>
+                          <input type="tel" class="form-control" name="tel" id="orderTel" required>
                         </div> -->
-                        <input type="text" class="form-control mt-2" name="address" id="orderAddress" placeholder="Address" required>
-                        <!-- <input type="text" class="form-control mt-2" name="addressDong" id="orderAddressDong" placeholder="District Address" readonly> -->
-                      </div>
-                      <div class="mb-2">
-                        <label class="form-label">City</label>
-                        <input type="text" class="form-control" name="city" id="orderCity" placeholder="City Name">
-                      </div>
-                      <div class="mb-2">
-                        <label class="form-label">Post code</label>
-                        <input type="text" class="form-control" name="postcode" id="orderPostcodeField" placeholder="Postal Code">
-                      </div>
-                      <!-- <div class="mb-2">
-                        <label class="form-label">Detailed Address</label>
-                        <input type="text" class="form-control" name="addressDetail" id="orderAddressDetail" placeholder="Detailed Address (Apartment, Unit No., etc.)" required>
-                      </div> -->
-                      <!-- <div class="mb-2">
-                        <label class="form-label">Delivery Note</label>
-                        <select id="orderDeliveryRequestSelect" class="form-select mt-2">
-                        <option value="">Please select delivery instructions</option>
-                        <option value="Please leave at the door if not available">Please leave at the door if not available</option>
-                        <option value="Please leave with security office">Please leave with security office</option>
-                        <option value="Please put in the mailbox">Please put in the mailbox</option>
-                        <option value="Please do not ring the bell">Please do not ring the bell</option>
-                        <option value="Please contact before delivery">Please contact before delivery</option>
-                        <option value="custom">Custom Input</option>
-                        </select>
-                        <input type="text" class="form-control d-none" name="deliveryRequest" id="orderDeliveryRequest" placeholder="Delivery Instructions (Optional)" readonly>
-                      </div> -->
-                      <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="orderIsMain" name="isMain">
-                        <label class="form-check-label" for="orderIsMain">Set as default address</label>
-                      </div>
-                      <div class="mb-5">
-                        <label class="form-label">Country/Region</label>
-                        <select class="form-select" name="country" id="orderCountry">
-                          <option value="United Kingdom" selected>United Kingdom</option>
-                        </select>
-                      </div>
-                      <button type="submit" class="btn btn-primary w-100">Save</button>
+                        
+                        <div class="mb-2">
+                          <label class="form-label">Address</label>
+                          <!-- <div class="input-group">
+                          <input type="text" id="orderPostcode" class="form-control" name="postcode" placeholder="Postal Code" readonly>
+                          <button type="button" class="btn btn-outline-secondary" onclick="execOrderDaumPostcode()">Find Address</button>
+                          </div> -->
+                          <input type="text" class="form-control mt-2" name="address" id="orderAddress" placeholder="Address" required>
+                          <!-- <input type="text" class="form-control mt-2" name="addressDong" id="orderAddressDong" placeholder="District Address" readonly> -->
+                        </div>
+                        <div class="mb-2">
+                          <label class="form-label">City</label>
+                          <input type="text" class="form-control" name="city" id="orderCity" placeholder="City Name">
+                        </div>
+                        <div class="mb-2">
+                          <label class="form-label">Post code</label>
+                          <input type="text" class="form-control" name="postcode" id="orderPostcodeField" placeholder="Postal Code">
+                        </div>
+                        <!-- <div class="mb-2">
+                          <label class="form-label">Detailed Address</label>
+                          <input type="text" class="form-control" name="addressDetail" id="orderAddressDetail" placeholder="Detailed Address (Apartment, Unit No., etc.)" required>
+                        </div> -->
+                        <!-- <div class="mb-2">
+                          <label class="form-label">Delivery Note</label>
+                          <select id="orderDeliveryRequestSelect" class="form-select mt-2">
+                          <option value="">Please select delivery instructions</option>
+                          <option value="Please leave at the door if not available">Please leave at the door if not available</option>
+                          <option value="Please leave with security office">Please leave with security office</option>
+                          <option value="Please put in the mailbox">Please put in the mailbox</option>
+                          <option value="Please do not ring the bell">Please do not ring the bell</option>
+                          <option value="Please contact before delivery">Please contact before delivery</option>
+                          <option value="custom">Custom Input</option>
+                          </select>
+                          <input type="text" class="form-control d-none" name="deliveryRequest" id="orderDeliveryRequest" placeholder="Delivery Instructions (Optional)" readonly>
+                        </div> -->
+                        <div class="form-check mb-2">
+                          <input class="form-check-input" type="checkbox" id="orderIsMain" name="isMain">
+                          <label class="form-check-label" for="orderIsMain">Set as default address</label>
+                        </div>
+                        <div class="mb-5">
+                          <label class="form-label">Country/Region</label>
+                          <select class="form-select" name="country" id="orderCountry">
+                            <option value="United Kingdom" selected>United Kingdom</option>
+                          </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Save</button>
                       </form>
                     </div>
                     </div>
                   </div>
                 </div>
-                <!-- Daum Postcode CDN -->
-                <!-- <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script> -->
+
+                <!-- 배송지 수정 모달 -->
+                <div class="modal fade" id="updateAddressModal" tabindex="-1" aria-labelledby="updateAddressModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="updateAddressModalLabel">Update Address</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <iframe src="/my/address-popup" frameborder="0" style="width: 100%; height: 500px; border: none;"></iframe>
+                      </div>
+                    </div>
+                  </div>
+                  
+                </div>
                 <script>
-                  // function execOrderDaumPostcode() {
-                  //   new daum.Postcode({
-                  //   oncomplete: function(data) {
-                  //     document.getElementById('orderPostcode').value = data.zonecode;
-                  //     document.getElementById('orderAddress').value = data.roadAddress;
-                  //     document.getElementById('orderAddressDong').value = data.jibunAddress;
-                  //   }
-                  //   }).open();
-                  // }
-                  // document.getElementById('orderDeliveryRequestSelect').addEventListener('change', function() {
-                  //   const selectedValue = this.value;
-                  //   const deliveryRequestInput = document.getElementById('orderDeliveryRequest');
-                  //   if (selectedValue === 'custom') {
-                  //   deliveryRequestInput.removeAttribute('readonly');
-                  //   deliveryRequestInput.classList.remove('d-none');
-                  //   deliveryRequestInput.value = '';
-                  //   deliveryRequestInput.focus();
-                  //   } else if (selectedValue === '') {
-                  //   deliveryRequestInput.value = '';
-                  //   deliveryRequestInput.classList.add('d-none');
-                  //   } else {
-                  //   deliveryRequestInput.value = selectedValue;
-                  //   deliveryRequestInput.classList.add('d-none');
-                  //   }
-                  // });
+                  // Update Address Modal close event listener
+                  document.getElementById('updateAddressModal').addEventListener('hidden.bs.modal', function () {
+                    location.reload();
+                  });
+
+                </script>
+
+                <script>
                   document.getElementById('order-address-form').addEventListener('submit', async function(e) {
                     e.preventDefault();
                     const formData = new FormData(this);
                     const addressData = {
-                    userNo: formData.get('userNo') || '',
-                    recipient: formData.get('recipient') || '',
-                    tel: formData.get('tel') || '',
-                    country: formData.get('country') || '',
-                    postcode: formData.get('postcode') || '',
-                    address: formData.get('address') || '',
-                    addressDong: formData.get('addressDong') || '',
-                    addressDetail: formData.get('addressDetail') || '',
-                    city: formData.get('city') || '',
-                    deliveryRequest: formData.get('deliveryRequest') || '',
-                    isMain: formData.get('isMain') === 'on',
+                      userNo: formData.get('userNo') || '',
+                      recipient: formData.get('recipient') || '',
+                      // tel: formData.get('tel') || '',
+                      country: formData.get('country') || '',
+                      postcode: formData.get('postcode') || '',
+                      address: formData.get('address') || '',
+                      addressDong: formData.get('addressDong') || '',
+                      addressDetail: formData.get('addressDetail') || '',
+                      city: formData.get('city') || '',
+                      deliveryRequest: formData.get('deliveryRequest') || '',
+                      isMain: formData.get('isMain') === 'on',
                     };
                     try {
                     await $ajax({
@@ -607,8 +613,8 @@
       if (paymentAmountInput) {
         const totalPriceElement = document.getElementById('total-price');
         if (totalPriceElement) {
-          const totalAmount = parseInt(totalPriceElement.getAttribute('data')) || 0;
-          paymentAmountInput.value = (totalAmount / 100).toFixed(2); // 파운드 단위로 변환
+          const totalAmount = totalPriceElement.getAttribute('data') || 0;
+          paymentAmountInput.value = (totalAmount); 
         }
       }
     }
@@ -645,8 +651,8 @@
       const buyerFirstName = document.getElementById('buyerFirstName').value;
       const buyerLastName = document.getElementById('buyerLastName').value;
       const buyerEmail = document.getElementById('buyerEmail').value;
-      let buyerPhone = document.getElementById('buyerPhone').value;
-      buyerPhone = buyerPhone.replace(/[^\d]/g, '');
+      // let buyerPhone = document.getElementById('buyerPhone').value;
+      // buyerPhone = buyerPhone.replace(/[^\d]/g, '');
       
       if (!buyerFirstName || !buyerLastName || !buyerEmail ) {
         $alert('Input Error', 'Please fill in all customer details.', 'warning');
@@ -676,12 +682,12 @@
       const buyerFirstName = document.getElementById('buyerFirstName').value;
       const buyerLastName = document.getElementById('buyerLastName').value;
       const buyerEmail = document.getElementById('buyerEmail').value;
-      let buyerPhone = document.getElementById('buyerPhone').value;
+      // let buyerPhone = document.getElementById('buyerPhone').value;
       const addressNo = document.querySelector('input[name="addressNo"]:checked') ? document.querySelector('input[name="addressNo"]:checked').value : null;
 
       $confirm(
         'Transfer Payment Confirmation', 
-        'Do you want to complete the order with cash payment?\nPayment information will be sent to your email after order completion.', 
+        'Do you want to complete the order with transfer payment?\nPayment information will be sent to your email after order completion.', 
         'question',
         'Pay',
         'Cancel'
@@ -713,7 +719,7 @@
               buyerFirstName: buyerFirstName,
               buyerLastName: buyerLastName,
               buyerEmail: buyerEmail,
-              buyerPhone: buyerPhone,
+              // buyerPhone: buyerPhone,
               addressNo: addressNo
             }
           }).then(function(res) {
@@ -739,7 +745,7 @@
       const buyerFirstName = document.getElementById('buyerFirstName').value;
       const buyerLastName = document.getElementById('buyerLastName').value;
       const buyerEmail = document.getElementById('buyerEmail').value;
-      const buyerPhone = document.getElementById('buyerPhone').value;
+      // const buyerPhone = document.getElementById('buyerPhone').value;
       const addressNo = document.querySelector('input[name="addressNo"]:checked') ? 
         document.querySelector('input[name="addressNo"]:checked').value : null;
 
@@ -781,7 +787,7 @@
               buyerFirstName: buyerFirstName,
               buyerLastName: buyerLastName,
               buyerEmail: buyerEmail,
-              buyerPhone: buyerPhone,
+              // buyerPhone: buyerPhone,
               addressNo: addressNo
             }
           }).then(function(response) {
@@ -812,27 +818,27 @@
           <div class="modal-dialog modal-lg">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title">암호화폐 결제</h5>
+                <h5 class="modal-title">Crypto Payment</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
               </div>
               <div class="modal-body text-center">
                 <div class="alert alert-info">
-                  <strong>결제 금액:</strong> ${paymentData.pay_amount} ${paymentData.pay_currency}
+                  <strong>Payment Amount:</strong> ${paymentData.pay_amount} ${paymentData.pay_currency}
                 </div>
                 <div class="mb-3">
-                  <label class="form-label">결제 주소</label>
+                  <label class="form-label">Payment Address</label>
                   <div class="input-group">
                     <input type="text" class="form-control" value="${paymentData.pay_address}" readonly id="payAddress">
-                    <button class="btn btn-outline-secondary" onclick="copyToClipboard('payAddress')">복사</button>
+                    <button class="btn btn-outline-secondary" onclick="copyToClipboard('payAddress')">Copy</button>
                   </div>
                 </div>
                 <div class="alert alert-warning">
-                  <small>위 주소로 정확한 금액을 송금해주세요. 결제 완료 후 자동으로 처리됩니다.</small>
+                    <small>Please send the exact amount to the above address. It will be processed automatically after payment completion.</small>
                 </div>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                <button type="button" class="btn btn-primary" onclick="checkPaymentStatus('${paymentData.payment_id}')">결제 확인</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="checkPaymentStatus('${paymentData.payment_id}')">Check Payment</button>
               </div>
             </div>
           </div>

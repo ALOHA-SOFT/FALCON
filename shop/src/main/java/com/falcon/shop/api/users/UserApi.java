@@ -169,25 +169,20 @@ public class UserApi {
           String email = request.get("email");
           
           // 입력값 검증
-          if (name == null || name.trim().isEmpty()) {
-              return ResponseEntity.badRequest()
-                  .body(createErrorResponse("이름을 입력해주세요."));
-          }
-          
           if (email == null || email.trim().isEmpty()) {
               return ResponseEntity.badRequest()
                   .body(createErrorResponse("이메일을 입력해주세요."));
           }
           
           // 사용자 조회
-          Users user = userService.findByNameAndEmail(name.trim(), email.trim());
+          Users user = userService.findByEmail(email.trim());
           
           if (user != null) {
               // 성공 응답
               java.util.Map<String, Object> response = new java.util.HashMap<>();
               response.put("success", true);
               response.put("username", user.getUsername());
-              response.put("message", "아이디를 찾았습니다.");
+              response.put("message", "Username found successfully.");
               
               return ResponseEntity.ok(response);
           } else {

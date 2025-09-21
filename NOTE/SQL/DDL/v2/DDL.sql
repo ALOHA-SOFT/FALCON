@@ -1,4 +1,4 @@
--- Active: 1757907901171@@falcon-db.cr8aiiek0cvi.eu-west-2.rds.amazonaws.com@3306@falcon
+-- Active: 1754231727979@@falcon-db.cr8aiiek0cvi.eu-west-2.rds.amazonaws.com@3306@falcon
 -- MySQL dump 10.13  Distrib 8.0.41, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: falcon
@@ -27,7 +27,7 @@ CREATE TABLE `address` (
   `no` bigint NOT NULL AUTO_INCREMENT COMMENT 'PK',
   `id` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'UK',
   `user_no` bigint NOT NULL COMMENT 'FK',
-  `tel` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '전화번호',
+  -- `tel` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '전화번호',
   `recipient` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '받는사람',
   `address` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '주소',
   `city` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '도시',
@@ -406,7 +406,7 @@ CREATE TABLE `orders` (
   `shipment_no` bigint DEFAULT NULL COMMENT 'FK',
   `code` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '주문코드 (20250101_상품번호_유저번호_당일시퀀스)',
   `title` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '주문제목 (상품1 외 5건)',
-  `guest_tel` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '비회원 전화번호',
+  -- `guest_tel` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '비회원 전화번호',
   `guest_email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '비회원 이메일',
   `guest_first_name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '비회원 성',
   `guest_last_name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '비회원 이름',
@@ -600,7 +600,7 @@ CREATE TABLE `shipments` (
   `no` bigint NOT NULL AUTO_INCREMENT COMMENT 'PK',
   `id` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'UK',
   `user_no` bigint NOT NULL COMMENT 'FK',
-  `tel` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '전화번호',
+  -- `tel` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '전화번호',
   `recipient` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '받는사람',
   `address` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '주소',
   `city` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '도시',
@@ -658,7 +658,7 @@ CREATE TABLE `users` (
   `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '이름',
   `first_name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '성',
   `last_name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '이름',
-  `tel` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '전화번호',
+  -- `tel` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '전화번호',
   `email` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '이메일',
   `enabled` tinyint(1) NOT NULL DEFAULT '1' COMMENT '활성화여부',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '등록일자',

@@ -140,63 +140,81 @@
         </div>
       </div>
       <!-- 배송 정보 입력 -->
-      <div class="col-12 col-xxl-6">
-        <div class="card">
-          <div class="card-body">
-            <div class="row">
-              <div class="col-6">
-                <h5 class="card-title">배송 정보 입력</h5>
-                <p class="card-text">배송 정보를 입력/수정</p>
-              </div>
-              <div class="col-6 text-end">
-                <div class="d-flex align-items-center justify-content-between">
-                  <span>배송 상태 : </span>
-                  <span class="badge badge-primary px-2 py-2 fs-6" th:text="${order.shipment.status}"></span>
+      <th:block th:if="${order.shipment != null}">
+        <div class="col-12 col-xxl-6">
+          <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-6">
+                    <h5 class="card-title">배송 정보 입력</h5>
+                    <p class="card-text">배송 정보를 입력/수정</p>
+                  </div>
+                  <div class="col-6 text-end">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <span>배송 상태 : </span>
+                      <span class="badge badge-primary px-2 py-2 fs-6" th:text="${order.shipment.status}"></span>
+                    </div>
+                  </div>
+                </div>
+                <hr>
+                <form>
+                  <div class="row">
+                    <!-- <div class="col-6">
+                      <div class="mb-3">
+                        <label for="status" class="form-label">배송 상태</label>
+                        <select class="form-select" id="status" name="status">
+                          <option value="">배송 상태 선택</option>
+                            <option value="배송준비중">배송준비중</option>
+                            <option value="배송시작">배송시작</option>
+                            <option value="배송중">배송중</option>
+                            <option value="배송완료">배송완료</option>
+                            <option value="주문취소">주문취소</option>
+                        </select>
+                      </div>
+                    </div> -->
+                    <div class="col-12">
+                      <div class="mb-3">
+                        <label for="trackingNo" class="form-label">운송장 번호</label>
+                        <input type="text" class="form-control" id="trackingNo" placeholder="운송장 번호 입력">
+                      </div>
+                    </div>
+                    <!-- <div class="col-6">
+                      <div class="mb-3">
+                        <label for="deliveryMethod" class="form-label">배송 방법</label>
+                        <input type="text" class="form-control" id="deliveryMethod" placeholder="배송 방법 입력">
+                      </div>
+                    </div> -->
+                    <div class="col-12">
+                      <div class="mb-3">
+                        <label for="shipCompany" class="form-label">택배 회사</label>
+                        <input type="text" class="form-control" id="shipCompany" placeholder="택배 회사 입력">
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <div class="d-flex align-items-center justify-content-end pt-3">
+                  <button type="button" class="btn btn-primary" onclick="updateShipment()">배송 정보 업데이트</button>
                 </div>
               </div>
             </div>
-            <hr>
-            <form>
-              <div class="row">
-                <div class="col-6">
-                  <div class="mb-3">
-                    <label for="status" class="form-label">배송 상태</label>
-                    <select class="form-select" id="status" name="status">
-                      <option value="">배송 상태 선택</option>
-                        <option value="배송준비중">배송준비중</option>
-                        <option value="배송시작">배송시작</option>
-                        <option value="배송중">배송중</option>
-                        <option value="배송완료">배송완료</option>
-                        <option value="주문취소">주문취소</option>
-                    </select>
+        </div>
+      </th:block>
+      <th:block th:if="${order.shipment == null}">
+        <div class="col-12 col-xxl-6">
+          <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-12">
+                    <h5 class="card-title">배송 정보 입력</h5>
+                    <p class="card-text">사용자가 아직 결제 요청 및 배송 정보를 입력하지 않았습니다.</p>
                   </div>
-                </div>
-                <div class="col-6">
-                  <div class="mb-3">
-                    <label for="trackingNo" class="form-label">운송장 번호</label>
-                    <input type="text" class="form-control" id="trackingNo" placeholder="운송장 번호 입력">
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="mb-3">
-                    <label for="deliveryMethod" class="form-label">배송 방법</label>
-                    <input type="text" class="form-control" id="deliveryMethod" placeholder="배송 방법 입력">
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="mb-3">
-                    <label for="shipCompany" class="form-label">택배 회사</label>
-                    <input type="text" class="form-control" id="shipCompany" placeholder="택배 회사 입력">
-                  </div>
+                  <div class="col-12" style="height: 186px;"></div>
                 </div>
               </div>
-            </form>
-            <div class="d-flex align-items-center justify-content-end pt-3">
-              <button type="button" class="btn btn-primary" onclick="updateShipment()">배송 정보 업데이트</button>
             </div>
           </div>
         </div>
-      </div>
+      </th:block>
     </div>
   </section>
 
@@ -256,53 +274,73 @@
         </div>
       </div>
       <!-- 배송 정보 -->
-      <div class="col-12 col-xxl-6">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">배송 정보</h5>
-            <p class="card-text">고객의 배송지 정보입니다.</p>
-            <div class="table-responsive">
-              <table class="table table-bordered">
-              <tbody>
-                <tr>
-                  <th width="120">수취인</th>
-                  <td th:text="${order.shipment.recipient}"></td>
-                  <th width="120">연락처</th>
-                  <td th:text="${order.shipment.tel}"></td>
-                </tr>
-                <tr>
-                  <th>주소</th>
-                  <td colspan="3" th:text="${order.shipment.address}"></td>
-                </tr>
-                <tr>
-                  <th>도시</th>
-                  <td th:text="${order.shipment.city}"></td>
-                  <th>우편번호</th>
-                  <td th:text="${order.shipment.postcode}"></td>
-                </tr>
-                <tr>
-                  <th>운송장번호</th>
-                  <td colspan="3" th:text="${order.shipment.trackingNo ?: '-'}"></td>
-                </tr>
-                <tr>
-                  <th>택배회사</th>
-                  <td colspan="3" th:text="${order.shipment.shipCompany}"></td>
-                </tr>
-                <tr>
-                  <th>배송방법</th>
-                  <td th:text="${order.shipment.deliveryMethod}"></td>
-                  <th>배송상태</th>
-                  <td>
-                    <span class="badge badge-primary px-2 py-2 fs-6" 
-                          th:text="${order.shipment.status}"></span>
-                  </td>
-                </tr>
-              </tbody>
-              </table>
+      <th:block th:if="${order.shipment != null}">
+        <div class="col-12 col-xxl-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">배송 정보</h5>
+              <p class="card-text">고객의 배송지 정보입니다.</p>
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                <tbody>
+                  <tr>
+                    <th width="120">수취인</th>
+                    <td th:text="${order.shipment.recipient}"></td>
+                    <th width="120">연락처</th>
+                    <td th:text="${order.shipment.tel}"></td>
+                  </tr>
+                  <tr>
+                    <th>주소</th>
+                    <td colspan="3" th:text="${order.shipment.address}"></td>
+                  </tr>
+                  <tr>
+                    <th>도시</th>
+                    <td th:text="${order.shipment.city}"></td>
+                    <th>우편번호</th>
+                    <td th:text="${order.shipment.postcode}"></td>
+                  </tr>
+                  <tr>
+                    <th>운송장번호</th>
+                    <td colspan="3" th:text="${order.shipment.trackingNo ?: '-'}"></td>
+                  </tr>
+                  <tr>
+                    <th>택배회사</th>
+                    <td colspan="3" th:text="${order.shipment.shipCompany}"></td>
+                  </tr>
+                  <tr>
+                    <th>배송방법</th>
+                    <td th:text="${order.shipment.deliveryMethod}"></td>
+                    <th>배송상태</th>
+                    <td>
+                      <span class="badge badge-primary px-2 py-2 fs-6" 
+                            th:text="${order.shipment.status}"></span>
+                    </td>
+                  </tr>
+                </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </th:block>
+      <th:block th:if="${order.shipment == null}">
+        <div class="col-12 col-xxl-6">
+          <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-12">
+                    <h5 class="card-title">배송 정보</h5>
+                    <p class="card-text">
+                      사용자가 아직 결제 요청 및 배송 정보를 입력하지 않았습니다.
+                    </p>
+                  </div>
+                  <div class="col-12" style="height: 280px;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </th:block>
     </div>
 
     <!-- 주문자 정보 -->
@@ -334,8 +372,8 @@
                     <td th:text="${order.user.lastName}"></td>
                   </tr>
                   <tr>
-                    <th>전화번호</th>
-                    <td th:text="${order.user.tel}"></td>
+                    <!-- <th>전화번호</th>
+                    <td th:text="${order.user.tel}"></td> -->
                     <th>이메일</th>
                     <td th:text="${order.user.email}"></td>
                   </tr>
@@ -358,7 +396,7 @@
   </section>
 
 
-  <script>
+  <script th:if="${order.shipment != null}">
     // 주문처리
     async function orderProcess(status) {
       if (!status) {
@@ -422,23 +460,23 @@
 
     // 배송 업데이트
     function updateShipment() {
-      const status = document.getElementById('status').value;
+      // const status = document.getElementById('status').value;
+      // const deliveryMethod = document.getElementById('deliveryMethod').value;
       const trackingNo = document.getElementById('trackingNo').value;
       const shipCompany = document.getElementById('shipCompany').value;
-      const deliveryMethod = document.getElementById('deliveryMethod').value;
 
-      if (!status) {
-        $alert('알림', '배송 상태를 선택해주세요.', 'warning');
-        return;
-      }
+      // if (!status) {
+      //   $alert('알림', '배송 상태를 선택해주세요.', 'warning');
+      //   return;
+      // }
 
       const shipment = {
         no: "[[${order.shipment.no}]]",
         id: "[[${order.shipment.id}]]",
-        status: status,
         trackingNo: trackingNo,
         shipCompany: shipCompany,
-        deliveryMethod: deliveryMethod
+        // status: status,
+        // deliveryMethod: deliveryMethod
       };
 
       $ajax({

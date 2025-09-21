@@ -37,7 +37,7 @@ public class Orders extends Base {
   private Long shipmentNo;                   // FK
   private String code;                       // 주문코드 (20250101_상품번호_유저번호_당일시퀀스)
   private String title;                      // 주문제목 (상품1 외 5건)
-  private String guestTel;                   // 비회원 전화번호
+  // private String guestTel;                   // 비회원 전화번호
   private String guestEmail;                 // 비회원 이메일
   private String guestFirstName;             // 비회원 성
   private String guestLastName;              // 비회원 이름

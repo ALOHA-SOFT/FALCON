@@ -173,7 +173,7 @@ public class OrderApi {
                       Shipments shipment = order.getShipment();
                       shipment.setUserNo(userNo);
                       shipment.setRecipient( address.getRecipient() );
-                      shipment.setTel( address.getTel() );
+                    //   shipment.setTel( address.getTel() );
                       shipment.setAddress( address.getAddress() );
                       shipment.setCity( address.getCity() );
                       shipment.setPostcode( address.getPostcode() );

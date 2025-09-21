@@ -303,4 +303,28 @@ public class MyController {
 
     return "page/my/address";
   }
+
+  
+  /**
+   * 배송지 관리 (팝업)
+   * @param customUser
+   * @param model
+   * @return
+   */
+  @GetMapping("/address-popup")
+  public String addressPopup(
+    @AuthenticationPrincipal CustomUser customUser,
+    Model model
+  ) {
+    // customeUser의 user 의 no 로 
+    Long userNo = customUser.getUser().getNo();
+    log.info("Fetching address for userNo: {}", userNo);
+    model.addAttribute("userNo", userNo);
+    // 사용자 번호로 배송 목록 조회
+    List<?> addressList = addressService.listByUser(userNo);
+    model.addAttribute("addressList", addressList);
+
+
+    return "page/my/address-popup";
+  }
 }

@@ -1,4 +1,4 @@
--- Active: 1757907901171@@falcon-db.cr8aiiek0cvi.eu-west-2.rds.amazonaws.com@3306@falcon
+-- Active: 1754231727979@@falcon-db.cr8aiiek0cvi.eu-west-2.rds.amazonaws.com@3306@falcon
 -- Delete existing templates
 DELETE FROM email_templates;
 
@@ -50,6 +50,9 @@ INSERT INTO email_templates (
                 <strong>Payment Method:</strong> {{paymentMethod}}
               </p>
             </div>
+
+            <!-- 주문내역 박스 -->
+            {{orderDetailsTable}}
             
             <!-- 현금 결제 안내 박스 -->
             <div style="background-color: #fff3cd !important; border: 1px solid #ffeaa7 !important; margin: 20px 0 !important; padding: 20px !important;">
@@ -95,7 +98,14 @@ INSERT INTO email_templates (
     'Order Confirmation Email',
     'ORDER_CONFIRMATION', 
     '[{{companyName}}] Order Received (Order No: {{orderCode}})',
-    '<table cellpadding="0" cellspacing="0" border="0" width="100%" style="font-family: Arial, sans-serif; background-color: #f4f4f4;">
+    '<!DOCTYPE html>
+<html style="margin: 0 !important; padding: 0 !important;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0px 0 !important; padding: 0 !important; background-color: #f4f4f4 !important; font-family: Arial, sans-serif !important;">
+<table cellpadding="0" cellspacing="0" border="0" width="100%" style="font-family: Arial, sans-serif; background-color: #f4f4f4;">
   <tr>
     <td align="center" style="padding: 20px;">
       <table cellpadding="0" cellspacing="0" border="0" width="600" style="background-color: #ffffff; border: 1px solid #ddd;">
@@ -145,7 +155,9 @@ INSERT INTO email_templates (
       </table>
     </td>
   </tr>
-</table>',
+</table>
+</body>
+</html>',
     1,
     '["customerName", "orderCode", "companyName", "orderDate"]',
     1,
@@ -165,7 +177,14 @@ INSERT INTO email_templates (
     'Temporary Password Email',
     'TEMP_PASSWORD',
     '[{{companyName}}] Temporary Password Sent',
-    '<table cellpadding="0" cellspacing="0" border="0" width="100%" style="font-family: Arial, sans-serif; background-color: #f4f4f4;">
+    '<!DOCTYPE html>
+<html style="margin: 0 !important; padding: 0 !important;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0px 0 !important; padding: 0 !important; background-color: #f4f4f4 !important; font-family: Arial, sans-serif !important;">
+<table cellpadding="0" cellspacing="0" border="0" width="100%" style="font-family: Arial, sans-serif; background-color: #f4f4f4;">
   <tr>
     <td align="center" style="padding: 20px;">
       <table cellpadding="0" cellspacing="0" border="0" width="600" style="background-color: #ffffff; border: 1px solid #ddd;">
@@ -216,7 +235,9 @@ INSERT INTO email_templates (
       </table>
     </td>
   </tr>
-</table>',
+</table>
+</body>
+</html>',
     1,
     '["username", "tempPassword", "companyName"]',
     1,

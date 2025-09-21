@@ -53,10 +53,10 @@
         </div>
 
         <!-- 전화번호 -->
-        <div class="mb-3">
+        <!-- <div class="mb-3">
           <label for="tel" class="form-label">Phone Number <span class="text-danger">*</span></label>
           <input type="tel" class="form-control" id="tel" th:field="*{tel}" required>
-        </div>
+        </div> -->
 
         <!-- 비밀번호 변경 -->
         <hr class="my-4">
@@ -120,7 +120,7 @@
       }
       
       // 유효성 검사
-      if (!formData.name || !formData.firstName || !formData.lastName || !formData.email || !formData.tel) {
+      if (!formData.name || !formData.firstName || !formData.lastName || !formData.email ) {
         $alert('Input Error', 'Please fill in all required information.', 'warning');
         return;
       }

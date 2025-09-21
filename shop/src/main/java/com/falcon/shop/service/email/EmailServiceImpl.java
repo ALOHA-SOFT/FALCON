@@ -1,5 +1,6 @@
 package com.falcon.shop.service.email;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -13,9 +14,11 @@ import org.springframework.stereotype.Service;
 
 import com.falcon.shop.domain.email.Email;
 import com.falcon.shop.domain.email.EmailTemplate;
+import com.falcon.shop.domain.shop.OrderItem;
 import com.falcon.shop.domain.shop.Orders;
 import com.falcon.shop.domain.users.Users;
 import com.falcon.shop.mapper.email.EmailMapper;
+import com.falcon.shop.mapper.shop.OrderItemMapper;
 import com.falcon.shop.mapper.users.UserMapper;
 import com.falcon.shop.service.BaseServiceImpl;
 
@@ -25,14 +28,10 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class EmailServiceImpl extends BaseServiceImpl<Email, EmailMapper> implements EmailService {
     
-    @Autowired
-    private JavaMailSender mailSender;
-    
-    @Autowired
-    private EmailTemplateService emailTemplateService;
-
-    @Autowired
-    private UserMapper userMapper;
+    @Autowired private JavaMailSender mailSender;
+    @Autowired private EmailTemplateService emailTemplateService;
+    @Autowired private UserMapper userMapper;
+    @Autowired private OrderItemMapper orderItemMapper;
     
     // 이메일 설정
     @Value("${spring.mail.username}")
@@ -158,13 +157,73 @@ public class EmailServiceImpl extends BaseServiceImpl<Email, EmailMapper> implem
     
     @Override
     public boolean sendOrderEmail(String orderCode, String recipientEmail, String recipientName) {
-        Map<String, Object> variables = Map.of(
-            "orderCode", orderCode,
-            "customerName", recipientName,
-            "companyName", "Falcon Cartons"
-        );
-        
+        Map<String, Object> variables = new java.util.HashMap<>();
+        variables.put("orderCode", orderCode);
+        variables.put("customerName", recipientName);
+        variables.put("companyName", "Falcon Cartons");
+
         return sendEmailWithTemplate("ORDER_CONFIRMATION", recipientEmail, recipientName, variables, orderCode);
+    }
+
+
+    /**
+     * 결제안내메일에 사용되는 주문 상세 HTML 테이블 생성
+     * @param order
+     * @param orderItems
+     * @return
+     */
+    public String createOrderDetailHTML(Orders order, List<OrderItem> orderItems) {
+        StringBuilder table = new StringBuilder();
+        table.append("<div style=\"background-color: #ffffff !important; border: 1px solid #27ae60 !important; border-left: 4px solid #27ae60 !important; margin: 20px 0 !important; padding: 20px !important;\">");
+        table.append("<h3 style=\"margin: 0 0 15px 0 !important; color: #27ae60 !important; font-size: 18px !important;\">Order Details</h3>");
+        table.append("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\" style=\"border-collapse: collapse !important;\">");
+        table.append("<thead>");
+        table.append("<tr style=\"background-color: #f8f9fa !important;\">");
+        table.append("<th style=\"padding: 10px !important; text-align: left !important; border-bottom: 2px solid #27ae60 !important; font-size: 14px !important; color: #333 !important;\">Product Name</th>");
+        table.append("<th style=\"padding: 10px !important; text-align: center !important; border-bottom: 2px solid #27ae60 !important; font-size: 14px !important; color: #333 !important;\">Unit Price</th>");
+        table.append("<th style=\"padding: 10px !important; text-align: center !important; border-bottom: 2px solid #27ae60 !important; font-size: 14px !important; color: #333 !important;\">Quantity</th>");
+        table.append("<th style=\"padding: 10px !important; text-align: right !important; border-bottom: 2px solid #27ae60 !important; font-size: 14px !important; color: #333 !important;\">Price</th>");
+        table.append("</tr>");
+        table.append("</thead>");
+        table.append("<tbody>");
+
+        // 주문 상품들을 테이블 행으로 추가
+        for (OrderItem item : orderItems) {
+            table.append("<tr>");
+            table.append("<td style=\"padding: 10px !important; border-bottom: 1px solid #eee !important; font-size: 14px !important; color: #333 !important;\">");
+            table.append(item.getProduct() != null ? item.getProduct().getName() : "Product");
+            table.append("</td>");
+            table.append("<td style=\"padding: 10px !important; text-align: center !important; border-bottom: 1px solid #eee !important; font-size: 14px !important; color: #333 !important;\">");
+            table.append("£").append(item.getPrice());
+            table.append("</td>");
+            table.append("<td style=\"padding: 10px !important; text-align: center !important; border-bottom: 1px solid #eee !important; font-size: 14px !important; color: #333 !important;\">");
+            table.append(item.getQuantity());
+            table.append("</td>");
+            table.append("<td style=\"padding: 10px !important; text-align: right !important; border-bottom: 1px solid #eee !important; font-size: 14px !important; color: #333 !important;\">");
+            table.append("£").append(item.getPrice().multiply(new BigDecimal(item.getQuantity())));
+            table.append("</td>");
+            table.append("</tr>");
+        }
+
+        table.append("</tbody>");
+        table.append("<tfoot>");
+        table.append("<tr>");
+        table.append("<td colspan=\"3\" style=\"padding: 10px !important; text-align: right !important; border-bottom: 1px solid #eee !important; font-size: 14px !important; color: #666 !important; font-weight: bold !important;\">Shipping Cost</td>");
+        table.append("<td style=\"padding: 10px !important; text-align: right !important; border-bottom: 1px solid #eee !important; font-size: 14px !important; color: #666 !important; font-weight: bold !important;\">");
+        table.append("£").append(order.getShipPrice() != null ? order.getShipPrice() : BigDecimal.ZERO);
+        table.append("</td>");
+        table.append("</tr>");
+        table.append("<tr style=\"background-color: #27ae60 !important;\">");
+        table.append("<td colspan=\"3\" style=\"padding: 12px 10px !important; font-weight: bold !important; color: #ffffff !important; font-size: 16px !important;\">Total Amount</td>");
+        table.append("<td style=\"padding: 12px 10px !important; text-align: right !important; font-weight: bold !important; color: #ffffff !important; font-size: 16px !important;\">");
+        table.append("£").append(order.getTotalPrice());
+        table.append("</td>");
+        table.append("</tr>");
+        table.append("</tfoot>");
+        table.append("</table>");
+        table.append("</div>");
+
+        return table.toString();
     }
     
     @Override
@@ -173,26 +232,40 @@ public class EmailServiceImpl extends BaseServiceImpl<Email, EmailMapper> implem
         Users user = userMapper.selectById(order.getUserNo());
         String userId = user.getId();
 
-        Map<String, Object> variables = Map.of(
-            "host", host,
-            "orderCode", order.getCode(),
-            "orderId", order.getId(),
-            "userId", userId,
-            "customerName", recipientName,
-            "paymentMethod", paymentMethod,
-            "companyName", "Falcon Cartons"
-        );
+        Map<String, Object> variables = new java.util.HashMap<>();
+        variables.put("host", host);
+        variables.put("orderCode", order.getCode());
+        variables.put("orderId", order.getId());
+        variables.put("userId", userId);
+        variables.put("customerName", recipientName);
+        variables.put("paymentMethod", paymentMethod);
+        variables.put("companyName", "Falcon Cartons");
+
+        // orderCode 로 Orders 조회하고, List<OrderItem> 등 주문 상세 정보를 HTML 테이블 형태로 생성
+        log.info("#############################################");
+        log.info("order : {}", order);
+        
+        // 상품 아이템 목록 조회
+        List<OrderItem> orderItems = orderItemMapper.selectListByOrderNo(order.getNo());
+        log.info("orderItems : {}", orderItems);
+        
+        // 주문 상품 정보를 HTML 테이블로 생성
+        String orderDetailsTable = createOrderDetailHTML(order, orderItems);
+        log.info("orderDetailsTable : {}", orderDetailsTable);
+        
+        // variables에 주문 상품 테이블 추가
+        variables.put("orderDetailsTable", orderDetailsTable);
+        log.info("#############################################");
         
         return sendEmailWithTemplate("PAYMENT_GUIDE", recipientEmail, recipientName, variables, order.getCode());
     }
     
     @Override
     public boolean sendTempPassword(String to, String username, String tempPassword) {
-        Map<String, Object> variables = Map.of(
-            "username", username,
-            "tempPassword", tempPassword,
-            "companyName", "Falcon Cartons"
-        );
+        Map<String, Object> variables = new java.util.HashMap<>();
+        variables.put("username", username);
+        variables.put("tempPassword", tempPassword);
+        variables.put("companyName", "Falcon Cartons");
         
         return sendEmailWithTemplate("TEMP_PASSWORD", to, username, variables, null);
     }
@@ -399,17 +472,16 @@ public class EmailServiceImpl extends BaseServiceImpl<Email, EmailMapper> implem
         Users user = userMapper.selectById(order.getUserNo());
         String userId = user.getId();
 
-        Map<String, Object> variables = Map.of(
-            "host", host,
-            "orderCode", order.getCode(),
-            "orderId", order.getId(),
-            "userId", userId,
-            "customerName", recipientName,
-            "paymentMethod", paymentMethod,
-            "companyName", "Falcon Cartons",
-            "totalAmount", order.getTotalPrice(),
-            "paymentDate", new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date())
-        );
+        Map<String, Object> variables = new java.util.HashMap<>();
+        variables.put("host", host);
+        variables.put("orderCode", order.getCode());
+        variables.put("orderId", order.getId());
+        variables.put("userId", userId);
+        variables.put("customerName", recipientName);
+        variables.put("paymentMethod", paymentMethod);
+        variables.put("companyName", "Falcon Cartons");
+        variables.put("totalAmount", order.getTotalPrice());
+        variables.put("paymentDate", new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
 
         return sendEmailWithTemplate("PAYMENT_COMPLETE", recipientEmail, recipientName, variables, order.getCode());
     }

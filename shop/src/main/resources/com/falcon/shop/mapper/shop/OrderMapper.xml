@@ -13,7 +13,7 @@
         <result property="shipmentNo" column="shipment_no"/>
         <result property="code" column="code"/>
         <result property="title" column="title"/>
-        <result property="guestTel" column="guest_tel"/>
+        <!-- <result property="guestTel" column="guest_tel"/> -->
         <result property="totalPrice" column="total_price"/>
         <result property="totalQuantity" column="total_quantity"/>
         <result property="totalItemCount" column="total_item_count"/>
@@ -35,7 +35,7 @@
                 code LIKE CONCAT('%', #{queryParams.search}, '%')
                 OR title LIKE CONCAT('%', #{queryParams.search}, '%')
                 OR status LIKE CONCAT('%', #{queryParams.search}, '%')
-                OR guest_tel LIKE CONCAT('%', #{queryParams.search}, '%')
+                <!-- OR guest_tel LIKE CONCAT('%', #{queryParams.search}, '%') -->
             )
         </if>
         <if test="status != null and status != ''">
