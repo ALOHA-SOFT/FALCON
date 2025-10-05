@@ -39,6 +39,7 @@ public class Products extends Base {
   private Boolean isBest;             // BEST
   private Boolean isSoldOut;          // 품절
   private String priceInfo;           // 가격설명
+  private Integer seq;                // 순서
 
 
   @TableField(exist = false)

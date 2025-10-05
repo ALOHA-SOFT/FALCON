@@ -286,8 +286,6 @@
                   <tr>
                     <th width="120">수취인</th>
                     <td th:text="${order.shipment.recipient}"></td>
-                    <th width="120">연락처</th>
-                    <td th:text="${order.shipment.tel}"></td>
                   </tr>
                   <tr>
                     <th>주소</th>
@@ -434,6 +432,8 @@
               status: status
             }
           };
+
+          console.dir(order);
 
           $ajax({
             url: '/api/shop/order/process',

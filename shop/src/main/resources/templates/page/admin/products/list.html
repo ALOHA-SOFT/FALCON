@@ -70,6 +70,7 @@
                 <th width="5%">번호</th>
                 <th width="10%">이미지</th>
                 <th>상품명</th>
+                <th width="5%">순서</th>
                 <th width="10%">가격</th>
                 <th width="8%">재고</th>
                 <th width="8%">상태</th>
@@ -109,6 +110,16 @@
                     <span th:if="${product.categoryLarge != null}" class="badge bg-dark" th:text="${product.categoryLarge.name}">대분류</span>
                   <br>
                   <small class="text-muted" th:if="${product.summary}" th:text="${#strings.abbreviate(product.summary, 50)}"></small>
+                </td>
+                <td>
+                  <div>
+                    <input type="text" class="form-control p-0 py-2 text-center" th:id="'seq-' + ${product.id}" name="seq" th:value="${product.seq}" >
+                  </div>
+                  <div class="d-flex justify-content-center">
+                    <button class="btn btn-sm btn-outline-primary mt-1" th:data="${product.id}" onclick="updateProductSeq()">
+                      <i class="material-icons-two-tone m-0">check</i>
+                    </button>
+                  </div>
                 </td>
                 <td>
                   <!-- 할인가 필드가 없으므로 기본 가격만 표시 -->
@@ -330,6 +341,39 @@
       });
     }
   </script>
+
+  <script>
+    // 순서 업데이트 버튼 클릭 이벤트
+    function updateProductSeq() {
+      const productId = event.currentTarget.getAttribute('data');
+      const newSeq = document.getElementById('seq-' + productId).value;
+      if (!newSeq || isNaN(newSeq) || newSeq < 0) {
+        $alert('입력 오류', '유효한 순서 값을 입력해주세요.', 'warning');
+        return;
+      }
+      
+      const data = {
+        id: productId,
+        seq: newSeq
+      }
+
+      $ajax({
+        url: '/api/products/product',
+        type: 'PUT',
+        contentType: 'application/json',
+        data: data
+      }).then(function(response) {
+        if (response || response == 'SUCCESS' || response.status == 200 ) {
+          $toast({ title: '상품 순서가 업데이트되었습니다.', icon: 'success' })
+        } else {
+          $toast({ title: '상품 순서 업데이트에 실패했습니다.', icon: 'error' });
+        }
+      });
+    }
+  </script>
+
+
+
 
 </body>
 </html>

@@ -96,7 +96,7 @@ public class EmailServiceImpl extends BaseServiceImpl<Email, EmailMapper> implem
             email.setSendStatus("SENT");
             log.info("이메일 발송 성공: {} -> {}", SENDER_EMAIL, email.getRecipientEmail());
             log.info("email : {}", email);
-            log.info("email - id : {}", email.getId());
+            // log.info("email - id : {}", email.getId());
 
             // 발송 성공 시 상태 업데이트
             boolean statusUpdateResult = updateById(email);

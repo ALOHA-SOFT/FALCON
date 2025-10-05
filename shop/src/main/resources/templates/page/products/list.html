@@ -51,9 +51,9 @@
                      class="product-image">
               </div>
               <div class="product-info">
-                <h3 class="product-title" th:text="${product.name}">KING BLUE KING BLUE KING BLUE</h3>
+                <h3 class="product-title" th:text="${product.name}">상품명</h3>
                 <p class="product-price" 
-                   th:if="${!product.isSoldOut}"
+                   th:if="${product.isSoldOut != null && !product.isSoldOut}"
                    th:text="${product.price != null ? '£ ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT') : product.priceInfo}"
                    >£52.30</p>
                 <p class="product-price out-of-stock" 

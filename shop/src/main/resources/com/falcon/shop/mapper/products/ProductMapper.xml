@@ -56,7 +56,7 @@
             AND is_best = 1
         </if>
         <if test="queryParams.filter == null or queryParams.filter == '' or queryParams.filter == 0">
-            ORDER BY no DESC, created_at DESC
+            ORDER BY seq ASC, no DESC, created_at DESC
         </if>
         <if test="queryParams.filter != null and queryParams.filter != ''">
             <choose>

@@ -46,8 +46,8 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="categoryNo" class="form-label">카테고리 <span class="text-danger">*</span></label>
-                    <select class="form-select" id="categoryNo" name="categoryNo" required>
+                    <label for="categoryNo" class="form-label">카테고리</label>
+                    <select class="form-select" id="categoryNo" name="categoryNo" >
                       <option value="">카테고리 선택</option>
                       <option th:each="category : ${categories}" th:value="${category.no}" th:text="${category.name}"></option>
                     </select>
@@ -98,9 +98,18 @@
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="shipMsg" class="form-label">배송안내</label>
-                    <input type="text" class="form-control" id="shipMsg" name="shipMsg" maxlength="200" placeholder="예: 평일 2-3일, 주말/공휴일 제외">
+                    <label for="seq" class="form-label">순서</label>
+                    <input type="text" class="form-control" id="seq" name="seq" maxlength="200" placeholder="숫자가 낮을수록 상단에 노출">
                   </div>
+                </div>
+              </div>
+
+              <!-- 배송 안내 -->
+              <div class="mb-3">
+                <div class="mb-3">
+                  <label for="shipMsg" class="form-label">배송안내</label>
+                  <input type="text" class="form-control" id="shipMsg" name="shipMsg" maxlength="200" placeholder="예: 평일 2-3일, 주말/공휴일 제외">
+                  <div class="form-text">상품 상세에 노출될 배송 안내를 써주세요.</div>
                 </div>
               </div>
 

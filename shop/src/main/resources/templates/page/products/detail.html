@@ -362,19 +362,19 @@
           </button>
           
           <!-- 품절이 아닌 경우 -->
-          <button type="button" id="addToCartBtn" class="add-to-cart-btn" th:if="${!product.isSoldOut}">
+          <button type="button" id="addToCartBtn" class="add-to-cart-btn" th:if="${product.isSoldOut != null && !product.isSoldOut}">
             Add to Cart
           </button>
           
           <!-- 품절인 경우 -->
-          <button type="button" class="sold-out-btn" disabled th:if="${product.isSoldOut}">
+          <button type="button" class="sold-out-btn" disabled th:if="${product.isSoldOut != null && product.isSoldOut}">
             Sold Out
           </button>
         </div>
 
         <!-- Order -->
         <div class="d-flex gap-2">
-          <button type="button" class="btn btn-outline-dark w-100" th:if="${!product.isSoldOut}" onclick="orderNow()">Order Now</button>
+          <button type="button" class="btn btn-outline-dark w-100" th:if="${product.isSoldOut != null && !product.isSoldOut}" onclick="orderNow()">Order Now</button>
         </div>
         
       </div>
@@ -399,12 +399,12 @@
     </button>
     
     <!-- 품절이 아닌 경우 -->
-    <button type="button" class="floating-btn floating-add-cart-btn" id="mobileAddToCartBtn" th:if="${!product.isSoldOut}">
+    <button type="button" class="floating-btn floating-add-cart-btn" id="mobileAddToCartBtn" th:if="${product.isSoldOut != null && !product.isSoldOut}">
       <span class="material-icons">add_shopping_cart</span>
     </button>
     
     <!-- 품절인 경우 -->
-    <button type="button" class="floating-btn floating-sold-out-btn" disabled th:if="${product.isSoldOut}">
+    <button type="button" class="floating-btn floating-sold-out-btn" disabled th:if="${product.isSoldOut != null && product.isSoldOut}">
       <span class="material-icons">block</span>
     </button>
   </div>

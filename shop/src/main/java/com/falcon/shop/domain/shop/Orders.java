@@ -2,6 +2,7 @@ package com.falcon.shop.domain.shop;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.ibatis.type.Alias;
 
@@ -15,7 +16,6 @@ import com.falcon.shop.domain.users.Users;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -23,7 +23,6 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 @TableName("orders")
 @Alias("Orders")
@@ -31,7 +30,7 @@ public class Orders extends Base {
 
   @TableId(type = IdType.AUTO)                // PK 자동증가 (Mybatis plus - insert 에서 사용)
   private Long no;                            // PK
-  
+  private String id;                          // ID
   private Long userNo;                       // FK
   private Long addressNo;                    // FK
   private Long shipmentNo;                   // FK
@@ -59,6 +58,12 @@ public class Orders extends Base {
   // 배송 정보
   @TableField(exist = false)
   private Shipments shipment;
+
+  public Orders() {
+    this.id = UUID.randomUUID().toString();         // UUID로 ID 생성
+  }
+
+  
 
   
 }

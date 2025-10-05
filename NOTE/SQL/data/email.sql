@@ -498,6 +498,17 @@ INSERT INTO email_templates (
             <p style="margin: 0 0 30px 0 !important; font-size: 14px !important; color: #666 !important; line-height: 1.6 !important;">
               {{statusMessage}}
             </p>
+
+            <!-- 배송 정보 (배송 관련 상태일 때만 표시) -->
+            <div style="background-color: #e8f4fd !important; border: 1px solid #2196f3 !important; margin: 20px 0 !important; padding: 20px !important; {{shippingDisplay}}">
+              <h4 style="margin: 0 0 10px 0 !important; color: #1976d2 !important; font-size: 16px !important;">🚚 Shipping Information</h4>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Tracking Number:</strong> {{trackingNo}}
+              </p>
+              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
+                <strong>Shipping Company:</strong> {{shipCompany}}
+              </p>
+            </div>
             
             <!-- 주문 정보 박스 -->
             <div style="background-color: #ffffff !important; border: 1px solid {{statusColor}} !important; border-left: 4px solid {{statusColor}} !important; margin: 20px 0 !important; padding: 20px !important;">
@@ -522,20 +533,6 @@ INSERT INTO email_templates (
               <div style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important; line-height: 1.6 !important;">
                 {{statusDetails}}
               </div>
-            </div>
-            
-            <!-- 배송 정보 (배송 관련 상태일 때만 표시) -->
-            <div style="background-color: #e8f4fd !important; border: 1px solid #2196f3 !important; margin: 20px 0 !important; padding: 20px !important; {{shippingDisplay}}">
-              <h4 style="margin: 0 0 10px 0 !important; color: #1976d2 !important; font-size: 16px !important;">🚚 Shipping Information</h4>
-              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
-                <strong>Tracking Number:</strong> {{trackingNo}}
-              </p>
-              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
-                <strong>Shipping Company:</strong> {{shipCompany}}
-              </p>
-              <p style="margin: 5px 0 !important; font-size: 14px !important; color: #333 !important;">
-                <strong>Delivery Method:</strong> {{deliveryMethod}}
-              </p>
             </div>
             
           </td>

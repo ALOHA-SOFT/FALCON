@@ -131,7 +131,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Orders, OrderMapper> imple
                 shipPrice = BigDecimal.ZERO;
                 // throw new RuntimeException("제품의 배송비를 찾을 수 없습니다.");
             }
-            totalShipPrice = totalShipPrice.max(shipPrice);
+            // 배송비 계산
+            totalShipPrice = calcShipPrice(totalQuantity);
+            log.info("🔍 계산된 배송비: {}", totalShipPrice);
         }
         log.info("🔍 배송비: {}", totalShipPrice);
         order.setShipPrice(totalShipPrice);
@@ -320,8 +322,12 @@ public class OrderServiceImpl extends BaseServiceImpl<Orders, OrderMapper> imple
                     log.error("주문 정보를 찾을 수 없습니다: 주문 ID {}", orderId);
                     throw new RuntimeException("주문 정보를 찾을 수 없습니다.");
                 }
+
                 String recipientEmail2 = orderforMail2.getGuestEmail();
                 String recipientName2 = orderforMail2.getGuestFirstName() + " " + orderforMail2.getGuestLastName();
+                
+                // 배송정보 (송장번호, 배송업체 등) 조회
+                shipment = shipmentMapper.selectOne(queryWrapper2);
                 String trackingNo = shipment.getTrackingNo();
                 String shipCompany = shipment.getShipCompany();
                 String deliveryMethod = shipment.getDeliveryMethod();
@@ -332,6 +338,30 @@ public class OrderServiceImpl extends BaseServiceImpl<Orders, OrderMapper> imple
 
         return true;
     }
-    
+
+
+    /**
+     * 배송비 계산
+     * 1 - 2 CARTONS: £12
+     * 3 - 5 CARTONS: £8.5
+     * 6 - 9 CARTONS: £5.5
+     * 10+ CARTONS: FREE
+     * @param totalQuantity
+     * @return
+     */
+    public BigDecimal calcShipPrice(Long totalQuantity) {
+        if (totalQuantity == null || totalQuantity <= 0) {
+            return BigDecimal.ZERO;
+        }
+        if (totalQuantity >= 10) {
+            return BigDecimal.ZERO;
+        } else if (totalQuantity >= 6) {
+            return BigDecimal.valueOf(5.5);
+        } else if (totalQuantity >= 3) {
+            return BigDecimal.valueOf(8.5);
+        } else {
+            return BigDecimal.valueOf(12);
+        }
+    }
     
 }

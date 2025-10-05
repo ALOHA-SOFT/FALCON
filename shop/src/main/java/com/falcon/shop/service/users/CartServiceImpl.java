@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -164,6 +165,7 @@ public class CartServiceImpl extends BaseServiceImpl<Carts, CartMapper> implemen
 
 
         Orders order = Orders.builder()
+            .id(UUID.randomUUID().toString())
             .title(title)
             .userNo(userNo)
             .status("결제대기")

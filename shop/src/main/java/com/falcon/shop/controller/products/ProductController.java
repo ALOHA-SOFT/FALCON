@@ -119,11 +119,14 @@ public class ProductController {
                 model.addAttribute("optionGroup", optionGroupService.select(optionGroupNo));
             }
             // 관련 상품
-            List<Products> relatedProducts = productService.relatedList(product.getCategoryNo());
-            log.info("relatedProducts : {}", relatedProducts);
-            model.addAttribute("relatedProducts", relatedProducts);
+            if( product.getCategoryNo() != null ) {
+                List<Products> relatedProducts = productService.relatedList(product.getCategoryNo());
+                log.info("relatedProducts : {}", relatedProducts);
+                model.addAttribute("relatedProducts", relatedProducts);
+            }
             
         } catch (Exception e) {
+            log.error("productDetail error : {}", e.getMessage());
             return "redirect:/products";
         }
         return "page/products/detail";

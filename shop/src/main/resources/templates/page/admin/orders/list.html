@@ -139,7 +139,7 @@
                   <a th:href="@{/admin/orders/{id}/process(id=${order.id})}" th:text="${order.code}"></a>
                 </td>
                 <td th:text="${order.title}">상품1 외 5건</td>
-                <td th:text="${#numbers.formatInteger(order.totalPrice, 0, 'COMMA')}">50,000</td>
+                <td th:text="'£ ' + ${#numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 2, 'POINT')}">50,000</td>
                 <td th:text="${order.totalQuantity}">3</td>
                 <td>
                     <span class="badge p-2 fs-6 bg-warning" th:if="${order.status == '결제대기'}">결제대기</span>
