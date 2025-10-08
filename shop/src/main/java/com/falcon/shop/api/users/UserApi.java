@@ -1,5 +1,10 @@
 package com.falcon.shop.api.users;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -175,14 +180,15 @@ public class UserApi {
           }
           
           // 사용자 조회
-          Users user = userService.findByEmail(email.trim());
+          //   Users user = userService.findByEmail(email.trim());
+          List<Users> userList = userService.findByEmailList(email.trim());
           
-          if (user != null) {
+          if (userList != null && !userList.isEmpty()) {
               // 성공 응답
-              java.util.Map<String, Object> response = new java.util.HashMap<>();
+              Map<String, Object> response = new HashMap<>();
               response.put("success", true);
-              response.put("username", user.getUsername());
-              response.put("message", "Username found successfully.");
+              response.put("usernames", userList.stream().map(Users::getUsername).collect(Collectors.toList()));
+              response.put("message", "Usernames found successfully.");
               
               return ResponseEntity.ok(response);
           } else {

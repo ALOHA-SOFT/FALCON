@@ -250,7 +250,7 @@
           }
           
           if (response.success) {
-            showResult(true, response.username, response.message);
+            showResult(true, response.usernames, response.message);
           } else {
             showResult(false, null, response.message || 'Unable to find your ID.');
           }
@@ -275,7 +275,7 @@
         loading.style.display = 'none';
       }
 
-      function showResult(success, username, message) {
+      function showResult(success, usernames, message) {
         resultContainer.style.display = 'block';
         
         if (success) {
@@ -283,7 +283,9 @@
           resultContent.innerHTML = `
             <i class="fas fa-check-circle fa-2x mb-3"></i>
             <h5>Your ID has been found!</h5>
-            <div class="found-id">${username}</div>
+            <ol class="found-id ">
+              ${usernames.map(id => `<li class="mb-2">${id.trim()}</li>`).join('')}
+            </ol>
             <p class="mb-3">${message}</p>
             <a href="/login" class="btn btn-primary">
               <i class="fas fa-sign-in-alt me-2"></i>Go to Login

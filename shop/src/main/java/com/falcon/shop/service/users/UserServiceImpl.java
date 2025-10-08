@@ -1,5 +1,7 @@
 package com.falcon.shop.service.users;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -270,6 +272,30 @@ public class UserServiceImpl extends BaseServiceImpl<Users, UserMapper> implemen
             }
         } catch (Exception e) {
             log.error("임시 비밀번호 이메일 발송 중 오류 발생: {}, 오류: {}", email, e.getMessage());
+        }
+    }
+
+    @Override
+    public List<Users> findByEmailList(String email) {
+        log.info("## 아이디 찾기 ##");
+        log.info("email={}", email);
+        
+        try {
+            QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("email", email)
+                       .eq("enabled", true); // 활성화된 계정만 조회
+            
+            List<Users> users = mapper.selectList(queryWrapper);
+            if (users != null && !users.isEmpty()) {
+                log.info("아이디 찾기 성공: {}건", users.size());
+                return users;
+            } else {
+                log.info("아이디 찾기 실패: 일치하는 사용자 없음");
+                return null;
+            }
+        } catch (Exception e) {
+            log.error("아이디 찾기 중 오류 발생: {}", e.getMessage());
+            return null;
         }
     }
 
