@@ -176,7 +176,7 @@ public class CartServiceImpl extends BaseServiceImpl<Carts, CartMapper> implemen
             OrderItem orderItem = OrderItem.builder()
                 .productNo(cart.getProductNo())
                 .quantity(cart.getQuantity())
-                .price(cart.getTotalPrice() != null ? cart.getTotalPrice() : BigDecimal.ZERO)
+                .price(cart.getTotalPrice() != null ? cart.getProduct().getPrice() : BigDecimal.ZERO)
                 .build();
             
             // CartItemOption을 OrderItemOption으로 변환

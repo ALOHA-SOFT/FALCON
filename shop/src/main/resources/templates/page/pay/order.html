@@ -263,7 +263,10 @@
                           <strong>Quantity:</strong> <span th:text="${item.quantity}">1</span>
                         </div>
                         <div>
-                          <strong>Price:</strong> <span th:text="${'£ ' + #numbers.formatDecimal(item.price, 1, 'COMMA', 2, 'POINT')}" class="item-price" data-item-id="${item.productNo}">£0</span>
+                          <strong>Unit Price:</strong> <span th:text="${'£ ' + #numbers.formatDecimal(item.price / item.quantity, 1, 'COMMA', 2, 'POINT')}" class="item-price" th:data-unit-price="${item.price / item.quantity}" th:data-quantity="${item.quantity}" th:data-item-id="${item.productNo}">£0</span>
+                        </div>
+                        <div>
+                          <strong>Total Price:</strong> <span th:text="${'£ ' + #numbers.formatDecimal(item.price, 1, 'COMMA', 2, 'POINT')}" class="item-total">£0</span>
                         </div>
                       </div>
                     </div>
@@ -527,10 +530,12 @@
     
     // 총 결제금액 계산 및 업데이트 함수
     function updateTotalPrice() {
-      // 상품 가격 합계
+      // 상품 가격 합계 (단가 × 수량)
       let itemTotal = 0;
       document.querySelectorAll('.item-price').forEach(function(el){
-        itemTotal += parseInt(el.innerText.replace(/[^\d]/g, ''));
+        const unitPrice = parseFloat(el.getAttribute('data-unit-price')) || 0;
+        const quantity = parseInt(el.getAttribute('data-quantity')) || 1;
+        itemTotal += unitPrice * quantity * 100; // 센트 단위로 계산
       });
       
       // 옵션 가격 합계
@@ -542,8 +547,8 @@
       // 배송비
       const shipPrice = parseInt(document.getElementById('shipping-price').innerText.replace(/[^\d]/g, '')) || 0;
       
-      // 총 결제금액
-      const total = itemTotal + optionTotal + shipPrice;
+      // 총 결제금액 (센트에서 파운드로 변환)
+      const total = Math.round(itemTotal / 100) + optionTotal + shipPrice;
       
       // 화면에 표시
       const totalPriceText = document.getElementById('total-price');
