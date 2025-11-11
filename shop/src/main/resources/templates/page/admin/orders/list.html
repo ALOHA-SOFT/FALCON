@@ -117,11 +117,13 @@
                   </div>
                 </th>
                 <th width="5%">번호</th>
-                <th width="15%">주문코드</th>
+                <th width="10%">주문코드</th>
                 <th width="20%">주문제목</th>
+                <th width="10%">고객명</th>
                 <th width="10%">총가격</th>
                 <th width="8%">총수량</th>
-                <th width="10%">상태</th>
+                <th width="8%">상태</th>
+                <th width="5%"><span style="font-size: 12px;">주소</span></th>
                 <th width="15%">주문일</th>
                 <th width="17%">관리</th>
               </tr>
@@ -134,11 +136,14 @@
                            th:value="${order.id}" th:id="'check-' + ${order.id}" th:data-shipment-id="${order.shipment != null ? order.shipment.id : ''}">
                   </div>
                 </td>
-                <td th:text="${iterStat.count}">1</td>
+                <td>
+                  <th:block th:text="${order.no}"></th:block>
+                </td>
                 <td>
                   <a th:href="@{/admin/orders/{id}/process(id=${order.id})}" th:text="${order.code}"></a>
                 </td>
                 <td th:text="${order.title}">상품1 외 5건</td>
+                <td th:text="${order.user.name}">고객명</td>
                 <td th:text="'£ ' + ${#numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 2, 'POINT')}">50,000</td>
                 <td th:text="${order.totalQuantity}">3</td>
                 <td>
@@ -150,6 +155,11 @@
                     <span class="badge p-2 fs-6 bg-primary" th:if="${order.status == '배송완료'}">배송완료</span>
                     <span class="badge p-2 fs-6 bg-danger" th:if="${order.status == '주문취소'}">주문취소</span>
                     <span class="badge p-2 fs-6 bg-secondary" th:if="${order.status == '환불완료'}">환불완료</span>
+                </td>
+                <td>
+                  <th:block th:if="${order.shipment != null}">
+                    <span class="material-icons-two-tone">check</span>
+                  </th:block>
                 </td>
                 <td th:text="${#dates.format(order.createdAt, 'yyyy-MM-dd HH:mm')}">2024-01-01 10:00</td>
                 <td>

@@ -176,7 +176,8 @@ public class UserApi {
           // 입력값 검증
           if (email == null || email.trim().isEmpty()) {
               return ResponseEntity.badRequest()
-                  .body(createErrorResponse("이메일을 입력해주세요."));
+              // 이메일을 입력해주세요.
+                  .body(createErrorResponse("Please enter your email."));
           }
           
           // 사용자 조회
@@ -200,7 +201,8 @@ public class UserApi {
       } catch (Exception e) {
           log.error("아이디 찾기 API 오류: {}", e.getMessage(), e);
           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-              .body(createErrorResponse("아이디 찾기 중 오류가 발생했습니다."));
+          // 아이디 찾기 중 오류가 발생했습니다.
+              .body(createErrorResponse("An error occurred while finding the username."));
       }
   }
   
@@ -221,12 +223,14 @@ public class UserApi {
           // 입력값 검증
           if (username == null || username.trim().isEmpty()) {
               return ResponseEntity.badRequest()
-                  .body(createErrorResponse("아이디를 입력해주세요."));
+              // 아이디를 입력해주세요.
+                  .body(createErrorResponse("Please enter your username."));
           }
           
           if (email == null || email.trim().isEmpty()) {
               return ResponseEntity.badRequest()
-                  .body(createErrorResponse("이메일을 입력해주세요."));
+                // 이메일을 입력해주세요.
+                .body(createErrorResponse("Please enter your email."));
           }
           
           // 비밀번호 재설정
@@ -237,18 +241,21 @@ public class UserApi {
               java.util.Map<String, Object> response = new java.util.HashMap<>();
               response.put("success", true);
               response.put("email", email);
-              response.put("message", "임시 비밀번호가 이메일로 발송되었습니다.");
+              // 임시 비밀번호가 이메일로 발송되었습니다.
+              response.put("message", "A temporary password has been sent to your email.");
               
               return ResponseEntity.ok(response);
           } else {
               // 실패 응답
-              return ResponseEntity.ok(createErrorResponse("입력하신 정보와 일치하는 계정이 없습니다."));
+              // 입력하신 정보와 일치하는 계정이 없습니다.
+              return ResponseEntity.ok(createErrorResponse("No account matches the provided information."));
           }
           
       } catch (Exception e) {
           log.error("비밀번호 찾기 API 오류: {}", e.getMessage(), e);
           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-              .body(createErrorResponse("임시 비밀번호 발송 중 오류가 발생했습니다."));
+              // 임시 비밀번호 발송 중 오류가 발생했습니다.
+              .body(createErrorResponse("An error occurred while sending the temporary password."));
       }
   }
   

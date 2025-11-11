@@ -62,24 +62,21 @@
             <input type="hidden" name="userNo" th:value="${userNo}">
             <input type="hidden" name="id" id="id">
             <div class="mb-2">
-              <label class="form-label">Recipient</label>
-              <input type="text" class="form-control" name="recipient" id="recipient" required>
+              <label class="form-label">Recipient <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="recipient" id="recipient" placeholder="Recipient Name" required>
             </div>
-            <!-- <div class="mb-2">
-              <label class="form-label">Phone Number</label>
-              <input type="tel" class="form-control" name="tel" id="tel" required>
-            </div> -->
             <div class="mb-2">
-              <label class="form-label">Address</label>
+              <label class="form-label">Address <span class="text-danger">*</span></label>
               <input type="text" class="form-control mt-2" name="address" id="address" placeholder="Address" required>
             </div>
             <div class="mb-2">
-              <label class="form-label">City</label>
-              <input type="text" class="form-control" name="city" id="orderCity" placeholder="City Name">
+              <label class="form-label">City <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="city" id="orderCity" placeholder="City Name" required>
             </div>
             <div class="mb-2">
-              <label class="form-label">Post code</label>
-              <input type="text" class="form-control" name="postcode" id="postcode" placeholder="Postal Code">
+              <label class="form-label">Post code <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="postcode" id="postcode" placeholder="Postal Code" 
+                     required minlength="6" maxlength="9" pattern="^[A-Za-z0-9\s]{6,9}$">
             </div>
             <div class="mb-5">
               <label class="form-label">Country/Region</label>
@@ -123,14 +120,39 @@
     // 배송지 등록/수정 폼 처리
     document.getElementById('address-form').addEventListener('submit', async function(e) {
       e.preventDefault();
+      
+      // HTML5 폼 유효성 검사
+      if (!this.checkValidity()) {
+        this.reportValidity();
+        return;
+      }
+      
       const formData = new FormData(this);
+      
+      // 추가 필드 검증
+      const address = formData.get('address')?.trim();
+      const city = formData.get('city')?.trim();
+      const postcode = formData.get('postcode')?.trim();
+      
+      if (!address || !city || !postcode) {
+        $alert('Required Fields', 'Please fill in Address, City, and Postcode.', 'warning');
+        return;
+      }
+      
+      // 우편번호 형식 검증 (6-9자리, 영문자/숫자/공백만 허용)
+      const postcodePattern = /^[A-Za-z0-9\s]{6,9}$/;
+      if (!postcodePattern.test(postcode)) {
+        $alert('Invalid Postcode', 'Postcode must be 6-9 characters (letters, numbers, and spaces only).', 'warning');
+        return;
+      }
+      
       const addressData = {
         userNo: formData.get('userNo') || '',
         recipient: formData.get('recipient') || '',
         tel: formData.get('tel') || '',
-        address: formData.get('address') || '',
-        city: formData.get('city') || '',
-        postcode: formData.get('postcode') || '',
+        address: address,
+        city: city,
+        postcode: postcode,
         country: formData.get('country') || '',
         isMain: formData.get('isMain') === 'on',
       };

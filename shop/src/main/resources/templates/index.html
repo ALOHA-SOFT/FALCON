@@ -192,67 +192,12 @@
   </section> -->
 
 
-  <!-- 메인 배너 슬라이드 - swiper -->
+  <!-- 검색 엔진 설명용 -->
   <div class="container-fluid p-0 d-none">
-    <!-- Swiper -->
-    <div class="swiper main-slide">
-      <div class="swiper-wrapper">
-        <th:block th:if="${mainBanners != null and !#lists.isEmpty(mainBanners)}" th:each="banner : ${mainBanners}">
-          <div class="swiper-slide position-relative">
-            <a th:href="${banner.link}" target="_blank">
-              <img th:src="${ banner.url }" th:alt="${banner.name}" style="width:100%;">
-              <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center align-items-center" style="background: rgba(0,0,0,0.3);">
-                <div class="card bg-dark bg-opacity-25 border-0 px-4 py-5 text-light" style="width: 100%; max-width: 80%;">
-                  <h2 class="mb-4 text-center fs-1" th:text="${banner.mainTitle}" style="font-weight:bold;"></h2>
-                  <p class="mb-0 text-center fs-2" th:text="${banner.subTitle}"></p>
-                </div>
-              </div>
-            </a>
-          </div>
-        </th:block>
-        <th:block th:if="${mainBanners == null or #lists.isEmpty(mainBanners)}">
-          <div class="swiper-slide">
-            <img src="https://placehold.co/1900x800?text=Banner+01" alt="기본 배너 이미지" style="width:100%;">
-            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center align-items-center" style="background: rgba(0,0,0,0.3);">
-                <div class="card bg-white bg-opacity-75 border-0 px-4 py-3" style="width: 100%; max-width: 80%;">
-                  <h2 class="mb-2 text-center fs-1" style="font-weight:bold;">메인 타이틀 입니다.</h2>
-                  <p class="mb-0 text-center fs-2">서브 타이틀 입니다.</p>
-                </div>
-              </div>
-          </div>
-          <div class="swiper-slide">
-            <img src="https://placehold.co/1900x800?text=Banner+02" alt="기본 배너 이미지" style="width:100%;">
-          </div>
-          <div class="swiper-slide">
-            <img src="https://placehold.co/1900x800?text=Banner+03" alt="기본 배너 이미지" style="width:100%;">
-          </div>
-        </th:block>
-      </div>
-      <!-- Add Pagination -->
-      <div class="swiper-pagination"></div>
-      <!-- Add Navigation -->
-      <!-- <div class="swiper-button-next"></div> -->
-      <!-- <div class="swiper-button-prev"></div> -->
-    </div>
-    <script>
-      var swiper = new Swiper(".main-slide", {
-        loop: true,
-        // effect: "fade",
-        speed: 3000,
-        pagination: {
-          el: ".swiper-pagination",
-          clickable: true,
-        },
-        // navigation: {
-        //   nextEl: ".swiper-button-next",
-        //   prevEl: ".swiper-button-prev",
-        // },
-        autoplay: {
-          delay: 5000,
-          disableOnInteraction: false,
-        },
-      });
-    </script>
+    <h2 class="mb-2 text-center fs-1" style="font-weight:bold;">Preminum Cigarettes UK</h2>
+    <p class="mb-0 text-center fs-2">
+      Buy Premium Cigarettes Online from Falcon Cartons - Your Trusted UK Supplier for Authentic Brands at Competitive Prices.
+    </p>
   </div>
 
   <!-- 메인 팝업 3:4 모달 (Swiper 슬라이드) -->

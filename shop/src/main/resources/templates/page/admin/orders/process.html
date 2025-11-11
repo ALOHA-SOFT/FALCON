@@ -225,8 +225,17 @@
       <div class="col-12 col-xxl-6">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title">주문상품 내역</h5>
-            <p class="card-text">고객이 주문한 상품 내역입니다.</p>
+            <h5 class="card-title">주문정보</h5>
+            <p class="card-text">
+              <div class="d-flex align-items-center justify-content-between">
+                <div>
+                  <span>주문번호 : <strong th:text="${order.no}"></strong></span>
+                  /
+                  <span>주문코드 : <strong th:text="${order.code}"></strong></span>
+                </div>
+                <span>주문일자 : <strong th:text="${#dates.format(order.createdAt, 'yyyy-MM-dd HH:mm')}"></strong></span>
+              </div>
+            </p>
             <div class="table-responsive">
               <table class="table table-striped">
                 <thead class="text-center">

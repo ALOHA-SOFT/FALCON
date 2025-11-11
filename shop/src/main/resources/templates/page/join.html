@@ -20,7 +20,7 @@
             <div class="mb-3">
             <label for="username" class="form-label">Username</label>
             <div class="input-group">
-              <input type="text" class="form-control" id="username" name="username" required maxlength="30" placeholder="Enter your username" autofocus>
+              <input type="text" class="form-control" id="username" name="username" required maxlength="30" placeholder="Enter your username (no spaces allowed)" autofocus pattern="^\S+$">
               <button type="button" class="btn btn-outline-secondary" id="checkUsernameBtn">Check Duplicate</button>
             </div>
             <div id="usernameFeedback" class="form-text"></div>
@@ -44,11 +44,28 @@
               checkBtn.addEventListener('click', function() {
                 const username = usernameInput.value.trim();
                 if (!username) {
-                  feedback.textContent = 'Please enter your username.';
-                  feedback.className = 'form-text text-danger';
+                  $alert({
+                    title: 'Username Required',
+                    text: 'Please enter your username.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                  });
                   usernameInput.focus();
                   return;
                 }
+                
+                // 공백 검사
+                if (/\s/.test(username)) {
+                  $alert({
+                    title: 'Invalid Username',
+                    text: 'Username cannot contain spaces.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                  });
+                  usernameInput.focus();
+                  return;
+                }
+                
                 $ajax({
                   url: '/api/users/user/check-username',
                   type: 'GET',
@@ -227,6 +244,23 @@
         const forms = document.getElementsByClassName('needs-validation');
         Array.prototype.filter.call(forms, function(form) {
           form.addEventListener('submit', function(event) {
+            // Username 공백 검사
+            const usernameInput = document.getElementById('username');
+            const username = usernameInput.value.trim();
+            
+            if (/\s/.test(username)) {
+              event.preventDefault();
+              event.stopPropagation();
+              $alert({
+                  title: 'Invalid Username',
+                  text: 'Username cannot contain spaces.',
+                  icon: 'warning',
+                  confirmButtonText: 'OK'
+              });
+              usernameInput.focus();
+              return false;
+            }
+            
             // 아이디 중복 검사 확인
             const usernameStatus = window.checkUsernameStatus();
             if (!usernameStatus.isUsernameChecked) {
